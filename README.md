@@ -1,66 +1,116 @@
-# Sakina — Prayer Tracker
+<div align="center">
 
-A simple, private daily prayer tracker. Mark each of the five prayers as **Completed** or **Missed**, and watch your streak grow.
+<img src="assets/logo.svg" alt="Sakina logo" width="120" height="120">
 
-Built with plain HTML, CSS and JavaScript. One file. No backend, no accounts, no frameworks, no libraries.
+# Sakina
 
-> **Phase 1** — foundation, navigation and the daily tracking dashboard.
+**A calm, private daily prayer tracker.**<br>
+Mark your five daily prayers, build your streak, and see your progress over time.
+
+![Version](https://img.shields.io/badge/version-1.1.0-cf9f86?style=for-the-badge)
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![No dependencies](https://img.shields.io/badge/dependencies-none-1b1b1d?style=for-the-badge)
+![Data stays on device](https://img.shields.io/badge/data-stays%20on%20device-1b1b1d?style=for-the-badge)
+
+[About](#about) · [Screenshots](#screenshots) · [Features](#features) · [How it works](#how-it-works) · [Backup and import](#backup-and-import) · [This repository](#this-repository)
+
+</div>
+
+---
+
+## About
+
+Sakina (Arabic for *calm* and *tranquility*) is a mobile-first website for tracking the five daily prayers: **Fajr, Dhuhr, Asr, Maghrib and Isha**.
+
+It is one HTML file. There is no backend, no account, no framework and no library. Your records are saved in your own browser and never leave your device.
+
+Sakina does not show prayer times and does not detect prayers on its own. You tell it what you prayed. That is all.
+
+## Screenshots
+
+<div align="center">
+<table>
+  <tr>
+    <td align="center"><img src="screenshots/home.png" width="210" alt="Home"><br><sub><b>Home</b></sub></td>
+    <td align="center"><img src="screenshots/statistics.png" width="210" alt="Statistics"><br><sub><b>Statistics</b></sub></td>
+    <td align="center"><img src="screenshots/history.png" width="210" alt="History"><br><sub><b>History</b></sub></td>
+    <td align="center"><img src="screenshots/settings.png" width="210" alt="Settings"><br><sub><b>Settings</b></sub></td>
+  </tr>
+</table>
+<sub>Screenshots use sample data.</sub>
+</div>
 
 ## Features
 
-- Home dashboard with today's date and daily progress
-- Daily focus card with a short Islamic reminder (Quran or hadith, source shown)
-- Five prayers: Fajr, Dhuhr, Asr, Maghrib, Isha
-- Mark each prayer as Completed or Missed (tap again to clear)
-- Weekly activity strip. Tap a past day to log or fix it
-- Daily progress ring
-- This week: completed, missed, completion rate, full days
-- Prayer streak counter
-- Statistics page: all-time totals, current and best streak, per-prayer bars, 12-week activity map
-- Profile page: name, week start (Mon or Sun), reset data
-- Bottom floating navigation with a large central **Log prayers** button
-- Mobile-first, dark UI, works offline
+**Home**
+- Today's date, prayer progress ring and streak counter
+- Daily focus card with a short reminder from the Quran or hadith, with its source
+- One tap to mark each prayer as completed
+- Weekly activity strip. Tap a day to view or fix it
+- This week: completed, missed, completion rate and full days
+- Large center button for quick logging from any page
 
-## What it does not do
+**Statistics**
+- Overall completion ring, current streak, longest streak and perfect days
+- Totals for done, missed, days tracked and perfect days
+- Full-year activity map with a year dropdown. Colors show 0 to 5 prayers per day, and missed days have their own color
 
-- It does **not** show prayer times.
-- It does **not** detect prayers automatically.
-- It does **not** send your data anywhere.
+**History**
+- Prayer summary for each of the five prayers, with a time range filter
+- A detailed card for every day with all five prayers
+- Tap any prayer on any past day to correct it
 
-You tell the app what you prayed. That is all.
+**Settings**
+- Name, week start (Monday or Sunday)
+- Export and import a backup file
+- Reset all data
 
-## Your data
+## How it works
 
-Everything is saved in your browser with `localStorage` (key: `sakina:v1`).
+| Rule | Meaning |
+| --- | --- |
+| Completed | You tapped the prayer. This is the only thing you mark. |
+| Pending | Today's prayers you have not marked yet. |
+| Missed | A prayer not completed once the day has ended. This is automatic. |
+| Completion rate | Completed ÷ (completed + missed). Pending prayers are not counted. |
+| Streak | Days in a row with all five prayers completed. An unfinished today does not break it. |
+| Start date | Counting begins on the day you first use Sakina, or on the earliest day in an imported backup. |
 
-- Data stays after you refresh or close the page.
-- Data is per browser and per device.
-- Clearing browser data will delete it.
+You cannot log future days.
 
-## How numbers are counted
+## Backup and import
 
-- **Rate** = completed ÷ (completed + missed). Only prayers you marked are counted. Unmarked prayers are not counted as missed.
-- **Streak** = days in a row with all five prayers completed. If today is not finished yet, your streak is not broken.
-- You cannot log future days.
+Data is saved in `localStorage` under the key `sakina:v1`. It stays after you refresh or close the page. It is removed if you clear your browser data, so export a backup from **Settings** now and then.
 
-## Run it
+Import adds the prayers from a backup file to your history. Years found in the imported data appear in the Statistics year dropdown. Someone who has just started will only see the current year.
 
-Open `index.html` in any modern browser. That is all.
+Backup file format (JSON):
 
-On Android with KSWEB: copy the files to your `htdocs` folder and open `http://localhost:8080/` (or your KSWEB port).
-In an AIDE WebView, make sure DOM storage is enabled, or data will not be saved.
+```json
+{
+  "app": "sakina",
+  "start": "2021-03-01",
+  "days": {
+    "2021-03-01": ["fajr", "dhuhr", "asr", "maghrib", "isha"],
+    "2021-03-02": ["fajr", "isha"]
+  }
+}
+```
 
+Prayer ids: `fajr`, `dhuhr`, `asr`, `maghrib`, `isha`. Dates use `YYYY-MM-DD`. Future dates are ignored.
 
-## Project structure
+## This repository
 
 ```
-index.html   The whole app (HTML + CSS + JS)
-README.md    This file
+.
+├── index.html          The whole website (HTML, CSS and JavaScript)
+├── README.md           This file
+├── assets/
+│   ├── logo.svg        Logo (vector)
+│   └── logo.png        Logo (1024 × 1024, transparent)
+└── screenshots/        Images used in this README
 ```
 
-Inside `index.html` the JavaScript is split into clear parts: storage, tracking logic, small components (`PrayerRow`, `WeekStrip`, `Ring`, `Nav`, sheets), views (`HomeView`, `StatsView`, `ProfileView`), and event handling.
-
-## Notes
-
-- Reminder texts are short English renderings. The source is shown under each one. Please check them against a trusted translation if you plan to publish.
-- Not affiliated with any organization.
+**Run locally:** open `index.html` in any modern browser.

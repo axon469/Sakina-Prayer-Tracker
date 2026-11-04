@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0a0a">
-<meta name="description" content="Sakina is a simple, private daily prayer tracker. Mark each prayer as completed or missed and watch your streak grow.">
+<meta name="description" content="Sakina is a simple, private daily prayer tracker. Mark each prayer as completed and watch your streak grow.">
 <title>Sakina – Prayer Tracker</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23cf9f86' d='M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z'/%3E%3C/svg%3E">
 <style>
@@ -21,7 +21,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 body.lock{overflow:hidden}
 body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
   background-image:radial-gradient(rgba(255,255,255,.13) 1.6px,transparent 1.9px);background-size:39px 39px;background-position:14px 10px}
-button,input{font:inherit;color:inherit}
+button,input,select{font:inherit;color:inherit}
 button{background:none;border:0;cursor:pointer}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .ic{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
@@ -40,6 +40,9 @@ h3.sec{font-size:26px;font-weight:600;margin:34px 4px 14px}
 .muted{color:var(--muted)}
 .card{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
 .card+.card,.card+.week-card,.week-card+.card{margin-top:14px}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:18px}
+.card-head h2{display:flex;align-items:center;gap:10px;font-size:19px;font-weight:600;white-space:nowrap}
+.card-head h2 .ic{color:var(--accent)}
 .back{display:inline-flex;align-items:center;gap:4px;color:var(--accent);font-size:13px;letter-spacing:.06em;text-transform:uppercase;font-weight:500}
 .back .ic{width:18px;height:18px}
 .pill{display:flex;align-items:center;gap:8px;height:48px;padding:0 20px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:19px;font-weight:600}
@@ -48,8 +51,12 @@ h3.sec{font-size:26px;font-weight:600;margin:34px 4px 14px}
 .btn-primary{background:#fff;color:#000}
 .btn-ghost{background:var(--card-2);color:#fff}
 .btn-danger{background:rgba(224,118,108,.14);color:var(--danger);border:1px solid rgba(224,118,108,.4)}
-.btn:active,.pbtn:active,.day:active,.nav-main:active{transform:scale(.96)}
-.btn,.pbtn,.day,.nav-main{transition:transform .15s ease,background .2s ease,color .2s ease,border-color .2s ease}
+.btn+.btn{margin-top:10px}
+.btn:active,.pbtn:active,.day:active,.nav-main:active,.hp:active{transform:scale(.96)}
+.btn,.pbtn,.day,.nav-main,.hp{transition:transform .15s ease,background .2s ease,color .2s ease,border-color .2s ease}
+.select-pill{-webkit-appearance:none;appearance:none;height:42px;padding:0 38px 0 16px;border-radius:999px;border:1px solid #38383d;color:#fff;font-size:15px;max-width:60%;
+  background:#212124 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 13px center/14px}
+.select-pill option{background:#1b1b1d;color:#fff}
 
 /* ---------- Focus card ---------- */
 .focus{padding:24px 22px 22px;background:var(--card)}
@@ -84,7 +91,10 @@ h3.sec{font-size:26px;font-weight:600;margin:34px 4px 14px}
 .ring svg{width:100%;height:100%;display:block}
 .ring-bg{fill:none;stroke:#2c2c2f;stroke-width:7}
 .ring-fg{fill:none;stroke:#fff;stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset .9s cubic-bezier(.2,.8,.2,1)}
-.ring-label{position:absolute;inset:0;display:grid;place-items:center;font-size:21px;font-weight:700}
+.ring-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:21px;font-weight:700}
+.rl{display:flex;flex-direction:column;align-items:center}
+.rl b{font-size:28px;font-weight:700;line-height:1}
+.rl small{font-size:13px;color:var(--muted);margin-top:5px;font-weight:400}
 .big{font-size:42px;font-weight:700;line-height:1;margin-top:8px}
 .big span{font-size:22px;color:var(--muted);font-weight:500}
 .sub{font-size:14px;color:var(--muted);margin-top:6px}
@@ -105,15 +115,13 @@ h3.sec{font-size:26px;font-weight:600;margin:34px 4px 14px}
 .p-state{font-size:13.5px;color:var(--muted);margin-top:3px}
 .prayer.done .p-state{color:#fff}
 .prayer.missed .p-state{color:var(--danger)}
-.p-btns{display:flex;gap:10px}
-.pbtn{width:46px;height:46px;border-radius:50%;border:1.5px solid #3b3b40;color:#9c9ca3;display:grid;place-items:center}
-.pbtn .ic{width:22px;height:22px;stroke-width:2.2}
-.pbtn.ok[aria-pressed="true"]{background:#fff;color:#000;border-color:#fff}
-.pbtn.no[aria-pressed="true"]{background:rgba(224,118,108,.15);color:var(--danger);border-color:var(--danger)}
+.pbtn{width:50px;height:50px;border-radius:50%;border:1.5px solid #3b3b40;color:#9c9ca3;display:grid;place-items:center;flex:none}
+.pbtn .ic{width:24px;height:24px;stroke-width:2.2}
+.pbtn[aria-pressed="true"]{background:#fff;color:#000;border-color:#fff}
 .prayer.pop .pbtn[aria-pressed="true"]{animation:pop .38s ease}
 @keyframes pop{0%{transform:scale(.78)}60%{transform:scale(1.14)}100%{transform:scale(1)}}
 
-/* ---------- Stats ---------- */
+/* ---------- This week card (Home) ---------- */
 .stats-card{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:8px;align-items:center;padding:22px 18px}
 .stat-l{display:block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:500}
 .stat-v{display:block;font-size:34px;font-weight:700;margin-top:10px;line-height:1}
@@ -121,32 +129,82 @@ h3.sec{font-size:26px;font-weight:600;margin:34px 4px 14px}
 .ring-col small{display:block;margin-top:6px;font-size:13px;color:var(--muted)}
 .ring-col .ring{--size:78px;margin:0 auto}
 .ring-col .ring-label{font-size:16px}
-.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:0}
-.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
-.grid3>.card+.card,.grid2>.card+.card{margin-top:0}
-.mini{padding:18px 16px}
-.mini .stat-v{font-size:32px}
-.mini .stat-v small{font-size:16px;color:var(--muted);font-weight:500;margin-left:3px}
-.mini .ic{width:20px;height:20px;color:var(--accent);fill:rgba(207,159,134,.25);vertical-align:-3px;margin-right:6px}
-.bar-row+.bar-row{margin-top:18px}
-.bar-top{display:flex;justify-content:space-between;align-items:baseline;font-size:16px;font-weight:600;margin-bottom:9px}
-.bar-top span{font-size:13.5px;font-weight:400;color:var(--muted)}
+
+/* ---------- Statistics ---------- */
+.hero{padding:22px 18px 20px}
+.hero::before{content:"";position:absolute;right:-70px;top:-70px;width:210px;height:210px;border-radius:50%;pointer-events:none;
+  background:repeating-radial-gradient(circle,transparent 0 30px,rgba(255,255,255,.07) 30px 31.5px)}
+.hero>*{position:relative}
+.hero-top{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center}
+.hero .ring{--size:112px}
+.hl{display:flex;align-items:center;gap:9px;padding:9px 0;font-size:15px;color:var(--soft)}
+.hl .ic{width:20px;height:20px}
+.hl .ic.fl{color:var(--accent);fill:rgba(207,159,134,.25)}
+.hl b{margin-left:auto;color:#fff;font-weight:600;font-size:16px}
+.hero hr{border:0;height:1px;margin:18px 0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent)}
+.hero-bottom{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));text-align:center}
+.hero-bottom div+div{border-left:1px solid var(--line)}
+.hero-bottom b{display:block;font-size:28px;font-weight:700;line-height:1}
+.hero-bottom b.red{color:var(--danger)}
+.hero-bottom small{display:block;margin-top:8px;font-size:13px;color:var(--muted)}
+.note{font-size:13.5px;line-height:1.5;color:var(--muted);margin:12px 4px 0}
+
+.hm-wrap{display:flex;gap:6px}
+.hm-days{display:grid;grid-template-rows:repeat(7,13px);gap:3px;margin-top:19px;font-size:9.5px;color:var(--muted);line-height:13px}
+.hm-scroll{flex:1;min-width:0;overflow-x:auto;padding-bottom:8px;scrollbar-width:thin;scrollbar-color:#333 transparent}
+.hm-inner{width:max-content}
+.hm-months{display:grid;grid-auto-columns:13px;gap:3px;height:16px;margin-bottom:3px}
+.hm-months span{font-size:11px;color:var(--muted);white-space:nowrap;line-height:13px}
+.hm-grid{display:grid;grid-template-rows:repeat(7,13px);grid-auto-flow:column;grid-auto-columns:13px;gap:3px}
+.hm-c{display:block;width:13px;height:13px;border-radius:4px;background:#27272a}
+.hm-c.l1{background:rgba(207,159,134,.28)}.hm-c.l2{background:rgba(207,159,134,.5)}
+.hm-c.l3{background:rgba(207,159,134,.72)}.hm-c.l4{background:#cf9f86}.hm-c.l5{background:#fff}
+.hm-c.lm{background:rgba(224,118,108,.38)}
+.hm-c.off{visibility:hidden}
+.hm-c[data-key]{cursor:pointer}
+.legend{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px;margin-top:10px;font-size:12px;color:var(--muted)}
+.lg{display:flex;align-items:center;gap:4px}
+.lg .hm-c{margin:0}
+.lg .gap{width:6px}
+.hm-detail{margin-top:12px;font-size:14px;color:var(--soft);min-height:20px}
+
+/* ---------- History ---------- */
+.sum-row{display:grid;grid-template-columns:24px 66px 1fr 62px;gap:10px;align-items:center}
+.sum-row+.sum-row{margin-top:18px}
+.sum-row .ic{color:#d3d3d8}
+.sum-row span.n{font-size:16px;font-weight:600}
+.sum-row span.c{font-size:14px;color:var(--muted);text-align:right;white-space:nowrap}
 .bar{height:8px;border-radius:9px;background:#2c2c2f;overflow:hidden}
 .bar i{display:block;height:100%;border-radius:9px;background:#fff;transition:width .8s cubic-bezier(.2,.8,.2,1)}
-.hm{display:grid;grid-template-columns:16px repeat(12,minmax(0,1fr));gap:5px;margin-top:6px}
-.hm-m{font-size:11px;color:var(--muted);white-space:nowrap;overflow:visible;height:16px}
-.hm-d{font-size:11px;color:var(--muted);align-self:center}
-.hm-c{display:block;aspect-ratio:1;border-radius:6px;background:#27272a}
-.hm-c.l1{background:rgba(255,255,255,.22)}.hm-c.l2{background:rgba(255,255,255,.4)}
-.hm-c.l3{background:rgba(255,255,255,.58)}.hm-c.l4{background:rgba(255,255,255,.78)}.hm-c.l5{background:#fff}
-.hm-c.lm{background:rgba(224,118,108,.35)}
-.hm-c.future{visibility:hidden}
-.legend{display:flex;align-items:center;justify-content:flex-end;gap:5px;margin-top:14px;font-size:12px;color:var(--muted)}
-.legend i{width:14px;height:14px;border-radius:4px;display:block}
-.empty{text-align:center;padding:26px 22px;margin-bottom:14px}
-.empty p{color:var(--soft);line-height:1.5;margin-bottom:18px}
+.hday{padding:18px 16px 16px}
+.hday.is-today{border:2px solid #3d3d44}
+.hday-top{display:flex;gap:14px;align-items:center}
+.hstat{width:54px;height:54px;border-radius:18px;display:grid;place-items:center;flex:none;background:#2a2a2d;color:#fff;font-weight:700;font-size:21px}
+.hstat .ic{width:26px;height:26px;stroke-width:2.4}
+.hstat.perfect{background:#fff;color:#000}
+.hstat.missed{background:rgba(224,118,108,.16);color:var(--danger)}
+.hstat.pending{color:var(--muted)}
+.hdate{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:20px;font-weight:600}
+.badge{font-size:12px;font-weight:500;padding:4px 10px;border-radius:999px;background:#2f2f33;color:var(--soft)}
+.hday .sub{margin-top:4px}
+.hbar{height:6px;border-radius:9px;background:#2c2c2f;margin:16px 0;overflow:hidden}
+.hbar.missed{background:rgba(224,118,108,.3)}
+.hbar i{display:block;height:100%;background:#fff;border-radius:9px}
+.hpr{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;text-align:center}
+.hp{display:flex;flex-direction:column;align-items:center;gap:9px;color:var(--muted);font-size:13px;min-width:0}
+.hp-c{position:relative;width:52px;height:52px;border-radius:50%;border:2px solid #3a3a3e;display:grid;place-items:center;color:#cfcfd4}
+.hp-c>.ic{width:24px;height:24px}
+.hp-b{position:absolute;right:-5px;bottom:-5px;width:23px;height:23px;border-radius:50%;display:grid;place-items:center;background:#3a3a3e;border:2px solid var(--card);color:#fff}
+.hp-b .ic{width:12px;height:12px;stroke-width:3}
+.hp.done .hp-c{border-color:#fff;background:#262629;color:#fff}
+.hp.done .hp-b{background:#fff;color:#000}
+.hp.done .hp-l{color:#fff}
+.hp.missed .hp-c{border-color:rgba(224,118,108,.7);background:rgba(224,118,108,.1)}
+.hp.missed .hp-b{background:var(--danger)}
+.hp.missed .hp-l{color:var(--danger)}
+.more{margin-top:14px}
 
-/* ---------- Profile ---------- */
+/* ---------- Settings ---------- */
 .me{display:flex;align-items:center;gap:16px}
 .avatar{width:64px;height:64px;border-radius:50%;background:var(--accent-dark);color:var(--accent);display:grid;place-items:center;font-size:26px;font-weight:600;flex:none}
 .avatar .ic{width:28px;height:28px}
@@ -161,20 +219,19 @@ h3.sec{font-size:26px;font-weight:600;margin:34px 4px 14px}
 .seg-ctl{display:flex;padding:5px;border-radius:999px;background:#262629}
 .seg-ctl button{height:42px;padding:0 18px;border-radius:999px;color:var(--muted);font-size:15px}
 .seg-ctl button[aria-pressed="true"]{background:#fff;color:#000;font-weight:600}
-.note{font-size:13.5px;line-height:1.5;color:var(--muted);margin:12px 4px 0}
 .about{text-align:center;color:var(--muted);font-size:13px;margin-top:30px;line-height:1.6}
 
 /* ---------- Bottom nav ---------- */
 .nav{position:fixed;left:0;right:0;bottom:calc(14px + env(safe-area-inset-bottom));z-index:20;padding:0 14px;pointer-events:none}
-.nav-bar{pointer-events:auto;max-width:452px;height:var(--nav-h);margin:0 auto;padding:0 8px;border-radius:40px;
-  display:grid;grid-template-columns:1fr 1fr 76px 2fr;align-items:center;
+.nav-bar{pointer-events:auto;max-width:452px;height:var(--nav-h);margin:0 auto;padding:0 6px;border-radius:40px;
+  display:grid;grid-template-columns:1fr 1fr 68px 1fr 1fr;align-items:center;
   background:rgba(28,28,30,.9);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid var(--line);box-shadow:0 18px 40px rgba(0,0,0,.55)}
-.nav-item{justify-self:center;display:flex;flex-direction:column;align-items:center;gap:5px;padding:11px 12px;border-radius:30px;
-  color:var(--muted);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:500}
+.nav-item{justify-self:center;display:flex;flex-direction:column;align-items:center;gap:5px;padding:11px 7px;border-radius:30px;min-width:0;
+  color:var(--muted);font-size:9.5px;letter-spacing:.04em;text-transform:uppercase;font-weight:500}
 .nav-item.active{background:#2d2d30;color:#fff}
-.nav-main{justify-self:center;width:72px;height:72px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:#111;
+.nav-main{justify-self:center;width:66px;height:66px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:#111;
   box-shadow:0 10px 28px rgba(207,159,134,.35)}
-.nav-main .ic{width:32px;height:32px;stroke-width:2.4}
+.nav-main .ic{width:30px;height:30px;stroke-width:2.4}
 
 /* ---------- Sheet + toast ---------- */
 .backdrop{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
@@ -193,16 +250,18 @@ h3.sec{font-size:26px;font-weight:600;margin:34px 4px 14px}
 .sheet-head h2{font-size:26px;font-weight:600;margin:6px 0 4px}
 .icon-btn{width:44px;height:44px;border-radius:50%;background:var(--card-2);display:grid;place-items:center;flex:none}
 .sheet .list{background:#1c1c1f;margin-bottom:16px}
-.sheet .btn+.btn{margin-top:10px}
 .sheet p.msg{padding:0 4px;margin-bottom:20px}
 .toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + 36px + env(safe-area-inset-bottom));z-index:40;transform:translate(-50%,16px);opacity:0;pointer-events:none;
   max-width:calc(100% - 40px);padding:12px 20px;border-radius:999px;background:#fff;color:#000;font-size:14.5px;font-weight:500;text-align:center;transition:.25s ease}
 .toast.show{opacity:1;transform:translate(-50%,0)}
+.hidden{display:none}
 
-@media (max-width:350px){
+@media (max-width:370px){
   .stats-card{grid-template-columns:repeat(3,minmax(0,1fr))}
   .ring-col{grid-column:1/-1;margin-top:8px}
   .p-ar{display:none}
+  .hero .ring{--size:96px}
+  .rl b{font-size:23px}
 }
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
@@ -212,15 +271,17 @@ h3.sec{font-size:26px;font-weight:600;margin:34px 4px 14px}
 <nav id="nav" class="nav" aria-label="Main"></nav>
 <div id="overlay"></div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
+<input type="file" id="import-file" class="hidden" accept=".json,application/json" aria-hidden="true" tabindex="-1">
 
 <script>
 (() => {
 'use strict';
 
 /* =====================================================================
-   Data + constants
+   Constants
    ===================================================================== */
-const KEY = 'sakina:v1';
+const VERSION = '1.1.0';
+const KEY = 'sakina:v1';          // same key as v1.0 so existing data carries over
 const PRAYERS = [
   { id: 'fajr',    name: 'Fajr',    ar: 'الفجر',  icon: 'sunrise' },
   { id: 'dhuhr',   name: 'Dhuhr',   ar: 'الظهر',  icon: 'sun' },
@@ -229,6 +290,7 @@ const PRAYERS = [
   { id: 'isha',    name: 'Isha',    ar: 'العشاء', icon: 'moon' }
 ];
 const N = PRAYERS.length;
+const IDS = new Set(PRAYERS.map(p => p.id));
 
 // Short reminders. Wording is a plain English rendering; the source is shown under each one.
 const MESSAGES = [
@@ -249,18 +311,26 @@ const MESSAGES = [
 ];
 
 /* =====================================================================
-   Icons (simple stroke icons, one place)
+   Icons
    ===================================================================== */
 const ICONS = {
   home: '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9v11h5v-6h4v6h5V9"/>',
   stats: '<path d="M5 20v-6M12 20V5M19 20v-9"/>',
+  history: '<path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1L3.5 8.5"/><path d="M3.5 4v4.5H8"/><path d="M12 8v4.5l3 1.8"/>',
+  settings: '<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',
   user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>',
   plus: '<path d="M12 5v14M5 12h14"/>',
   check: '<path d="M5 12.5 10 17.5 19 7.5"/>',
   x: '<path d="M6 6l12 12M18 6 6 18"/>',
+  clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
   flame: '<path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2 1-3.5 2-4.5.3 1.5 1 2.2 1.8 2.5C10.5 8 10.8 5.3 12 3z"/>',
+  award: '<circle cx="12" cy="9" r="5.5"/><path d="M8.7 13.6 7.5 21l4.5-2.6 4.5 2.6-1.2-7.4"/>',
+  star: '<path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.2 1 5.9L12 16.9l-5.2 2.9 1-5.9-4.3-4.2 5.9-.8z"/>',
   chev: '<path d="M15 5l-7 7 7 7"/>',
   trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+  download: '<path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 20h14"/>',
+  upload: '<path d="M12 15V4M7.5 8.5 12 4l4.5 4.5M5 20h14"/>',
+  mosque: '<path d="M4 20V11M20 20V11M2 20h20M7 20v-4a5 5 0 0 1 10 0v4M12 7V4M10.5 5.5h3"/>',
   sunrise: '<path d="M3 19h18"/><path d="M7.5 19a4.5 4.5 0 0 1 9 0"/><path d="M12 4v6"/><path d="M9.5 6.5 12 4l2.5 2.5"/><path d="M4.5 12.5 6 14M19.5 12.5 18 14"/>',
   sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5V5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/>',
   sunlow: '<circle cx="12" cy="10" r="3.5"/><path d="M12 3v1.5M5.6 5.6l1 1M18.4 5.6l-1 1M3.5 10H5M19 10h1.5"/><path d="M4 17h16M8 21h8"/>',
@@ -277,6 +347,7 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;'
 const pad = n => String(n).padStart(2, '0');
 const toKey = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 const fromKey = k => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d); };
+const validKey = k => typeof k === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(k) && toKey(fromKey(k)) === k;
 const addDays = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
 const startOfWeek = (d, ws) => addDays(d, -((d.getDay() - ws + 7) % 7));
 const dayIndex = d => Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5);
@@ -285,25 +356,46 @@ const fmtLong = new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'shor
 const fmtShort = new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 const fmtMonth = new Intl.DateTimeFormat('en-US', { month: 'short' });
 const fmtFull = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+const fmtCard = d => `${pad(d.getDate())} ${fmtMonth.format(d)} ${d.getFullYear()}`;
+
+function keysBetween(a, b) {
+  const out = [];
+  for (let d = fromKey(a), end = fromKey(b); d <= end; d = addDays(d, 1)) out.push(toKey(d));
+  return out;
+}
 
 /* =====================================================================
-   Storage (localStorage, validated on load)
+   Storage
+   Model: { v, name, weekStart, start, days: { 'YYYY-MM-DD': { fajr: 1, ... } } }
+   Only completed prayers are stored. Anything not stored is "not completed".
    ===================================================================== */
-const defaults = () => ({ v: 1, name: '', weekStart: 1, days: {} });
+const defaults = () => ({ v: 2, name: '', weekStart: 1, start: todayKey(), days: {} });
+const isOn = v => v === 1 || v === true || v === 'done';   // 'done' = v1.0 data
+
+function cleanDays(src) {
+  const out = {};
+  if (!src || typeof src !== 'object' || Array.isArray(src)) return out;
+  for (const [k, v] of Object.entries(src)) {
+    if (!validKey(k)) continue;
+    const day = {};
+    if (Array.isArray(v)) { for (const id of v) if (IDS.has(id)) day[id] = 1; }
+    else if (v && typeof v === 'object') { for (const id of IDS) if (isOn(v[id])) day[id] = 1; }
+    if (Object.keys(day).length) out[k] = day;
+  }
+  return out;
+}
 
 function sanitize(p) {
   const d = defaults();
   if (!p || typeof p !== 'object') return d;
   if (typeof p.name === 'string') d.name = p.name.slice(0, 30);
   if (p.weekStart === 0 || p.weekStart === 1) d.weekStart = p.weekStart;
-  if (p.days && typeof p.days === 'object') {
-    for (const [k, v] of Object.entries(p.days)) {
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(k) || !v || typeof v !== 'object') continue;
-      const day = {};
-      for (const pr of PRAYERS) if (v[pr.id] === 'done' || v[pr.id] === 'missed') day[pr.id] = v[pr.id];
-      if (Object.keys(day).length) d.days[k] = day;
-    }
-  }
+  d.days = cleanDays(p.days);
+  const first = Object.keys(d.days).sort()[0];
+  let s = validKey(p.start) ? p.start : (first || todayKey());
+  if (first && first < s) s = first;
+  if (s > todayKey()) s = todayKey();
+  d.start = s;
   return d;
 }
 
@@ -327,23 +419,33 @@ const state = {
   data: load(),
   view: 'home',
   selected: todayKey(),
+  year: new Date().getFullYear(),
+  histRange: 'all',
+  histLimit: 30,
   sheet: null,        // 'log' | 'reset' | null
   sheetFresh: false,
   closing: false,
   pop: null
 };
+save();   // writes upgraded data (v2) straight away
 const ringPrev = {};
 
 /* =====================================================================
    Tracking logic
+   A prayer is "missed" when the day has ended and it was not completed.
+   Today's unmarked prayers are "pending". Days before the start date are not counted.
    ===================================================================== */
 const dayOf = k => state.data.days[k] || {};
 
 function countDay(k) {
-  const d = dayOf(k);
-  let done = 0, missed = 0;
-  for (const p of PRAYERS) { if (d[p.id] === 'done') done++; else if (d[p.id] === 'missed') missed++; }
-  return { done, missed, left: N - done - missed };
+  const d = dayOf(k), t = todayKey();
+  let done = 0;
+  for (const p of PRAYERS) if (d[p.id]) done++;
+  return {
+    done,
+    missed: k < t && k >= state.data.start ? N - done : 0,
+    left: k >= t ? N - done : 0
+  };
 }
 const isComplete = k => countDay(k).done === N;
 
@@ -354,28 +456,17 @@ function totals(keys) {
   return { done, missed, rate: logged ? Math.round(done / logged * 100) : null };
 }
 
-function streaks() {
-  let current = 0, cursor = fromKey(todayKey());
-  if (!isComplete(toKey(cursor))) cursor = addDays(cursor, -1);   // today can still be finished
-  while (isComplete(toKey(cursor))) { current++; cursor = addDays(cursor, -1); }
-  let best = 0, run = 0, prev = null;
-  for (const k of Object.keys(state.data.days).sort()) {
-    if (!isComplete(k)) { run = 0; prev = null; continue; }
-    run = prev && toKey(addDays(fromKey(prev), 1)) === k ? run + 1 : 1;
-    prev = k;
-    best = Math.max(best, run);
+function overview() {
+  const keys = keysBetween(state.data.start, todayKey());
+  const t = totals(keys);
+  let perfect = 0, run = 0, best = 0;
+  for (const k of keys) {
+    if (isComplete(k)) { perfect++; run++; best = Math.max(best, run); } else run = 0;
   }
-  return { current, best: Math.max(best, current) };
-}
-
-function perPrayer() {
-  return PRAYERS.map(p => {
-    let done = 0, missed = 0;
-    for (const d of Object.values(state.data.days)) {
-      if (d[p.id] === 'done') done++; else if (d[p.id] === 'missed') missed++;
-    }
-    return { ...p, done, total: done + missed };
-  });
+  let current = 0, i = keys.length - 1;
+  if (i >= 0 && !isComplete(keys[i])) i--;            // today can still be finished
+  while (i >= 0 && isComplete(keys[i])) { current++; i--; }
+  return { ...t, days: keys.length, perfect, current, best };
 }
 
 const weekKeys = () => {
@@ -383,20 +474,72 @@ const weekKeys = () => {
   return Array.from({ length: 7 }, (_, i) => toKey(addDays(s, i)));
 };
 
-function mark(id, status) {
-  const k = state.selected;
-  if (k > todayKey()) return;                       // never log the future
+// Flip one prayer for one day. Returns the new state, or null for future days.
+function toggle(k, id) {
+  if (k > todayKey()) return null;
   const day = state.data.days[k] || (state.data.days[k] = {});
-  const cleared = day[id] === status;
-  if (cleared) delete day[id]; else day[id] = status;
+  const now = !day[id];
+  if (now) { day[id] = 1; if (k < state.data.start) state.data.start = k; } else delete day[id];
   if (!Object.keys(day).length) delete state.data.days[k];
   save();
+  return now;
+}
+
+function mark(id) {
+  const k = state.selected;
+  const now = toggle(k, id);
+  if (now === null) return;
   state.pop = id;
   render();
   state.pop = null;
   const name = PRAYERS.find(p => p.id === id).name;
-  if (!cleared && status === 'done' && isComplete(k)) toast('Alhamdulillah. All five prayers completed.');
-  else toast(cleared ? `${name} cleared` : `${name} marked ${status === 'done' ? 'completed' : 'missed'}`);
+  if (now && isComplete(k)) toast('Alhamdulillah. All five prayers completed.');
+  else toast(now ? `${name} completed` : `${name} unmarked`);
+}
+
+/* ---------- Backup ---------- */
+function exportData() {
+  const days = {};
+  for (const k of Object.keys(state.data.days).sort()) days[k] = PRAYERS.filter(p => state.data.days[k][p.id]).map(p => p.id);
+  const out = { app: 'sakina', version: VERSION, exported: todayKey(), start: state.data.start, days };
+  const blob = new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `sakina-backup-${todayKey()}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+  toast('Backup file created');
+}
+
+function importData(raw) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return 0;
+  const days = cleanDays(raw.days && typeof raw.days === 'object' ? raw.days : raw);
+  const t = todayKey();
+  let n = 0;
+  for (const [k, v] of Object.entries(days)) {
+    if (k > t) continue;
+    Object.assign(state.data.days[k] || (state.data.days[k] = {}), v);
+    if (k < state.data.start) state.data.start = k;
+    n++;
+  }
+  if (n && validKey(raw.start) && raw.start < state.data.start) state.data.start = raw.start;
+  if (n) save();
+  return n;
+}
+
+function handleImport(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    let n = 0;
+    try { n = importData(JSON.parse(reader.result)); } catch (e) { n = 0; }
+    if (!n) { toast('No prayer data found in that file'); return; }
+    state.year = new Date().getFullYear();
+    render();
+    toast(`Imported ${n} ${n === 1 ? 'day' : 'days'}`);
+  };
+  reader.onerror = () => toast('Could not read that file');
+  reader.readAsText(file);
 }
 
 /* =====================================================================
@@ -413,18 +556,17 @@ function Ring(id, pct, label, size) {
     <div class="ring-label">${label}</div></div>`;
 }
 
-function PrayerRow(p, status) {
-  const label = status === 'done' ? 'Completed' : status === 'missed' ? 'Missed' : 'Not marked';
-  return `<div class="prayer ${status || ''} ${state.pop === p.id ? 'pop' : ''}">
+function PrayerRow(p, k) {
+  const done = !!dayOf(k)[p.id], t = todayKey();
+  const label = done ? 'Completed' : k === t ? 'Pending' : k < t && k >= state.data.start ? 'Missed' : 'Not recorded';
+  const cls = done ? 'done' : label === 'Missed' ? 'missed' : '';
+  return `<div class="prayer ${cls} ${state.pop === p.id ? 'pop' : ''}">
     <div class="p-ic">${Icon(p.icon)}</div>
     <div class="p-txt"><div class="p-name">${p.name}<span class="p-ar" lang="ar" dir="rtl">${p.ar}</span></div><div class="p-state">${label}</div></div>
-    <div class="p-btns">
-      <button class="pbtn ok" data-action="mark" data-prayer="${p.id}" data-status="done" aria-pressed="${status === 'done'}" aria-label="Mark ${p.name} as completed">${Icon('check')}</button>
-      <button class="pbtn no" data-action="mark" data-prayer="${p.id}" data-status="missed" aria-pressed="${status === 'missed'}" aria-label="Mark ${p.name} as missed">${Icon('x')}</button>
-    </div></div>`;
+    <button class="pbtn" data-action="mark" data-prayer="${p.id}" aria-pressed="${done}" aria-label="${done ? 'Unmark' : 'Mark'} ${p.name} as completed">${Icon('check')}</button>
+  </div>`;
 }
-
-const PrayerList = k => `<div class="card list">${PRAYERS.map(p => PrayerRow(p, dayOf(k)[p.id])).join('')}</div>`;
+const PrayerList = k => `<div class="card list">${PRAYERS.map(p => PrayerRow(p, k)).join('')}</div>`;
 
 function WeekStrip() {
   const today = todayKey(), ws = state.data.weekStart;
@@ -445,7 +587,7 @@ function Nav() {
   const item = (to, icon, label) => `<button class="nav-item ${state.view === to ? 'active' : ''}" data-action="nav" data-to="${to}" ${state.view === to ? 'aria-current="page"' : ''}>${Icon(icon)}<span>${label}</span></button>`;
   return `<div class="nav-bar">${item('home', 'home', 'Home')}${item('stats', 'stats', 'Stats')}
     <button class="nav-main" data-action="open-log" aria-label="Log prayers">${Icon('plus')}</button>
-    ${item('profile', 'user', 'Profile')}</div>`;
+    ${item('history', 'history', 'History')}${item('settings', 'settings', 'Settings')}</div>`;
 }
 
 /* =====================================================================
@@ -453,7 +595,7 @@ function Nav() {
    ===================================================================== */
 function focusTitle(c) {
   if (c.done === N) return 'Alhamdulillah';
-  if (c.done + c.missed === 0) return 'Begin with Bismillah';
+  if (c.done === 0) return 'Begin with Bismillah';
   return 'Keep going';
 }
 
@@ -461,11 +603,13 @@ function HomeView() {
   const today = todayKey(), sel = state.selected, isToday = sel === today;
   const c = countDay(sel), pct = Math.round(c.done / N * 100);
   const name = state.data.name.trim();
-  const { current } = streaks();
+  const { current } = overview();
   const [text, src] = MESSAGES[dayIndex(fromKey(sel)) % MESSAGES.length];
-  const wk = weekKeys(), wt = totals(wk), fullDays = wk.filter(isComplete).length;
+  const wt = totals(weekKeys()), fullDays = weekKeys().filter(isComplete).length;
   const eyebrow = isToday ? (name ? `Salam, ${esc(name)}` : 'Today')
     : `<button class="back" data-action="back-today">${Icon('chev')}Back to today</button>`;
+  const sub = sel < today ? `${c.done} completed · ${c.missed} missed` : `${c.done} completed · ${c.left} left`;
+  const segs = PRAYERS.map(p => `<i class="${dayOf(sel)[p.id] ? 'done' : c.missed ? 'missed' : ''}"></i>`).join('');
 
   return `
   <header class="top">
@@ -488,9 +632,9 @@ function HomeView() {
     <div>
       <p class="eyebrow">${isToday ? "Today's progress" : 'Progress'}</p>
       <div class="big">${c.done}<span>/${N}</span></div>
-      <p class="sub">${c.done} completed · ${c.missed} missed · ${c.left} left</p>
+      <p class="sub">${sub}</p>
     </div>
-    <div class="segs" aria-hidden="true">${PRAYERS.map(p => `<i class="${dayOf(sel)[p.id] || ''}"></i>`).join('')}</div>
+    <div class="segs" aria-hidden="true">${segs}</div>
   </section>
 
   <div class="sec-row" id="prayers"><h3>${isToday ? "Today's prayers" : 'Prayers'}</h3><span class="muted">${isToday ? '' : fmtShort.format(fromKey(sel))}</span></div>
@@ -505,68 +649,150 @@ function HomeView() {
   </section>`;
 }
 
-function Heatmap() {
-  const ws = state.data.weekStart, tk = todayKey();
-  const first = addDays(startOfWeek(new Date(), ws), -11 * 7);
+/* ---------- Statistics ---------- */
+function yearsList() {
+  const first = fromKey(state.data.start).getFullYear(), last = new Date().getFullYear(), out = [];
+  for (let y = last; y >= first; y--) out.push(y);     // newest first
+  return out;
+}
+
+function Heatmap(year) {
+  const ws = state.data.weekStart, t = todayKey(), start = state.data.start;
+  const jan1 = new Date(year, 0, 1), dec31 = new Date(year, 11, 31);
+  const first = startOfWeek(jan1, ws);
+  const cols = Math.ceil((dayIndex(dec31) - dayIndex(first) + 1) / 7);
   const names = ws === 1 ? ['M', 'T', 'W', 'T', 'F', 'S', 'S'] : ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-  let html = '<div class="hm" role="img" aria-label="Prayer activity for the last 12 weeks"><span></span>', last = -1;
-  for (let c = 0; c < 12; c++) {
-    const d = addDays(first, c * 7), m = d.getMonth();
-    html += `<span class="hm-m">${m !== last ? fmtMonth.format(d) : ''}</span>`;
-    last = m;
-  }
-  for (let r = 0; r < 7; r++) {
-    html += `<span class="hm-d">${names[r]}</span>`;
-    for (let c = 0; c < 12; c++) {
-      const d = addDays(first, c * 7 + r), k = toKey(d);
-      if (k > tk) { html += '<i class="hm-c future"></i>'; continue; }
+  let months = '', cells = '', last = -1;
+  for (let c = 0; c < cols; c++) {
+    let labelled = false;
+    for (let r = 0; r < 7; r++) {
+      const d = addDays(first, c * 7 + r);
+      if (d.getFullYear() !== year) { cells += '<i class="hm-c off"></i>'; continue; }
+      if (!labelled) {
+        labelled = true;
+        if (d.getMonth() !== last) { months += `<span style="grid-column:${c + 1}">${fmtMonth.format(d)}</span>`; last = d.getMonth(); }
+      }
+      const k = toKey(d);
+      if (k > t) { cells += '<i class="hm-c"></i>'; continue; }
       const x = countDay(k);
       const cls = x.done ? 'l' + x.done : x.missed ? 'lm' : '';
-      html += `<i class="hm-c ${cls}" title="${fmtShort.format(d)}: ${x.done}/${N} completed"></i>`;
+      cells += `<i class="hm-c ${cls}" data-action="hm-pick" data-key="${k}" title="${fmtShort.format(d)}: ${x.done}/${N} completed"></i>`;
     }
   }
-  const legend = ['', 'l1', 'l3', 'l5'].map(c => `<i class="hm-c ${c}"></i>`).join('');
-  return html + `</div><div class="legend">Less ${legend} More</div>`;
+  return `<div class="hm-wrap">
+    <div class="hm-days" aria-hidden="true">${names.map(n => `<span>${n}</span>`).join('')}</div>
+    <div class="hm-scroll"><div class="hm-inner">
+      <div class="hm-months" style="grid-template-columns:repeat(${cols},13px)">${months}</div>
+      <div class="hm-grid" role="img" aria-label="Prayer activity for ${year}">${cells}</div>
+    </div></div></div>`;
+}
+
+function ActivityCard() {
+  const years = yearsList();
+  if (!years.includes(state.year)) state.year = years[0];
+  const opts = years.map(y => `<option value="${y}" ${y === state.year ? 'selected' : ''}>${y}</option>`).join('');
+  const legend = ['l1', 'l2', 'l3', 'l4', 'l5'].map(c => `<i class="hm-c ${c}"></i>`).join('');
+  return `<section class="card">
+    <div class="card-head"><h2>${Icon('mosque')}Activity</h2>
+      <select class="select-pill" id="year-select" aria-label="Year">${opts}</select></div>
+    ${Heatmap(state.year)}
+    <div class="legend">
+      <span class="lg"><i class="hm-c lm"></i>&nbsp;Missed</span>
+      <span class="lg">Less&nbsp;${legend}&nbsp;More <span class="gap"></span>(1–5 prayers)</span>
+    </div>
+    <p class="hm-detail" id="hm-detail">Tap a day to see details.</p>
+  </section>`;
 }
 
 function StatsView() {
-  const keys = Object.keys(state.data.days);
-  const t = totals(keys), s = streaks();
-  const empty = !keys.length;
-  const bars = perPrayer().map(p => {
-    const w = p.total ? Math.round(p.done / p.total * 100) : 0;
-    return `<div class="bar-row"><div class="bar-top">${p.name}<span>${p.total ? `${p.done} of ${p.total} completed` : 'No data yet'}</span></div><div class="bar"><i style="width:${w}%"></i></div></div>`;
-  }).join('');
-
+  const o = overview();
+  const label = `<span class="rl"><b>${o.rate === null ? '—' : o.rate + '%'}</b><small>Overall</small></span>`;
   return `
   <header class="top"><div><p class="eyebrow">Insights</p><h1>Statistics</h1></div></header>
-  ${empty ? `<section class="card empty"><p>No prayers logged yet. Mark your first prayer on Home and your numbers will appear here.</p><button class="btn btn-primary" data-action="nav" data-to="home">Go to Home</button></section>` : ''}
-  <div class="grid3">
-    <div class="card mini"><span class="stat-l">Completed</span><span class="stat-v">${t.done}</span></div>
-    <div class="card mini"><span class="stat-l">Missed</span><span class="stat-v">${t.missed}</span></div>
-    <div class="card mini"><span class="stat-l">Rate</span><span class="stat-v">${t.rate === null ? '—' : t.rate + '%'}</span></div>
-  </div>
-  <div class="grid2">
-    <div class="card mini"><span class="stat-l">Current streak</span><span class="stat-v">${Icon('flame')}${s.current}<small>${s.current === 1 ? 'day' : 'days'}</small></span></div>
-    <div class="card mini"><span class="stat-l">Best streak</span><span class="stat-v">${s.best}<small>${s.best === 1 ? 'day' : 'days'}</small></span></div>
-  </div>
-  <p class="note">Rate counts only the prayers you marked. Unmarked prayers are not counted as missed. A streak is a run of days with all five prayers completed.</p>
-  <h3 class="sec">By prayer</h3>
-  <section class="card">${bars}</section>
-  <h3 class="sec">Activity</h3>
-  <section class="card">${Heatmap()}</section>`;
+  <section class="card hero" aria-label="Overall statistics">
+    <div class="hero-top">
+      ${Ring('overall', o.rate || 0, label)}
+      <div>
+        <div class="hl">${Icon('flame', 'fl')}Streak<b>${o.current}</b></div>
+        <div class="hl">${Icon('award')}Longest<b>${o.best}</b></div>
+        <div class="hl">${Icon('star')}Perfect days<b>${o.perfect}/${o.days}</b></div>
+      </div>
+    </div>
+    <hr>
+    <div class="hero-bottom">
+      <div><b>${o.done}</b><small>Done</small></div>
+      <div><b class="red">${o.missed}</b><small>Missed</small></div>
+      <div><b>${o.days}</b><small>Days</small></div>
+      <div><b>${o.perfect}</b><small>Perfect</small></div>
+    </div>
+  </section>
+  <p class="note">A prayer you did not complete counts as missed once the day ends. Today's open prayers are not counted yet.</p>
+  <div style="height:14px"></div>
+  ${ActivityCard()}`;
 }
 
+/* ---------- History ---------- */
+const RANGES = [['all', 'All time'], ['year', 'This year'], ['30', 'Last 30 days'], ['7', 'Last 7 days']];
+
+function rangeKeys() {
+  const t = fromKey(todayKey());
+  const from = { all: state.data.start, year: `${t.getFullYear()}-01-01`, 30: toKey(addDays(t, -29)), 7: toKey(addDays(t, -6)) }[state.histRange];
+  return keysBetween(from < state.data.start ? state.data.start : from, todayKey());
+}
+
+function SummaryCard(keys) {
+  const rows = PRAYERS.map(p => {
+    const done = keys.filter(k => dayOf(k)[p.id]).length;
+    const w = keys.length ? Math.round(done / keys.length * 100) : 0;
+    return `<div class="sum-row">${Icon(p.icon)}<span class="n">${p.name}</span><div class="bar"><i style="width:${w}%"></i></div><span class="c">${done}/${keys.length}</span></div>`;
+  }).join('');
+  const opts = RANGES.map(([v, l]) => `<option value="${v}" ${v === state.histRange ? 'selected' : ''}>${l}</option>`).join('');
+  return `<section class="card">
+    <div class="card-head"><h2>${Icon('mosque')}Prayer Summary</h2><select class="select-pill" id="range-select" aria-label="Time range">${opts}</select></div>${rows}</section>`;
+}
+
+function DayCard(k) {
+  const c = countDay(k), t = todayKey(), d = fromKey(k), isT = k === t;
+  const tone = c.done === N ? 'perfect' : c.done > 0 ? 'partial' : isT ? 'pending' : 'missed';
+  const stat = tone === 'perfect' ? Icon('check') : tone === 'partial' ? c.done : tone === 'pending' ? Icon('clock') : Icon('x');
+  const btns = PRAYERS.map(p => {
+    const done = !!dayOf(k)[p.id];
+    const st = done ? 'done' : isT ? 'pending' : 'missed';
+    const badge = done ? 'check' : isT ? 'clock' : 'x';
+    return `<button class="hp ${st}" data-action="hist-mark" data-key="${k}" data-prayer="${p.id}" aria-pressed="${done}"
+      aria-label="${p.name}, ${fmtCard(d)}: ${done ? 'completed' : isT ? 'pending' : 'missed'}. Tap to change.">
+      <span class="hp-c">${Icon(p.icon)}<span class="hp-b">${Icon(badge)}</span></span><span class="hp-l">${p.name}</span></button>`;
+  }).join('');
+  return `<article class="card hday ${isT ? 'is-today' : ''}">
+    <div class="hday-top"><div class="hstat ${tone}">${stat}</div>
+      <div><div class="hdate">${fmtCard(d)}${isT ? '<span class="badge">Today</span>' : ''}</div>
+      <p class="sub">${c.done}/${N} prayers completed</p></div></div>
+    <div class="hbar ${tone === 'missed' ? 'missed' : ''}"><i style="width:${c.done / N * 100}%"></i></div>
+    <div class="hpr">${btns}</div></article>`;
+}
+
+function HistoryView() {
+  const keys = rangeKeys(), list = keys.slice().reverse();
+  const shown = list.slice(0, state.histLimit);
+  return `
+  <header class="top"><div><p class="eyebrow">Records</p><h1>History</h1></div></header>
+  ${SummaryCard(keys)}
+  <div class="sec-row"><h3>All days</h3><span class="muted">${list.length} ${list.length === 1 ? 'entry' : 'entries'}</span></div>
+  ${shown.map(DayCard).join('')}
+  ${list.length > shown.length ? `<button class="btn btn-ghost more" data-action="more">Show more days</button>` : ''}
+  <p class="note">Tap a prayer to change it. Unmarked prayers on past days count as missed.</p>`;
+}
+
+/* ---------- Settings ---------- */
 function AvatarInner() {
   const n = state.data.name.trim();
   return n ? esc([...n][0].toUpperCase()) : Icon('moon');
 }
 
-function ProfileView() {
-  const keys = Object.keys(state.data.days).sort();
-  const t = totals(keys), ws = state.data.weekStart;
+function SettingsView() {
+  const ws = state.data.weekStart, o = overview();
   return `
-  <header class="top"><div><p class="eyebrow">You</p><h1>Profile</h1></div></header>
+  <header class="top"><div><p class="eyebrow">Preferences</p><h1>Settings</h1></div></header>
   <section class="card me">
     <div class="avatar" id="avatar">${AvatarInner()}</div>
     <div class="field"><label for="name-input">Your name</label><input id="name-input" type="text" maxlength="30" autocomplete="off" placeholder="Optional" value="${esc(state.data.name)}"></div>
@@ -577,16 +803,19 @@ function ProfileView() {
         <button data-action="set-week" data-ws="1" aria-pressed="${ws === 1}">Mon</button>
         <button data-action="set-week" data-ws="0" aria-pressed="${ws === 0}">Sun</button>
       </div></div>
-    <div class="row"><b>Tracking since</b><span class="v">${keys.length ? fmtFull.format(fromKey(keys[0])) : '—'}</span></div>
-    <div class="row"><b>Days logged</b><span class="v">${keys.length}</span></div>
-    <div class="row"><b>Prayers logged</b><span class="v">${t.done + t.missed}</span></div>
+    <div class="row"><b>Tracking since</b><span class="v">${fmtFull.format(fromKey(state.data.start))}</span></div>
+    <div class="row"><b>Prayers completed</b><span class="v">${o.done}</span></div>
   </section>
-  <section class="card"><button class="btn btn-danger" data-action="ask-reset">${Icon('trash')}Reset all data</button></section>
-  <p class="note">Everything is saved only in this browser on this device. Clearing browser data will remove it. There are no accounts and nothing is sent anywhere.</p>
-  <p class="about">Sakina · Prayer Tracker<br>Phase 1</p>`;
+  <section class="card">
+    <button class="btn btn-ghost" data-action="export">${Icon('download')}Export backup</button>
+    <button class="btn btn-ghost" data-action="pick-file">${Icon('upload')}Import backup</button>
+    <button class="btn btn-danger" data-action="ask-reset">${Icon('trash')}Reset all data</button>
+  </section>
+  <p class="note">Everything is saved only in this browser on this device. Clearing browser data removes it, so export a backup now and then. Importing a backup adds its prayers to your history and unlocks earlier years in Statistics.</p>
+  <p class="about">Sakina · Prayer Tracker<br>Version ${VERSION}</p>`;
 }
 
-const VIEWS = { home: HomeView, stats: StatsView, profile: ProfileView };
+const VIEWS = { home: HomeView, stats: StatsView, history: HistoryView, settings: SettingsView };
 
 /* ---------- Sheets ---------- */
 function LogSheet() {
@@ -651,6 +880,8 @@ function render(enter) {
     }));
     ringPrev[el.dataset.ring] = pct;
   });
+  const sc = document.querySelector('.hm-scroll');      // show the newest weeks first
+  if (sc) sc.scrollLeft = state.year === new Date().getFullYear() ? sc.scrollWidth : 0;
 }
 
 let toastTimer;
@@ -665,7 +896,11 @@ function toast(msg) {
 /* =====================================================================
    Navigation + events
    ===================================================================== */
-const parseHash = () => { const v = location.hash.replace('#/', ''); return VIEWS[v] ? v : 'home'; };
+const parseHash = () => {
+  let v = location.hash.replace('#/', '');
+  if (v === 'profile') v = 'settings';                   // old name
+  return VIEWS[v] ? v : 'home';
+};
 
 function go(view) {
   if (view === state.view) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
@@ -688,23 +923,39 @@ document.addEventListener('click', e => {
   const d = t.dataset;
   switch (d.action) {
     case 'nav': go(d.to); break;
-    case 'mark': mark(d.prayer, d.status); break;
+    case 'mark': mark(d.prayer); break;
+    case 'hist-mark': toggle(d.key, d.prayer); render(); break;
+    case 'more': state.histLimit += 30; render(); break;
     case 'select-day': state.selected = d.key; render(); break;
     case 'back-today': state.selected = todayKey(); render(); break;
     case 'open-log': openSheet('log'); break;
     case 'close-sheet': closeSheet(); break;
     case 'scroll-prayers': $('#prayers').scrollIntoView({ behavior: 'smooth', block: 'start' }); break;
+    case 'hm-pick': {
+      const c = countDay(d.key), el = $('#hm-detail');
+      if (el) el.textContent = `${fmtShort.format(fromKey(d.key))}: ${c.done}/${N} completed` + (c.missed ? ` · ${c.missed} missed` : '');
+      break;
+    }
     case 'set-week':
       state.data.weekStart = Number(d.ws);
       if (!weekKeys().includes(state.selected)) state.selected = todayKey();
       save(); render(); break;
+    case 'export': exportData(); break;
+    case 'pick-file': $('#import-file').click(); break;
     case 'ask-reset': openSheet('reset'); break;
     case 'confirm-reset':
-      state.data = defaults(); state.selected = todayKey();
+      state.data = defaults(); state.selected = todayKey(); state.year = new Date().getFullYear(); state.histLimit = 30;
       save(); state.sheet = null; state.closing = false;
       $('#overlay').classList.remove('leaving');
       render(); toast('All data cleared'); break;
   }
+});
+
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.id === 'year-select') { state.year = Number(t.value); render(); }
+  else if (t.id === 'range-select') { state.histRange = t.value; state.histLimit = 30; render(); }
+  else if (t.id === 'import-file') { handleImport(t.files && t.files[0]); t.value = ''; }
 });
 
 document.addEventListener('input', e => {
