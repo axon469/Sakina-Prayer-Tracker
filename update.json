@@ -1,13 +1,13 @@
-
 {
-  "versionCode": 1,
-  "versionName": "1.1.0",
+  "versionCode": 4,
+  "versionName": "1.2.0",
   "title": "A little update is ready.",
-  "message": "A newer version of Sakina is available. Update to enjoy the latest improvements.",
+  "message": "Sakina 1.2.0 is here with improved backup import and export.",
   "whatsNew": [
-    "Improved prayer tracking",
-    "Small improvements and fixes",
-    "More features coming in upcoming updates."
+    "Improved backup import and export",
+    "Import supported Deen prayer tracker backups",
+    "Choose where to save your backup files",
+    "More improvements and fixes"
   ],
   "downloadUrl": "https://github.com/axon469/Sakina-Prayer-Tracker/releases/latest"
 }
