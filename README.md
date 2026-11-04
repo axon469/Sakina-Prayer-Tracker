@@ -4,10 +4,10 @@
 
 # Sakina
 
-**A calm, private daily prayer tracker.**<br>
+**A calm, private daily prayer tracker android app.**<br>
 See your next prayer, mark each prayer you complete, and watch your streak grow.
 
-![Version](https://img.shields.io/badge/version-1.1.6-cf9f86?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-1.2.0-cf9f86?style=for-the-badge)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
@@ -22,9 +22,8 @@ See your next prayer, mark each prayer you complete, and watch your streak grow.
 
 ## About
 
-Sakina (Arabic for *calm* and *tranquility*) is a mobile-first website for tracking the five daily prayers: **Fajr, Dhuhr, Asr, Maghrib and Isha**.
+Sakina (Arabic for *calm* and *tranquility*) is a mobile-first app and website for tracking the five daily prayers: **Fajr, Dhuhr, Asr, Maghrib and Isha**.
 
-It is one HTML file. There is no backend, no account, no framework and no library. Your records and settings are saved in your own browser and never leave your device.
 
 Prayer times are **calculated on your device** from the position of the sun, using the location and method you choose. There are no fixed or placeholder times.
 
@@ -33,11 +32,16 @@ Prayer times are **calculated on your device** from the position of the sun, usi
 <div align="center">
 <table>
   <tr>
-    <td align="center"><img src="screenshots/home.png" width="170" alt="Home"><br><sub><b>Home</b></sub></td>
-    <td align="center"><img src="screenshots/statistics.png" width="170" alt="Statistics"><br><sub><b>Statistics</b></sub></td>
-    <td align="center"><img src="screenshots/history.png" width="170" alt="History"><br><sub><b>History</b></sub></td>
-    <td align="center"><img src="screenshots/settings.png" width="170" alt="Settings"><br><sub><b>Settings</b></sub></td>
-    <td align="center"><img src="screenshots/location.png" width="170" alt="Location and calculation method"><br><sub><b>Location &amp; Method</b></sub></td>
+    <td align="center"><img src="screenshots/home.png" width="190" alt="Home"><br><sub><b>Home</b></sub></td>
+    <td align="center"><img src="screenshots/statistics.png" width="190" alt="Statistics"><br><sub><b>Statistics</b></sub></td>
+    <td align="center"><img src="screenshots/history.png" width="190" alt="History"><br><sub><b>History</b></sub></td>
+    <td align="center"><img src="screenshots/light.png" width="190" alt="Light theme"><br><sub><b>Light theme</b></sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshots/settings.png" width="190" alt="Settings"><br><sub><b>Settings</b></sub></td>
+    <td align="center"><img src="screenshots/design.png" width="190" alt="Design style"><br><sub><b>Design style</b></sub></td>
+    <td align="center"><img src="screenshots/location.png" width="190" alt="Location and calculation method"><br><sub><b>Location &amp; Method</b></sub></td>
+    <td></td>
   </tr>
 </table>
 <sub>Screenshots use sample data.</sub>
@@ -47,6 +51,7 @@ Prayer times are **calculated on your device** from the position of the sun, usi
 
 **Home**
 - Next prayer card with start time, live countdown and a progress ring
+- Prayer time shown beside every prayer, in the list and in the quick log
 - Daily progress ring and streak counter
 - One tap to mark each prayer as completed
 - Weekly activity strip. Tap a day to view or fix it
@@ -64,10 +69,11 @@ Prayer times are **calculated on your device** from the position of the sun, usi
 - Tap any prayer on any past day to correct it
 
 **Settings**
-- Theme and Design style (placeholders for a future update)
-- Location & Calculation Method
-- About
-- Name, week start, backup export and import, reset
+- **Theme:** Dark, Light or AMOLED black
+- **Design style:** background None, Dots, Star, Grid or Your Photo. Dots, Star and Grid have opacity and size sliders. Your Photo has a Soft, Medium or Strong darkness setting
+- **General:** week start, backup export, backup import and reset
+- **Location & Calculation Method:** see below
+- **About:** version, privacy notes and developer links
 
 ## Prayer times
 
@@ -116,19 +122,18 @@ Sakina is a personal tracking tool. It does not verify whether a prayer was perf
 
 ## Backup and import
 
-The website stores prayer records in browser `localStorage` using the key:
+**Import** accepts two kinds of files. Sakina detects which one you picked and shows a preview before anything is added.
 
-` sakina:v1 `
+| File | What is imported |
+| --- | --- |
+| Sakina backup | All prayer days in the file |
+| Deen app backup |
 
-Your records remain in that browser when you refresh or close the page. Clearing browser data can remove them, so export a backup periodically.
+Import only merges. Prayers you already completed are never removed, and nothing is added twice. Years found in the imported data appear in the Statistics year dropdown.
 
-The Settings page provides backup export and import.
+For a Deen backup, `fazar`, `duhur`, `asr`, `magrib` and `esha` become Fajr, Dhuhr, Asr, Maghrib and Isha. A value of `1` is a completed prayer and `0` is not. Dates are kept exactly as written. Days in the file with no completed prayer count as missed.
 
-Importing a backup adds its prayer records to your history. Years present in the imported records can also appear in the Statistics year selector.
-
-### Backup file format
-
-Backups use JSON format:
+Sakina backup format (JSON):
 
 ```json
 {
@@ -140,8 +145,6 @@ Backups use JSON format:
   }
 }
 ```
-
-Prayer IDs:
 
 - `fajr`
 - `dhuhr`
