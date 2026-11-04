@@ -754,11 +754,25 @@ function exportData() {
   const days = {};
   for (const k of Object.keys(state.data.days).sort()) days[k] = PRAYERS.filter(p => state.data.days[k][p.id]).map(p => p.id);
   const out = { app: 'sakina', version: VERSION, exported: todayKey(), start: state.data.start, days };
-  const blob = new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' });
+const filename = `sakina-backup-${todayKey()}.json`;
+const backupJSON = JSON.stringify(out, null, 2);
+
+// Use Android's native save-file dialog inside the app.
+if (window.AndroidFileBridge &&
+    typeof window.AndroidFileBridge.saveBackup === 'function') {
+
+  window.AndroidFileBridge.saveBackup(filename, backupJSON);
+  toast('Choose where to save your backup');
+
+} else {
+  // Keep normal browser downloading on the website.
+  const blob = new Blob([backupJSON], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `sakina-backup-${todayKey()}.json`;
-  document.body.appendChild(a); a.click(); a.remove();
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 1500);
   toast('Backup file created');
 }
