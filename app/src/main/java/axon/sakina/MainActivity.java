@@ -1,4 +1,3 @@
-
 package org.axon.sakina;
 
 import android.Manifest;
