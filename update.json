@@ -1,0 +1,13 @@
+
+{
+  "versionCode": 1,
+  "versionName": "1.1.0",
+  "title": "A little update is ready.",
+  "message": "A newer version of Sakina is available. Update to enjoy the latest improvements.",
+  "whatsNew": [
+    "Improved prayer tracking",
+    "Small improvements and fixes",
+    "More features coming in upcoming updates."
+  ],
+  "downloadUrl": "https://github.com/axon469/Sakina-Prayer-Tracker/releases/latest"
+}
