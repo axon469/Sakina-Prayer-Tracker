@@ -72,36 +72,13 @@ Sakina does not show prayer times and does not detect prayers on its own. You te
 | Rule | Meaning |
 | --- | --- |
 | Completed | You tapped the prayer. This is the only thing you mark. |
-| Pending | Today's prayers you have not marked yet. |
 | Missed | A prayer not completed once the day has ended. This is automatic. |
-| Completion rate | Completed ÷ (completed + missed). Pending prayers are not counted. |
+| Completion rate | Completed ÷ (completed + missed)
 | Streak | Days in a row with all five prayers completed. An unfinished today does not break it. |
 | Start date | Counting begins on the day you first use Sakina, or on the earliest day in an imported backup. |
 
 You cannot log future days.
 
-## Backup and import
-
-Data is saved in `localStorage` under the key `sakina:v1`. It stays after you refresh or close the page. It is removed if you clear your browser data, so export a backup from **Settings** now and then.
-
-Import adds the prayers from a backup file to your history. Years found in the imported data appear in the Statistics year dropdown. Someone who has just started will only see the current year.
-
-Backup file format (JSON):
-
-```json
-{
-  "app": "sakina",
-  "start": "2021-03-01",
-  "days": {
-    "2021-03-01": ["fajr", "dhuhr", "asr", "maghrib", "isha"],
-    "2021-03-02": ["fajr", "isha"]
-  }
-}
-```
-
-Prayer ids: `fajr`, `dhuhr`, `asr`, `maghrib`, `isha`. Dates use `YYYY-MM-DD`. Future dates are ignored.
-
-## This repository
 
 ```
 .
@@ -112,5 +89,3 @@ Prayer ids: `fajr`, `dhuhr`, `asr`, `maghrib`, `isha`. Dates use `YYYY-MM-DD`. F
 │   └── logo.png        Logo (1024 × 1024, transparent)
 └── screenshots/        Images used in this README
 ```
-
-**Run locally:** open `index.html` in any modern browser.
