@@ -13,8 +13,11 @@ See your next prayer, mark each prayer you complete, and watch your streak grow.
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 ![No dependencies](https://img.shields.io/badge/dependencies-none-1b1b1d?style=for-the-badge)
 ![Data stays on device](https://img.shields.io/badge/data-stays%20on%20device-1b1b1d?style=for-the-badge)
+[![Download Android APK](https://img.shields.io/badge/Download-Android%20APK-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/axon469/Sakina-Prayer-Tracker/releases)
 
-[About](#about) · [Screenshots](#screenshots) · [Features](#features) · [Prayer times](#prayer-times) · [How tracking works](#how-tracking-works) · [Backup and import](#backup-and-import) · [This repository](#this-repository)
+**Sakina is also available as a standalone Android app that works offline.** Download the latest APK from [GitHub Releases](https://github.com/axon469/Sakina-Prayer-Tracker/releases).
+
+[About](#about) · [Screenshots](#screenshots) · [Features](#features) · [Prayer times](#prayer-times) · [How tracking works](#how-tracking-works) · [Backup and import](#backup-and-import) · [Android app](#android-app) · [This repository](#this-repository)
 
 </div>
 
@@ -24,6 +27,7 @@ See your next prayer, mark each prayer you complete, and watch your streak grow.
 
 Sakina (Arabic for *calm* and *tranquility*) is a mobile-first app and website for tracking the five daily prayers: **Fajr, Dhuhr, Asr, Maghrib and Isha**.
 
+Sakina is also available as a standalone **Android app** (Sakina Prayer Tracker) that works offline. Internet is only needed to detect your location for accurate prayer times.
 
 Prayer times are **calculated on your device** from the position of the sun, using the location and method you choose. There are no fixed or placeholder times.
 
@@ -158,25 +162,17 @@ Dates use the `YYYY-MM-DD` format. Future dates are ignored during import.
 
 ## Android app
 
-The Android application is built around the Sakina website.
+The Android application is a standalone app that bundles the complete Sakina website codes inside the APK, so it works offline.
 
-Current Android version: **1.1.0**
+Current Android version: **1.2.0**
 
 - Application name: Sakina Prayer Tracker
 - Package ID: `org.axon.sakina`
 - Update checking: Checks GitHub for available app updates when the app opens and an internet connection is available.
-- Current website loading: Uses the hosted Sakina website.
+- Offline use: Works fully offline. The complete website codes is bundled inside the APK, so tracking and prayer times do not need an internet connection.
+- Internet: Only needed to detect your location (and look up your address) so Sakina can calculate accurate prayer times for where you are, and to check for updates. You can also set your location manually.
+- Data: Browser storage and Android app storage are not automatically the same. Export a backup before moving between the website and the app.
 
-### Planned improvements
-
-The following improvements are planned for future Android updates:
-
-- Bundle the complete website inside the APK for offline access.
-- Add location-based features and time-zone support.
-- Improve native Android data storage.
-- Add an Android-focused backup and restore experience.
-
-These are planned features and are not part of the current 1.1.0 release.
 
 ## Installation
 
@@ -225,8 +221,7 @@ Sakina is designed to keep prayer tracking simple and personal.
 - No account or registration is required.
 - The website stores prayer records in browser storage.
 - The prayer-tracking feature does not require a backend database.
-- The current Android app needs internet access to load the hosted website and check for updates.
-- The fully offline Android experience is planned for a future release.
+- The Android app works offline. Internet access is only needed to detect your location and to check for app updates.
 
 Remember that browser data can be lost if you clear the browser's stored data. Export a backup periodically.
 
@@ -234,7 +229,7 @@ Remember that browser data can be lost if you clear the browser's stored data. E
 
 Sakina is open-source software licensed under the **MIT License**.
 
-You are free to use, copy, modify, merge, publish, distribute, sublicense and sell copies of the software, subject to the terms of the license.
+You are free to use, copy, modify, merge, publish, distribute, sublicense and sell copies of the software, subject to the terms of the license. But give a credit to me.
 
 See the [LICENSE](LICENSE) file for the complete license text.
 
