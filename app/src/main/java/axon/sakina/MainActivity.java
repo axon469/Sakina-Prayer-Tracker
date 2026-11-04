@@ -63,7 +63,11 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setStatusBarColor(android.graphics.Color.BLACK);
 
+if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+    getWindow().getDecorView().setSystemUiVisibility(0);
+}
         assetLoader = new WebViewAssetLoader.Builder()
                 .addPathHandler(
                         "/assets/",
