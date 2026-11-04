@@ -12,7 +12,7 @@
 :root{
   --bg:#0a0a0a; --card:#1b1b1d; --card-2:#262629; --line:rgba(255,255,255,.07);
   --text:#fff; --soft:#c9c9ce; --muted:#8f8f96; --accent:#cf9f86; --accent-dark:#392e29;
-  --danger:#e0766c; --radius:28px; --nav-h:78px;
+  --danger:#e0766c; --radius:28px; --nav-h:72px;
   --font:"Outfit","Poppins",ui-rounded,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -58,16 +58,29 @@ h3.sec{font-size:26px;font-weight:600;margin:34px 4px 14px}
   background:#212124 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 13px center/14px}
 .select-pill option{background:#1b1b1d;color:#fff}
 
-/* ---------- Focus card ---------- */
-.focus{padding:24px 22px 22px;background:var(--card)}
-.focus::before{content:"";position:absolute;width:150px;height:150px;border-radius:50%;background:#2e2e31;top:-72px;left:50%}
-.focus::after{content:"";position:absolute;width:270px;height:270px;border-radius:50%;background:var(--accent-dark);left:-100px;bottom:-150px}
-.focus>*{position:relative;z-index:1}
-.focus-art{position:absolute;right:16px;top:22px;width:92px;height:92px;fill:none;stroke:#8a8a90;stroke-width:.55;stroke-linecap:round;stroke-linejoin:round;opacity:.75;z-index:1}
-.focus h2{font-size:clamp(30px,9.4vw,42px);font-weight:700;text-transform:uppercase;line-height:1.04;letter-spacing:-.01em;margin:12px 0 14px;max-width:78%}
-.msg{font-size:15.5px;line-height:1.5;color:var(--soft)}
-.src{display:block;margin-top:8px;font-size:12.5px;color:var(--muted);letter-spacing:.03em}
-.focus .btn{margin-top:22px}
+/* ---------- Next prayer ---------- */
+.date{font-size:clamp(21px,6vw,25px);white-space:nowrap}
+.next{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:22px 16px 22px 22px}
+.nx-name{display:flex;align-items:center;gap:10px;font-size:30px;font-weight:700;margin:10px 0 8px;line-height:1.1}
+.live{width:10px;height:10px;border-radius:50%;background:var(--danger);box-shadow:0 0 0 4px rgba(224,118,108,.18);animation:pulse 1.8s ease-in-out infinite;flex:none}
+@keyframes pulse{50%{box-shadow:0 0 0 8px rgba(224,118,108,0)}}
+.nx-time{font-size:34px;font-weight:700;line-height:1;letter-spacing:-.01em}
+.nx-time span{font-size:16px;font-weight:500;margin-left:5px;color:var(--soft)}
+.nx-sub{font-size:14px;line-height:1.45;color:var(--muted);margin-top:10px}
+.nx-ring{position:relative;width:132px;height:132px}
+.nx-ring svg{width:100%;height:100%;display:block}
+.nx-track,.nx-arc{fill:none;stroke-width:6;stroke-linecap:round}
+.nx-track{stroke:#2c2c2f}
+.nx-arc{stroke:#fff}
+.nx-knob{fill:#fff;stroke:var(--card);stroke-width:2}
+.nx-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+.nx-center small{font-size:12px;color:var(--muted)}
+.nx-center b{font-size:19px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.01em}
+.next-empty{display:flex;gap:16px;align-items:flex-start}
+.next-empty .mi{margin-top:2px}
+.next-empty h2{font-size:21px;font-weight:600;margin-bottom:6px}
+.next-empty p{font-size:14.5px;line-height:1.5;color:var(--muted)}
+.next-empty .btn{height:50px;font-size:16px;margin-top:16px}
 
 /* ---------- Week strip ---------- */
 .week-card{background:transparent;border:1.5px solid #2a2a2d;border-radius:28px;padding:14px 10px 16px;margin-top:14px}
@@ -149,24 +162,24 @@ h3.sec{font-size:26px;font-weight:600;margin:34px 4px 14px}
 .hero-bottom small{display:block;margin-top:8px;font-size:13px;color:var(--muted)}
 .note{font-size:13.5px;line-height:1.5;color:var(--muted);margin:12px 4px 0}
 
-.hm-wrap{display:flex;gap:6px}
-.hm-days{display:grid;grid-template-rows:repeat(7,13px);gap:3px;margin-top:19px;font-size:9.5px;color:var(--muted);line-height:13px}
-.hm-scroll{flex:1;min-width:0;overflow-x:auto;padding-bottom:8px;scrollbar-width:thin;scrollbar-color:#333 transparent}
+.hm-wrap{--cell:24px;--gap:5px;display:flex;gap:8px}
+.hm-days{display:grid;grid-template-rows:repeat(7,var(--cell));gap:var(--gap);margin-top:calc(20px + 4px);font-size:13px;color:var(--muted);line-height:var(--cell)}
+.hm-scroll{flex:1;min-width:0;overflow-x:auto;padding-bottom:10px;scrollbar-width:thin;scrollbar-color:#333 transparent}
 .hm-inner{width:max-content}
-.hm-months{display:grid;grid-auto-columns:13px;gap:3px;height:16px;margin-bottom:3px}
-.hm-months span{font-size:11px;color:var(--muted);white-space:nowrap;line-height:13px}
-.hm-grid{display:grid;grid-template-rows:repeat(7,13px);grid-auto-flow:column;grid-auto-columns:13px;gap:3px}
-.hm-c{display:block;width:13px;height:13px;border-radius:4px;background:#27272a}
+.hm-months{display:grid;grid-auto-columns:var(--cell);gap:var(--gap);height:20px;margin-bottom:4px}
+.hm-months span{font-size:13px;color:var(--muted);white-space:nowrap;line-height:20px}
+.hm-grid{display:grid;grid-template-rows:repeat(7,var(--cell));grid-auto-flow:column;grid-auto-columns:var(--cell);gap:var(--gap)}
+.hm-c{display:block;width:var(--cell,22px);height:var(--cell,22px);border-radius:8px;background:#27272a}
 .hm-c.l1{background:rgba(207,159,134,.28)}.hm-c.l2{background:rgba(207,159,134,.5)}
 .hm-c.l3{background:rgba(207,159,134,.72)}.hm-c.l4{background:#cf9f86}.hm-c.l5{background:#fff}
 .hm-c.lm{background:rgba(224,118,108,.38)}
 .hm-c.off{visibility:hidden}
 .hm-c[data-key]{cursor:pointer}
-.legend{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px;margin-top:10px;font-size:12px;color:var(--muted)}
-.lg{display:flex;align-items:center;gap:4px}
-.lg .hm-c{margin:0}
-.lg .gap{width:6px}
-.hm-detail{margin-top:12px;font-size:14px;color:var(--soft);min-height:20px}
+.legend{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;margin-top:8px;font-size:13px;color:var(--muted)}
+.lg{display:flex;align-items:center;gap:5px}
+.lg .hm-c{--cell:20px;border-radius:6px}
+.hm-detail{margin-top:14px;font-size:14px;color:var(--soft);min-height:20px}
+.hm-hint{margin-top:6px;font-size:12.5px;color:#6f6f76}
 
 /* ---------- History ---------- */
 .sum-row{display:grid;grid-template-columns:24px 66px 1fr 62px;gap:10px;align-items:center}
@@ -221,17 +234,86 @@ h3.sec{font-size:26px;font-weight:600;margin:34px 4px 14px}
 .seg-ctl button[aria-pressed="true"]{background:#fff;color:#000;font-weight:600}
 .about{text-align:center;color:var(--muted);font-size:13px;margin-top:30px;line-height:1.6}
 
+/* ---------- Settings pages ---------- */
+.subhead{display:flex;align-items:center;gap:14px;padding:18px 0 20px}
+.subhead h1{margin:0;font-size:clamp(19px,5.4vw,23px);line-height:1.2}
+.back-btn{width:48px;height:48px;border-radius:50%;border:1.5px solid #333337;background:var(--card);display:grid;place-items:center;flex:none}
+.menu{padding:6px 0}
+.menu-row{display:flex;align-items:center;gap:14px;width:100%;padding:15px 18px;text-align:left}
+.menu-row+.menu-row{border-top:1px solid var(--line)}
+.mi{width:44px;height:44px;border-radius:14px;background:var(--card-2);display:grid;place-items:center;color:#d3d3d8;flex:none}
+.mt{flex:1;min-width:0}
+.mt b{display:block;font-size:17px;font-weight:600}
+.mt small{display:block;margin-top:3px;font-size:13.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.menu-row>.ic{color:var(--muted);width:20px;height:20px}
+.group{margin:30px 4px 12px}
+.ph{text-align:center;padding:34px 22px}
+.ph .mi{margin:0 auto 18px;width:64px;height:64px;border-radius:20px}
+.ph h2{font-size:22px;margin-bottom:8px}
+.ph p{color:var(--muted);line-height:1.5}
+.addr{font-size:16px;line-height:1.45;color:var(--soft)}
+.place{margin-top:8px;font-size:15px;font-weight:500}
+.tz{margin-top:6px;font-size:14.5px;color:var(--muted)}
+.coords{margin-top:6px;font-size:12.5px;color:#6f6f76}
+.loc .btn{height:52px;font-size:16px;margin-top:16px}
+.status{display:flex;gap:10px;align-items:flex-start;margin-top:14px;font-size:14px;line-height:1.45;color:var(--soft)}
+.status.err{color:var(--danger)}
+.spin{width:16px;height:16px;border-radius:50%;border:2px solid #444;border-top-color:#fff;animation:spin .8s linear infinite;flex:none;margin-top:2px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.inp{width:100%;height:48px;padding:0 16px;border-radius:16px;border:1px solid #333337;background:#121214;font-size:16px;margin-top:10px}
+.inp::placeholder{color:#66666c}
+.field-row{display:flex;gap:10px}
+.field-row .inp{margin-top:0;flex:1;min-width:0}
+.btn-sm{display:flex;align-items:center;gap:8px;height:48px;padding:0 16px;border-radius:16px;background:#fff;color:#000;font-weight:600;font-size:15px;flex:none}
+.btn-sm .ic{width:18px;height:18px}
+.btn-sm .spin{border-color:#bbb;border-top-color:#000;margin:0}
+.btn-sm:disabled,.icon-btn:disabled{opacity:.55;cursor:default}
+.res-list{margin-top:12px;border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.res{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;padding:12px 14px;font-size:14px;line-height:1.4;color:var(--soft)}
+.res+.res{border-top:1px solid var(--line)}
+.res .ic{width:18px;height:18px;color:var(--accent);margin-top:1px}
+.lbl{margin:20px 2px 0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.select-pill.wide{width:100%;max-width:100%;margin-top:10px;height:48px;border-radius:16px;background-color:#121214}
+.card h2.h{font-size:21px;font-weight:600}
+.card p.small{font-size:14px;line-height:1.5;color:var(--muted);margin-top:8px}
+.opt{padding:14px 14px 14px 16px;border:1.5px solid #34343a;border-radius:22px;margin-top:14px}
+.opt-l{display:flex;align-items:center;gap:10px;font-size:16px;margin-bottom:12px}
+.q{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--muted);color:var(--muted);font-size:14px;font-weight:600;display:grid;place-items:center;flex:none;line-height:1}
+.opt .select-pill{display:block;width:100%;max-width:100%;height:46px;border-radius:16px;background-color:#212124}
+.ok-note{display:flex;gap:10px;align-items:flex-start;margin-top:14px;padding:14px 16px;border-radius:18px;background:rgba(111,207,151,.1);color:#7fd6a2;font-size:14px;line-height:1.45}
+.ok-note .ic{width:20px;height:20px;margin-top:1px}
+.adj{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0}
+.adj+.adj{border-top:1px solid var(--line)}
+.adj b{display:block;font-size:17px;font-weight:600}
+.adj small{font-size:13.5px;color:var(--muted)}
+.stepper{display:flex;align-items:center;background:#262629;border-radius:999px;padding:4px}
+.stepper button{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:#34343a;color:#fff}
+.stepper button .ic{width:18px;height:18px;stroke-width:2.4}
+.stepper output{min-width:68px;text-align:center;font-size:15px;font-weight:500}
+.adj-head{margin-bottom:6px}
+.mh{padding:14px 0;border-top:1px solid var(--line)}
+.mh b{font-size:17px}
+.mh small{display:block;color:var(--muted);margin:2px 0 6px}
+.mh p{font-size:14px;line-height:1.5;color:var(--soft);margin-top:4px}
+.mh .tag{display:inline-block;margin-left:8px;padding:2px 9px;border-radius:999px;background:#fff;color:#000;font-size:11px;font-weight:600;vertical-align:2px}
+.help p.msg{padding:0 4px;margin-bottom:14px;font-size:14.5px}
+.help ul{margin:6px 4px 16px 22px;font-size:14px;line-height:1.6;color:var(--soft)}
+.help h3{font-size:16px;margin:18px 4px 6px}
+.logo-mark{display:block;width:84px;height:84px;margin:0 auto 14px}
+
 /* ---------- Bottom nav ---------- */
-.nav{position:fixed;left:0;right:0;bottom:calc(14px + env(safe-area-inset-bottom));z-index:20;padding:0 14px;pointer-events:none}
-.nav-bar{pointer-events:auto;max-width:452px;height:var(--nav-h);margin:0 auto;padding:0 6px;border-radius:40px;
-  display:grid;grid-template-columns:1fr 1fr 68px 1fr 1fr;align-items:center;
-  background:rgba(28,28,30,.9);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid var(--line);box-shadow:0 18px 40px rgba(0,0,0,.55)}
-.nav-item{justify-self:center;display:flex;flex-direction:column;align-items:center;gap:5px;padding:11px 7px;border-radius:30px;min-width:0;
-  color:var(--muted);font-size:9.5px;letter-spacing:.04em;text-transform:uppercase;font-weight:500}
+.nav{position:fixed;left:0;right:0;bottom:calc(12px + env(safe-area-inset-bottom));z-index:20;padding:0 12px;pointer-events:none}
+.nav-bar{pointer-events:auto;max-width:456px;height:var(--nav-h);margin:0 auto;padding:0 8px;border-radius:38px;
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr)) 64px repeat(2,minmax(0,1fr));column-gap:4px;align-items:center;
+  background:rgba(28,28,30,.92);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid var(--line);box-shadow:0 18px 40px rgba(0,0,0,.55)}
+.nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:100%;height:56px;padding:0;border-radius:28px;min-width:0;
+  color:var(--muted);font-size:9.5px;letter-spacing:.03em;text-transform:uppercase;font-weight:500}
+.nav-item .ic{width:23px;height:23px}
 .nav-item.active{background:#2d2d30;color:#fff}
-.nav-main{justify-self:center;width:66px;height:66px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:#111;
-  box-shadow:0 10px 28px rgba(207,159,134,.35)}
-.nav-main .ic{width:30px;height:30px;stroke-width:2.4}
+.nav-main{justify-self:center;width:60px;height:60px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:#111;
+  box-shadow:0 8px 24px rgba(207,159,134,.32)}
+.nav-main .ic{width:28px;height:28px;stroke-width:2.4}
 
 /* ---------- Sheet + toast ---------- */
 .backdrop{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
@@ -262,6 +344,10 @@ h3.sec{font-size:26px;font-weight:600;margin:34px 4px 14px}
   .p-ar{display:none}
   .hero .ring{--size:96px}
   .rl b{font-size:23px}
+  .nav-item{font-size:9px;letter-spacing:.01em}
+  .nx-ring{width:116px;height:116px}
+  .nx-time{font-size:30px}
+  .nx-center b{font-size:16px}
 }
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
@@ -280,7 +366,7 @@ h3.sec{font-size:26px;font-weight:600;margin:34px 4px 14px}
 /* =====================================================================
    Constants
    ===================================================================== */
-const VERSION = '1.1.0';
+const VERSION = '1.1.6';
 const KEY = 'sakina:v1';          // same key as v1.0 so existing data carries over
 const PRAYERS = [
   { id: 'fajr',    name: 'Fajr',    ar: 'الفجر',  icon: 'sunrise' },
@@ -292,23 +378,42 @@ const PRAYERS = [
 const N = PRAYERS.length;
 const IDS = new Set(PRAYERS.map(p => p.id));
 
-// Short reminders. Wording is a plain English rendering; the source is shown under each one.
-const MESSAGES = [
-  ['Indeed, in the remembrance of Allah do hearts find rest.', 'Quran 13:28'],
-  ['Establish prayer for My remembrance.', 'Quran 20:14'],
-  ['Indeed, prayer prevents immorality and wrongdoing.', 'Quran 29:45'],
-  ['Seek help through patience and prayer.', 'Quran 2:45'],
-  ['Prayer has been prescribed for the believers at specified times.', 'Quran 4:103'],
-  ['So remember Me, and I will remember you.', 'Quran 2:152'],
-  ['The most beloved deeds to Allah are the most consistent, even if small.', 'Sahih al-Bukhari and Muslim'],
-  ['Prayer is light.', 'Sahih Muslim'],
-  ['Whoever prays Fajr is under the protection of Allah.', 'Sahih Muslim'],
-  ['Indeed, with hardship comes ease.', 'Quran 94:6'],
-  ['Successful indeed are the believers, those who are humble in their prayers.', 'Quran 23:1-2'],
-  ['Guard strictly your prayers, especially the middle prayer.', 'Quran 2:238'],
-  ['My mercy encompasses all things.', 'Quran 7:156'],
-  ['Allah does not burden a soul beyond what it can bear.', 'Quran 2:286']
-];
+const TIME_IDS = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'];
+const TIME_NAMES = { fajr: 'Fajr', sunrise: 'Sunrise', dhuhr: 'Dhuhr', asr: 'Asr', maghrib: 'Maghrib', isha: 'Isha' };
+
+// Calculation methods. Fajr/Isha are sun angles below the horizon (degrees).
+const METHODS = {
+  isna:      { name: 'ISNA', full: 'Islamic Society of North America', fajr: 15, isha: 15, best: 'United States, Canada',
+               info: 'The most widely used method in North America. It gives moderate Fajr and Isha times that work well for most latitudes in the US and Canada.' },
+  mwl:       { name: 'MWL', full: 'Muslim World League', fajr: 18, isha: 17, best: 'Europe, Far East, parts of the Americas',
+               info: 'Uses a wider angle for Fajr, so Fajr is earlier than with ISNA. Many mosques in Europe and Southeast Asia follow this method.' },
+  egyptian:  { name: 'Egyptian', full: 'Egyptian General Authority of Survey', fajr: 19.5, isha: 17.5, best: 'Africa, Syria, Iraq, Lebanon, Malaysia',
+               info: 'Gives the earliest Fajr among the common methods. Widely used across the Middle East and Africa.' },
+  ummalqura: { name: 'Umm al-Qura', full: 'Umm al-Qura (Saudi Arabia)', fajr: 18.5, ishaMin: 90, best: 'Saudi Arabia, Gulf states',
+               info: 'Uses a fixed interval for Isha instead of a sun angle. This is the official method in Makkah and Madinah.' },
+  karachi:   { name: 'Karachi', full: 'University of Islamic Sciences, Karachi', fajr: 18, isha: 18, best: 'Pakistan, Bangladesh, India, Afghanistan',
+               info: 'Commonly followed in South Asia. Fajr and Isha both use the same 18 degree angle.' },
+  tehran:    { name: 'Tehran', full: 'Institute of Geophysics, Tehran', fajr: 17.7, isha: 14, maghrib: 4.5, best: 'Iran, some Shia communities',
+               info: 'Uses a narrower Isha angle, so Isha is earlier than with most other methods. Maghrib is taken 4.5 degrees below the horizon.' }
+};
+const METHOD_IDS = Object.keys(METHODS);
+
+// Country groups used to pick a method and Asr rule automatically.
+const cs = s => new Set(s.split(' '));
+const CC_SOUTH_ASIA = cs('BD PK IN AF LK NP BT MV');
+const CC_GULF = cs('SA AE QA KW BH OM YE');
+const CC_EGYPTIAN = cs('EG SY IQ LB JO PS LY DZ TN MA SD SS MY MR SO DJ KM ER ET KE TZ UG NG NE ML SN GM GN GW SL LR CI BF GH TG BJ CM TD CF CG CD GA GQ AO ZM MW MZ ZW BW NA ZA MG MU SC RW BI LS SZ ST CV EH');
+const CC_HANAFI = cs('BD PK IN AF LK NP BT TR UZ TJ KG KZ TM');
+// Countries with one time zone. Used only to pre-fill the manual form and to guess a country offline.
+const TZ_BY_CC = { BD: 'Asia/Dhaka', PK: 'Asia/Karachi', IN: 'Asia/Kolkata', LK: 'Asia/Colombo', NP: 'Asia/Kathmandu', BT: 'Asia/Thimphu', MV: 'Indian/Maldives', AF: 'Asia/Kabul',
+  SA: 'Asia/Riyadh', AE: 'Asia/Dubai', QA: 'Asia/Qatar', KW: 'Asia/Kuwait', BH: 'Asia/Bahrain', OM: 'Asia/Muscat', YE: 'Asia/Aden', IQ: 'Asia/Baghdad', JO: 'Asia/Amman',
+  SY: 'Asia/Damascus', LB: 'Asia/Beirut', IR: 'Asia/Tehran', TR: 'Europe/Istanbul', EG: 'Africa/Cairo', MA: 'Africa/Casablanca', DZ: 'Africa/Algiers', TN: 'Africa/Tunis',
+  LY: 'Africa/Tripoli', SD: 'Africa/Khartoum', NG: 'Africa/Lagos', KE: 'Africa/Nairobi', MY: 'Asia/Kuala_Lumpur', SG: 'Asia/Singapore', TH: 'Asia/Bangkok', PH: 'Asia/Manila',
+  VN: 'Asia/Ho_Chi_Minh', JP: 'Asia/Tokyo', KR: 'Asia/Seoul', CN: 'Asia/Shanghai', GB: 'Europe/London', IE: 'Europe/Dublin', FR: 'Europe/Paris', DE: 'Europe/Berlin',
+  NL: 'Europe/Amsterdam', BE: 'Europe/Brussels', IT: 'Europe/Rome', ES: 'Europe/Madrid', CH: 'Europe/Zurich', AT: 'Europe/Vienna', SE: 'Europe/Stockholm',
+  NO: 'Europe/Oslo', DK: 'Europe/Copenhagen', PL: 'Europe/Warsaw' };
+const TZ_CC = Object.fromEntries(Object.entries(TZ_BY_CC).map(([c, z]) => [z, c]));
+const TZ_FALLBACK = Object.values(TZ_BY_CC).concat(['UTC', 'America/New_York', 'America/Chicago', 'America/Denver', 'America/Los_Angeles', 'America/Toronto', 'America/Sao_Paulo', 'Australia/Sydney', 'Africa/Johannesburg']);
 
 /* =====================================================================
    Icons
@@ -335,7 +440,14 @@ const ICONS = {
   sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5V5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/>',
   sunlow: '<circle cx="12" cy="10" r="3.5"/><path d="M12 3v1.5M5.6 5.6l1 1M18.4 5.6l-1 1M3.5 10H5M19 10h1.5"/><path d="M4 17h16M8 21h8"/>',
   sunset: '<path d="M3 19h18"/><path d="M7.5 19a4.5 4.5 0 0 1 9 0"/><path d="M12 4v6"/><path d="M9.5 7.5 12 10l2.5-2.5"/><path d="M4.5 12.5 6 14M19.5 12.5 18 14"/>',
-  moon: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>'
+  moon: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
+  pin: '<path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+  chevr: '<path d="M9 5l7 7-7 7"/>',
+  minus: '<path d="M5 12h14"/>',
+  search: '<circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/>',
+  palette: '<path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-1.8 0-1.2-1-1.5-1-2.7 0-1 .8-1.6 1.8-1.6H17a4 4 0 0 0 4-4C21 6.6 17 3 12 3z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7.5" r="1"/><circle cx="14.5" cy="7.5" r="1"/>',
+  layout: '<rect x="3.5" y="4" width="17" height="16" rx="3"/><path d="M3.5 10h17M10 10v10"/>',
+  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.8v.2"/>'
 };
 const Icon = (name, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICONS[name]}</svg>`;
 
@@ -369,7 +481,7 @@ function keysBetween(a, b) {
    Model: { v, name, weekStart, start, days: { 'YYYY-MM-DD': { fajr: 1, ... } } }
    Only completed prayers are stored. Anything not stored is "not completed".
    ===================================================================== */
-const defaults = () => ({ v: 2, name: '', weekStart: 1, start: todayKey(), days: {} });
+const defaults = () => ({ v: 2, name: '', weekStart: 1, start: todayKey(), days: {}, loc: null, calc: { method: 'auto', asr: 'auto' }, adj: {} });
 const isOn = v => v === 1 || v === true || v === 'done';   // 'done' = v1.0 data
 
 function cleanDays(src) {
@@ -385,12 +497,34 @@ function cleanDays(src) {
   return out;
 }
 
+function validTz(tz) {
+  try { new Intl.DateTimeFormat('en-US', { timeZone: tz }); return typeof tz === 'string' && tz.length > 0; } catch (e) { return false; }
+}
+function deviceTz() {
+  try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'; } catch (e) { return 'UTC'; }
+}
+function cleanLoc(l) {
+  if (!l || typeof l !== 'object' || typeof l.lat !== 'number' || typeof l.lon !== 'number') return null;
+  if (!(l.lat >= -90 && l.lat <= 90 && l.lon >= -180 && l.lon <= 180) || !validTz(l.tz)) return null;
+  const t = (v, n = 160) => (typeof v === 'string' ? v.slice(0, n) : '');
+  return { lat: l.lat, lon: l.lon, tz: l.tz, source: l.source === 'manual' ? 'manual' : 'device',
+    address: t(l.address, 300), city: t(l.city), region: t(l.region), country: t(l.country), cc: t(l.cc, 2).toUpperCase() };
+}
+
 function sanitize(p) {
   const d = defaults();
   if (!p || typeof p !== 'object') return d;
   if (typeof p.name === 'string') d.name = p.name.slice(0, 30);
   if (p.weekStart === 0 || p.weekStart === 1) d.weekStart = p.weekStart;
   d.days = cleanDays(p.days);
+  d.loc = cleanLoc(p.loc);
+  if (p.calc && typeof p.calc === 'object') {
+    if (p.calc.method === 'auto' || METHOD_IDS.includes(p.calc.method)) d.calc.method = p.calc.method;
+    if (['auto', 'hanafi', 'shafi'].includes(p.calc.asr)) d.calc.asr = p.calc.asr;
+  }
+  if (p.adj && typeof p.adj === 'object') {
+    for (const id of TIME_IDS) { const n = Math.round(Number(p.adj[id])); if (n) d.adj[id] = Math.max(-60, Math.min(60, n)); }
+  }
   const first = Object.keys(d.days).sort()[0];
   let s = validKey(p.start) ? p.start : (first || todayKey());
   if (first && first < s) s = first;
@@ -422,13 +556,18 @@ const state = {
   year: new Date().getFullYear(),
   histRange: 'all',
   histLimit: 30,
-  sheet: null,        // 'log' | 'reset' | null
+  sub: null,          // settings sub page: 'theme' | 'design' | 'location' | 'about'
+  ui: freshUi(),
+  form: freshForm(),
+  sheet: null,        // 'log' | 'reset' | 'help-method' | 'help-asr' | null
   sheetFresh: false,
   closing: false,
   pop: null
 };
 save();   // writes upgraded data (v2) straight away
 const ringPrev = {};
+function freshUi() { return { status: 'idle', msg: '', manual: false, results: [], searching: false, sMsg: '', fMsg: '' }; }
+function freshForm() { return { q: '', name: '', lat: '', lon: '', tz: '', meta: null }; }
 
 /* =====================================================================
    Tracking logic
@@ -543,6 +682,281 @@ function handleImport(file) {
 }
 
 /* =====================================================================
+   Prayer times
+   Calculated on this device from the position of the sun. No fixed times.
+   ===================================================================== */
+const RAD = Math.PI / 180;
+const sinD = d => Math.sin(d * RAD), cosD = d => Math.cos(d * RAD), tanD = d => Math.tan(d * RAD);
+const asinD = x => Math.asin(x) / RAD, acosD = x => Math.acos(x) / RAD;
+const atan2D = (y, x) => Math.atan2(y, x) / RAD, acotD = x => Math.atan(1 / x) / RAD;
+const fixMod = (a, m) => ((a % m) + m) % m;
+
+function julian(y, m, d) {
+  if (m <= 2) { y -= 1; m += 12; }
+  const A = Math.floor(y / 100), B = 2 - A + Math.floor(A / 4);
+  return Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + d + B - 1524.5;
+}
+
+function sunPos(jd) {
+  const D = jd - 2451545.0;
+  const g = fixMod(357.529 + 0.98560028 * D, 360);
+  const q = fixMod(280.459 + 0.98564736 * D, 360);
+  const L = fixMod(q + 1.915 * sinD(g) + 0.020 * sinD(2 * g), 360);
+  const e = 23.439 - 0.00000036 * D;
+  const RA = fixMod(atan2D(cosD(e) * sinD(L), cosD(L)), 360) / 15;
+  return { decl: asinD(sinD(e) * sinD(L)), eqt: q / 15 - fixMod(RA, 24) };
+}
+
+// Returns minutes after local midnight for each time, or null if the sun never rises or sets.
+function solarTimes(y, m, d, lat, lon, tzH, P, factor) {
+  const jd = julian(y, m, d) - lon / 360;
+  const mid = h => fixMod(12 - sunPos(jd + h / 24).eqt, 24);
+  const at = (angle, h, dir) => {
+    const { decl } = sunPos(jd + h / 24);
+    const x = (-sinD(angle) - sinD(decl) * sinD(lat)) / (cosD(decl) * cosD(lat));
+    return mid(h) + dir * acosD(x) / 15;
+  };
+  const asrAt = (f, h) => at(-acotD(f + tanD(Math.abs(lat - sunPos(jd + h / 24).decl))), h, 1);
+  let t = { fajr: 5, sunrise: 6, dhuhr: 12, asr: 13, sunset: 18, maghrib: 18, isha: 18 };
+  for (let i = 0; i < 2; i++) {
+    t = {
+      fajr: at(P.fajr, t.fajr, -1), sunrise: at(0.833, t.sunrise, -1), dhuhr: mid(t.dhuhr), asr: asrAt(factor, t.asr),
+      sunset: at(0.833, t.sunset, 1), maghrib: at(P.maghrib || 0.833, t.maghrib, 1), isha: P.ishaMin ? t.isha : at(P.isha, t.isha, 1)
+    };
+  }
+  const off = tzH - lon / 15;
+  for (const k of Object.keys(t)) t[k] += off;
+  if (isNaN(t.sunrise) || isNaN(t.sunset)) return null;
+  // Very high latitudes: when the sun never reaches the Fajr/Isha angle, use the angle-based night portion.
+  const night = fixMod(t.sunrise - t.sunset, 24);
+  const fix = (time, base, angle, dir) => {
+    const portion = angle / 60 * night;
+    const diff = dir < 0 ? fixMod(base - time, 24) : fixMod(time - base, 24);
+    return isNaN(time) || diff > portion ? base + dir * portion : time;
+  };
+  t.fajr = fix(t.fajr, t.sunrise, P.fajr, -1);
+  if (P.ishaMin) t.isha = t.maghrib + P.ishaMin / 60; else t.isha = fix(t.isha, t.sunset, P.isha, 1);
+  const out = {};
+  for (const id of TIME_IDS) { if (isNaN(t[id])) return null; out[id] = t[id] * 60; }
+  return out;
+}
+
+/* ---------- Time zones ---------- */
+const dtfCache = {}, tfCache = {};
+function partsAt(tz, ms) {
+  const f = dtfCache[tz] || (dtfCache[tz] = new Intl.DateTimeFormat('en-US', { timeZone: tz, hourCycle: 'h23', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' }));
+  const p = {};
+  for (const x of f.formatToParts(new Date(ms))) p[x.type] = Number(x.value);
+  p.hour = p.hour % 24;
+  return p;
+}
+function tzOffsetMin(tz, ms) {
+  const p = partsAt(tz, ms);
+  return Math.round((Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute, p.second) - Math.floor(ms / 1000) * 1000) / 60000);
+}
+function fmtTime(ms, tz) {
+  const f = tfCache[tz] || (tfCache[tz] = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit', hour12: true }));
+  return f.format(new Date(ms)).replace(/\u202f/g, ' ');
+}
+const fmtClock = ms => {
+  const t = Math.max(0, Math.floor(ms / 1000));
+  return `${pad(Math.floor(t / 3600))}:${pad(Math.floor(t % 3600 / 60))}:${pad(t % 60)}`;
+};
+function fmtLeft(ms) {
+  const m = Math.floor(ms / 60000), h = Math.floor(m / 60);
+  if (m < 1) return 'Less than a minute left';
+  return h ? `${h} hr ${m % 60} min left` : `${m} min left`;
+}
+
+/* ---------- Method choice ---------- */
+const ccOf = l => (l && (l.cc || TZ_CC[l.tz])) || '';
+function autoMethod(l) {
+  const cc = ccOf(l);
+  if (cc === 'IR') return 'tehran';
+  if (CC_SOUTH_ASIA.has(cc)) return 'karachi';
+  if (CC_GULF.has(cc)) return 'ummalqura';
+  if (CC_EGYPTIAN.has(cc)) return 'egyptian';
+  if (cc === 'US' || cc === 'CA' || (!cc && l && /^America\//.test(l.tz))) return 'isna';
+  return 'mwl';
+}
+const autoAsr = l => (CC_HANAFI.has(ccOf(l)) ? 'hanafi' : 'shafi');
+function activeCalc() {
+  const l = state.data.loc, c = state.data.calc;
+  return { method: c.method === 'auto' ? autoMethod(l) : c.method, asr: c.asr === 'auto' ? autoAsr(l) : c.asr };
+}
+
+/* ---------- Day times (cached) ---------- */
+let timesCache = {};
+const clearCache = () => { timesCache = {}; };
+
+function dayTimes(y, m, d) {
+  const l = state.data.loc;
+  if (!l) return null;
+  const { method, asr } = activeCalc();
+  const key = [l.lat, l.lon, l.tz, method, asr, JSON.stringify(state.data.adj), y, m, d].join('|');
+  if (key in timesCache) return timesCache[key];
+  let out = null;
+  try {
+    const offMin = tzOffsetMin(l.tz, Date.UTC(y, m - 1, d, 12));
+    const raw = solarTimes(y, m, d, l.lat, l.lon, offMin / 60, METHODS[method], asr === 'hanafi' ? 2 : 1);
+    if (raw) {
+      out = {};
+      const base = Date.UTC(y, m - 1, d) - offMin * 60000;
+      for (const id of TIME_IDS) out[id] = base + (Math.round(raw[id]) + (state.data.adj[id] || 0)) * 60000;
+    }
+  } catch (e) { out = null; }
+  timesCache[key] = out;
+  return out;
+}
+
+function todayTimes() {
+  const l = state.data.loc;
+  if (!l) return null;
+  try { const p = partsAt(l.tz, Date.now()); return dayTimes(p.year, p.month, p.day); } catch (e) { return null; }
+}
+
+function nextInfo(now = Date.now()) {
+  const l = state.data.loc;
+  if (!l) return { none: true };
+  try {
+    const p = partsAt(l.tz, now), ev = [];
+    for (let k = -1; k <= 1; k++) {
+      const dt = new Date(Date.UTC(p.year, p.month - 1, p.day + k));
+      const t = dayTimes(dt.getUTCFullYear(), dt.getUTCMonth() + 1, dt.getUTCDate());
+      if (!t) return { error: true };
+      for (const pr of PRAYERS) ev.push({ id: pr.id, ms: t[pr.id] });
+    }
+    ev.sort((a, b) => a.ms - b.ms);
+    const i = ev.findIndex(e => e.ms > now);
+    if (i < 1) return { error: true };
+    return { prev: ev[i - 1], next: ev[i] };
+  } catch (e) { return { error: true }; }
+}
+
+/* =====================================================================
+   Location (device, search, manual)
+   Coordinates are only sent to OpenStreetMap when you ask to detect or search,
+   to look up an address. Prayer times are always calculated on the device.
+   ===================================================================== */
+function resetUi() { state.ui = freshUi(); state.form = freshForm(); }
+
+function setLoc(loc) {
+  state.data.loc = loc;
+  clearCache();
+  save();
+}
+
+async function fetchJson(url) {
+  const ac = new AbortController(), to = setTimeout(() => ac.abort(), 9000);
+  try {
+    const r = await fetch(url, { signal: ac.signal, headers: { Accept: 'application/json' } });
+    if (!r.ok) throw new Error('http ' + r.status);
+    return await r.json();
+  } finally { clearTimeout(to); }
+}
+function placeFrom(a) {
+  const ad = (a && a.address) || {};
+  return {
+    address: (a && a.display_name) || '',
+    city: ad.city || ad.town || ad.village || ad.municipality || ad.suburb || ad.county || '',
+    region: ad.state || ad.state_district || ad.region || '',
+    country: ad.country || '',
+    cc: (ad.country_code || '').toUpperCase()
+  };
+}
+const lookupAddress = (lat, lon) => fetchJson(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&accept-language=en&zoom=16&lat=${lat}&lon=${lon}`).then(placeFrom);
+const searchPlaces = q => fetchJson(`https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&accept-language=en&limit=6&q=${encodeURIComponent(q)}`);
+
+function detectLocation() {
+  const u = state.ui;
+  if (u.status === 'locating' || u.status === 'geocoding') return;
+  const fail = msg => { u.status = 'idle'; u.msg = msg; render(); };
+  if (!('geolocation' in navigator)) { u.manual = true; return fail('This browser cannot share your location. Choose your location manually below.'); }
+  if (window.isSecureContext === false) { u.manual = true; return fail('Location sharing needs a secure page (https). Open Sakina from your GitHub Pages link, or choose your location manually below.'); }
+  u.status = 'locating'; u.msg = '';
+  render();
+  navigator.geolocation.getCurrentPosition(pos => {
+    const lat = +pos.coords.latitude.toFixed(5), lon = +pos.coords.longitude.toFixed(5);
+    setLoc({ lat, lon, tz: deviceTz(), source: 'device', address: '', city: '', region: '', country: '', cc: '' });
+    u.status = 'geocoding'; u.manual = false;
+    render();
+    toast('Location detected');
+    lookupAddress(lat, lon).then(place => {
+      const l = state.data.loc;
+      if (l && l.lat === lat && l.lon === lon) { Object.assign(l, place); clearCache(); save(); }
+      u.status = 'idle'; u.msg = ''; render();
+    }).catch(() => {
+      u.status = 'idle';
+      u.msg = 'Could not look up the address (you may be offline). Prayer times still work from your coordinates.';
+      render();
+    });
+  }, err => {
+    if (err && err.code === 1) { u.manual = true; fail('Location permission was denied. You can allow it in your browser settings, or choose your location manually below.'); }
+    else if (err && err.code === 3) fail('Finding your location took too long. Try again, or choose it manually.');
+    else fail('Your position could not be found. Try again, or choose your location manually.');
+  }, { enableHighAccuracy: false, timeout: 15000, maximumAge: 600000 });
+}
+
+function openManual() {
+  const u = state.ui, f = state.form, l = state.data.loc;
+  u.manual = !u.manual;
+  if (!u.manual) return;
+  u.results = []; u.sMsg = ''; u.fMsg = '';
+  f.q = ''; f.meta = null;
+  f.name = l ? (l.address || [l.city, l.country].filter(Boolean).join(', ')) : '';
+  f.lat = l ? String(l.lat) : ''; f.lon = l ? String(l.lon) : ''; f.tz = l ? l.tz : deviceTz();
+}
+
+function searchManual() {
+  const u = state.ui, q = state.form.q.trim();
+  if (q.length < 2) { u.sMsg = 'Type at least 2 letters.'; render(); return; }
+  u.searching = true; u.sMsg = ''; u.results = [];
+  render();
+  searchPlaces(q).then(list => {
+    u.searching = false;
+    u.results = Array.isArray(list) ? list.slice(0, 6) : [];
+    u.sMsg = u.results.length ? '' : 'No places found. Try another spelling, or enter the coordinates below.';
+    render();
+  }).catch(() => {
+    u.searching = false;
+    u.sMsg = 'Search needs an internet connection. You can still enter latitude, longitude and time zone below.';
+    render();
+  });
+}
+
+function pickResult(i) {
+  const r = state.ui.results[i], f = state.form;
+  if (!r) return;
+  const pl = placeFrom(r);
+  f.lat = String(+(+r.lat).toFixed(5)); f.lon = String(+(+r.lon).toFixed(5));
+  f.name = pl.address || r.display_name || ''; f.meta = pl;
+  f.tz = TZ_BY_CC[pl.cc] || f.tz || deviceTz();
+  state.ui.results = []; state.ui.fMsg = '';
+  render();
+}
+
+function saveManual() {
+  const u = state.ui, f = state.form;
+  const lat = parseFloat(f.lat), lon = parseFloat(f.lon);
+  if (!(lat >= -90 && lat <= 90) || !(lon >= -180 && lon <= 180) || f.lat.trim() === '' || f.lon.trim() === '') { u.fMsg = 'Enter a latitude from -90 to 90 and a longitude from -180 to 180.'; render(); return; }
+  if (!validTz(f.tz)) { u.fMsg = 'Choose a time zone.'; render(); return; }
+  const m = f.meta, name = f.name.trim();
+  setLoc({ lat: +lat.toFixed(5), lon: +lon.toFixed(5), tz: f.tz, source: 'manual',
+    address: m ? m.address : name, city: m ? m.city : name, region: m ? m.region : '', country: m ? m.country : '', cc: m ? m.cc : '' });
+  u.manual = false; u.msg = ''; u.fMsg = '';
+  render();
+  toast('Location saved');
+}
+
+function tzList() {
+  let list = [];
+  try { list = Intl.supportedValuesOf('timeZone').slice(); } catch (e) { /* older browsers */ }
+  if (!list.length) list = Array.from(new Set(TZ_FALLBACK)).sort();
+  for (const z of [state.form.tz, state.data.loc && state.data.loc.tz, deviceTz()]) if (z && !list.includes(z)) list.push(z);
+  return list;
+}
+
+/* =====================================================================
    Components (each returns an HTML string)
    ===================================================================== */
 const RING_C = 2 * Math.PI * 34;
@@ -593,10 +1007,60 @@ function Nav() {
 /* =====================================================================
    Views
    ===================================================================== */
-function focusTitle(c) {
-  if (c.done === N) return 'Alhamdulillah';
-  if (c.done === 0) return 'Begin with Bismillah';
-  return 'Keep going';
+const NX_C = 2 * Math.PI * 42, NX_ARC = 0.75;
+function ringGeom(p) {
+  const a = (135 + 270 * p) * RAD;
+  return { dash: `${(NX_C * NX_ARC * p).toFixed(2)} ${NX_C.toFixed(2)}`, x: (50 + 42 * Math.cos(a)).toFixed(2), y: (50 + 42 * Math.sin(a)).toFixed(2) };
+}
+
+function NextCard() {
+  const l = state.data.loc;
+  if (!l) return `<section class="card next-empty" aria-label="Next prayer">
+    <div class="mi">${Icon('pin')}</div>
+    <div><h2>Set your location</h2>
+    <p>Sakina calculates prayer times on your device. Add your location to see the next prayer and the time left.</p>
+    <button class="btn btn-primary" data-action="open-sub" data-sub="location">Set location</button></div></section>`;
+  const info = nextInfo();
+  if (!info.next) return `<section class="card next-empty" aria-label="Next prayer">
+    <div class="mi">${Icon('info')}</div>
+    <div><h2>Times unavailable</h2>
+    <p>Prayer times could not be calculated for this location. Check your location and calculation settings.</p>
+    <button class="btn btn-primary" data-action="open-sub" data-sub="location">Open settings</button></div></section>`;
+  const { prev, next } = info, now = Date.now();
+  const p = Math.min(1, Math.max(0, (now - prev.ms) / (next.ms - prev.ms)));
+  const g = ringGeom(p), left = next.ms - now, name = TIME_NAMES[next.id];
+  const [clock, ap] = fmtTime(next.ms, l.tz).split(' ');
+  return `<section class="card next" id="next-card" data-next="${next.ms}" aria-label="Next prayer">
+    <div>
+      <p class="eyebrow">Next prayer</p>
+      <div class="nx-name">${name}<i class="live" aria-hidden="true"></i></div>
+      <div class="nx-time">${clock}<span>${ap || ''}</span></div>
+      <p class="nx-sub">Start time<br><span id="nx-left">${fmtLeft(left)}</span></p>
+    </div>
+    <div class="nx-ring" role="timer" aria-label="Time left until ${name}">
+      <svg viewBox="0 0 100 100" aria-hidden="true">
+        <circle class="nx-track" cx="50" cy="50" r="42" stroke-dasharray="${(NX_C * NX_ARC).toFixed(2)} ${NX_C.toFixed(2)}" transform="rotate(135 50 50)"/>
+        <circle id="nx-arc" class="nx-arc" cx="50" cy="50" r="42" stroke-dasharray="${g.dash}" transform="rotate(135 50 50)"/>
+        <circle id="nx-knob" class="nx-knob" cx="${g.x}" cy="${g.y}" r="4.6"/>
+      </svg>
+      <div class="nx-center"><small>Time left</small><b id="nx-clock">${fmtClock(left)}</b></div>
+    </div></section>`;
+}
+
+// Updates the countdown in place every second without redrawing the page.
+function tickNext() {
+  const root = $('#next-card');
+  if (!root || !root.dataset || !root.dataset.next) return;
+  const info = nextInfo();
+  if (!info.next) return;
+  if (String(info.next.ms) !== root.dataset.next) { render(); return; }
+  const now = Date.now(), p = Math.min(1, Math.max(0, (now - info.prev.ms) / (info.next.ms - info.prev.ms)));
+  const g = ringGeom(p), left = info.next.ms - now;
+  $('#nx-clock').textContent = fmtClock(left);
+  $('#nx-left').textContent = fmtLeft(left);
+  $('#nx-arc').setAttribute('stroke-dasharray', g.dash);
+  $('#nx-knob').setAttribute('cx', g.x);
+  $('#nx-knob').setAttribute('cy', g.y);
 }
 
 function HomeView() {
@@ -604,7 +1068,6 @@ function HomeView() {
   const c = countDay(sel), pct = Math.round(c.done / N * 100);
   const name = state.data.name.trim();
   const { current } = overview();
-  const [text, src] = MESSAGES[dayIndex(fromKey(sel)) % MESSAGES.length];
   const wt = totals(weekKeys()), fullDays = weekKeys().filter(isComplete).length;
   const eyebrow = isToday ? (name ? `Salam, ${esc(name)}` : 'Today')
     : `<button class="back" data-action="back-today">${Icon('chev')}Back to today</button>`;
@@ -613,17 +1076,11 @@ function HomeView() {
 
   return `
   <header class="top">
-    <div><p class="eyebrow">${eyebrow}</p><h1>${fmtLong.format(fromKey(sel))}</h1></div>
+    <div><p class="eyebrow">${eyebrow}</p><h1 class="date">${fmtLong.format(fromKey(sel))}</h1></div>
     <button class="pill" data-action="nav" data-to="stats" aria-label="Prayer streak: ${current} ${current === 1 ? 'day' : 'days'}">${Icon('flame')}<span>${current}</span></button>
   </header>
 
-  <section class="card focus">
-    <svg class="focus-art" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/><path d="M19 3.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z"/></svg>
-    <p class="eyebrow">Daily focus</p>
-    <h2>${focusTitle(c)}</h2>
-    <p class="msg">${esc(text)}<span class="src">${esc(src)}</span></p>
-    <button class="btn btn-primary" data-action="scroll-prayers">${Icon('check')}Mark today's prayers</button>
-  </section>
+  ${NextCard()}
 
   ${WeekStrip()}
 
@@ -682,7 +1139,7 @@ function Heatmap(year) {
   return `<div class="hm-wrap">
     <div class="hm-days" aria-hidden="true">${names.map(n => `<span>${n}</span>`).join('')}</div>
     <div class="hm-scroll"><div class="hm-inner">
-      <div class="hm-months" style="grid-template-columns:repeat(${cols},13px)">${months}</div>
+      <div class="hm-months" style="grid-template-columns:repeat(${cols},var(--cell))">${months}</div>
       <div class="hm-grid" role="img" aria-label="Prayer activity for ${year}">${cells}</div>
     </div></div></div>`;
 }
@@ -697,10 +1154,11 @@ function ActivityCard() {
       <select class="select-pill" id="year-select" aria-label="Year">${opts}</select></div>
     ${Heatmap(state.year)}
     <div class="legend">
-      <span class="lg"><i class="hm-c lm"></i>&nbsp;Missed</span>
-      <span class="lg">Less&nbsp;${legend}&nbsp;More <span class="gap"></span>(1–5 prayers)</span>
+      <span class="lg">Less ${legend} More</span>
+      <span class="lg"><i class="hm-c lm"></i>Missed</span>
     </div>
     <p class="hm-detail" id="hm-detail">Tap a day to see details.</p>
+    <p class="hm-hint">Swipe sideways to see other weeks.</p>
   </section>`;
 }
 
@@ -789,10 +1247,35 @@ function AvatarInner() {
   return n ? esc([...n][0].toUpperCase()) : Icon('moon');
 }
 
+function MenuRow(icon, title, sub, to) {
+  return `<button class="menu-row" data-action="open-sub" data-sub="${to}"><span class="mi">${Icon(icon)}</span>
+    <span class="mt"><b>${title}</b><small>${esc(sub)}</small></span>${Icon('chevr')}</button>`;
+}
+
+function SubHead(title) {
+  return `<header class="subhead"><button class="back-btn" data-action="back" aria-label="Back to settings">${Icon('chev')}</button><h1>${title}</h1></header>`;
+}
+
+function locSummary() {
+  const l = state.data.loc;
+  if (!l) return 'Not set';
+  const place = [l.city, l.country].filter(Boolean).join(', ') || l.tz;
+  return `${place} · ${METHODS[activeCalc().method].name}`;
+}
+
 function SettingsView() {
+  if (state.sub && SUBS[state.sub]) return SUBS[state.sub]();
   const ws = state.data.weekStart, o = overview();
   return `
   <header class="top"><div><p class="eyebrow">Preferences</p><h1>Settings</h1></div></header>
+  <section class="card menu">
+    ${MenuRow('palette', 'Theme', 'Dark', 'theme')}
+    ${MenuRow('layout', 'Design style', 'Default', 'design')}
+    ${MenuRow('pin', 'Location & Calculation Method', locSummary(), 'location')}
+    ${MenuRow('info', 'About', 'Version ' + VERSION, 'about')}
+  </section>
+
+  <p class="eyebrow group">General</p>
   <section class="card me">
     <div class="avatar" id="avatar">${AvatarInner()}</div>
     <div class="field"><label for="name-input">Your name</label><input id="name-input" type="text" maxlength="30" autocomplete="off" placeholder="Optional" value="${esc(state.data.name)}"></div>
@@ -806,14 +1289,125 @@ function SettingsView() {
     <div class="row"><b>Tracking since</b><span class="v">${fmtFull.format(fromKey(state.data.start))}</span></div>
     <div class="row"><b>Prayers completed</b><span class="v">${o.done}</span></div>
   </section>
+
+  <p class="eyebrow group">Data</p>
   <section class="card">
     <button class="btn btn-ghost" data-action="export">${Icon('download')}Export backup</button>
     <button class="btn btn-ghost" data-action="pick-file">${Icon('upload')}Import backup</button>
     <button class="btn btn-danger" data-action="ask-reset">${Icon('trash')}Reset all data</button>
   </section>
-  <p class="note">Everything is saved only in this browser on this device. Clearing browser data removes it, so export a backup now and then. Importing a backup adds its prayers to your history and unlocks earlier years in Statistics.</p>
-  <p class="about">Sakina · Prayer Tracker<br>Version ${VERSION}</p>`;
+  <p class="note">Everything is saved only in this browser on this device. Clearing browser data removes it, so export a backup now and then. Importing a backup adds its prayers to your history and unlocks earlier years in Statistics.</p>`;
 }
+
+function Placeholder(title, icon, text) {
+  return `${SubHead(title)}
+  <section class="card ph"><div class="mi">${Icon(icon)}</div><h2>Coming soon</h2><p>${text}</p></section>`;
+}
+const ThemePage = () => Placeholder('Theme', 'palette', 'Theme options will be added in a future update. Sakina uses its dark theme for now.');
+const DesignPage = () => Placeholder('Design style', 'layout', 'Design style options will be added in a future update.');
+
+function AboutPage() {
+  return `${SubHead('About')}
+  <section class="card" style="text-align:center">
+    <svg class="logo-mark" viewBox="0 0 512 512" aria-hidden="true"><defs><linearGradient id="ab1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#202023"/><stop offset="1" stop-color="#0a0a0a"/></linearGradient><linearGradient id="ab2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ecc9b4"/><stop offset="1" stop-color="#c48f74"/></linearGradient></defs>
+      <rect width="512" height="512" rx="116" fill="url(#ab1)"/><path transform="translate(70 76) scale(15.5)" fill="url(#ab2)" d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/><path fill="#fff" d="M338 128l13 34 34 13-34 13-13 34-13-34-34-13 34-13z"/></svg>
+    <h2 class="h">Sakina</h2>
+    <p class="small">A calm, private daily prayer tracker.</p>
+  </section>
+  <section class="card">
+    <div class="row"><b>Version</b><span class="v">${VERSION}</span></div>
+    <div class="row"><b>Prayer times</b><span class="v">Calculated on device</span></div>
+    <div class="row"><b>Your records</b><span class="v">Saved in this browser</span></div>
+  </section>
+  <p class="note">Sakina has no account and no server. Your prayer records and settings stay on this device. Your coordinates are sent to OpenStreetMap only when you tap detect or search, to look up an address.</p>`;
+}
+
+function LocationPage() {
+  const l = state.data.loc, u = state.ui, c = state.data.calc;
+  const busy = u.status === 'locating' || u.status === 'geocoding';
+  const cap = x => x[0].toUpperCase() + x.slice(1);
+  let body;
+  if (l) {
+    const place = [l.city, l.region, l.country].filter(Boolean).join(', ');
+    body = `${l.address ? `<p class="addr">${esc(l.address)}</p>` : ''}
+      ${place && !(l.address || '').includes(place) ? `<p class="place">${esc(place)}</p>` : ''}
+      <p class="tz">Time Zone: ${esc(l.tz)}</p>
+      <p class="coords">${l.lat.toFixed(4)}, ${l.lon.toFixed(4)} · ${l.source === 'device' ? 'From your device' : 'Set manually'}</p>`;
+  } else body = '<p class="small" style="margin-top:0">No location set yet. Share your device location or choose a place manually to get accurate prayer times.</p>';
+  const status = u.status === 'locating' ? `<p class="status"><i class="spin"></i>Waiting for your device. Allow location access if your browser asks.</p>`
+    : u.status === 'geocoding' ? `<p class="status"><i class="spin"></i>Finding your address…</p>` : '';
+  const err = u.msg ? `<p class="status err" role="alert">${esc(u.msg)}</p>` : '';
+
+  const mOpts = `<option value="auto" ${c.method === 'auto' ? 'selected' : ''}>Auto${l ? ': ' + METHODS[autoMethod(l)].name : ''}</option>` +
+    METHOD_IDS.map(id => `<option value="${id}" ${c.method === id ? 'selected' : ''}>${METHODS[id].name}</option>`).join('');
+  const aOpts = `<option value="auto" ${c.asr === 'auto' ? 'selected' : ''}>Auto${l ? ': ' + cap(autoAsr(l)) : ''}</option>
+    <option value="hanafi" ${c.asr === 'hanafi' ? 'selected' : ''}>Hanafi</option><option value="shafi" ${c.asr === 'shafi' ? 'selected' : ''}>Shafi</option>`;
+  const auto = l && (c.method === 'auto' || c.asr === 'auto');
+  const act = activeCalc();
+  const note = auto ? `<div class="ok-note">${Icon('check')}<span>${c.method === 'auto' ? 'Calculation method' : 'Asr calculation'} automatically set based on your location. Using ${METHODS[act.method].name} and ${cap(act.asr)}.</span></div>`
+    : (!l ? `<p class="small">Set your location to let Sakina pick the right method for your area.</p>` : '');
+
+  return `${SubHead('Location & Calculation Method')}
+  <section class="card loc" aria-label="Your location">
+    <div class="card-head" style="margin-bottom:12px"><h2 class="h">Your Location</h2>
+      <button class="icon-btn" data-action="detect" aria-label="Detect my location" ${busy ? 'disabled' : ''}>${Icon('pin')}</button></div>
+    ${body}${status}${err}
+    <button class="btn btn-primary" data-action="detect" ${busy ? 'disabled' : ''}>${Icon('pin')}${l && l.source === 'device' ? 'Update from my device' : 'Share my device location'}</button>
+    <button class="btn btn-ghost" data-action="manual-toggle">${u.manual ? 'Hide manual options' : 'Choose location manually'}</button>
+  </section>
+  ${u.manual ? ManualCard() : ''}
+  <section class="card" aria-label="Prayer time calculation">
+    <h2 class="h">Prayer Time Calculation</h2>
+    <p class="small">Select your preferred calculation method or let Sakina choose one for your area.</p>
+    <div class="opt"><span class="opt-l">Calculation Method <button class="q" data-action="help" data-topic="method" aria-label="About calculation methods">?</button></span>
+      <select id="method-select" class="select-pill" aria-label="Calculation method">${mOpts}</select></div>
+    <div class="opt"><span class="opt-l">Asr Calculation <button class="q" data-action="help" data-topic="asr" aria-label="About Asr calculation">?</button></span>
+      <select id="asr-select" class="select-pill" aria-label="Asr calculation">${aOpts}</select></div>
+    ${note}
+  </section>
+  ${AdjCard()}
+  <p class="note">Prayer times are calculated on your device from the position of the sun. Your coordinates are sent to OpenStreetMap only when you detect your location or search for a place, to look up an address.</p>`;
+}
+
+function ManualCard() {
+  const u = state.ui, f = state.form;
+  const results = u.results.map((r, i) => `<button class="res" data-action="pick-result" data-i="${i}">${Icon('pin')}<span>${esc(r.display_name || '')}</span></button>`).join('');
+  const tzs = tzList().map(z => `<option value="${esc(z)}" ${z === f.tz ? 'selected' : ''}>${esc(z)}</option>`).join('');
+  return `<section class="card" aria-label="Choose location manually">
+    <h2 class="h">Choose manually</h2>
+    <div class="field-row" style="margin-top:14px"><input id="f-q" type="search" class="inp" placeholder="Search city or place" value="${esc(f.q)}" autocomplete="off" enterkeyhint="search">
+      <button class="btn-sm" data-action="search" ${u.searching ? 'disabled' : ''}>${u.searching ? '<i class="spin"></i>' : Icon('search')}<span>Search</span></button></div>
+    ${u.sMsg ? `<p class="status err" role="alert">${esc(u.sMsg)}</p>` : ''}
+    ${results ? `<div class="res-list">${results}</div>` : ''}
+    <p class="lbl">Location details</p>
+    <input id="f-name" class="inp" placeholder="Place name (optional)" value="${esc(f.name)}" autocomplete="off">
+    <div class="two"><input id="f-lat" class="inp" inputmode="decimal" placeholder="Latitude" value="${esc(f.lat)}" aria-label="Latitude"><input id="f-lon" class="inp" inputmode="decimal" placeholder="Longitude" value="${esc(f.lon)}" aria-label="Longitude"></div>
+    <select id="tz-select" class="select-pill wide" aria-label="Time zone">${tzs}</select>
+    ${u.fMsg ? `<p class="status err" role="alert">${esc(u.fMsg)}</p>` : ''}
+    <button class="btn btn-primary" style="margin-top:16px" data-action="save-manual">Save location</button>
+  </section>`;
+}
+
+function AdjCard() {
+  const l = state.data.loc, a = state.data.adj, tt = todayTimes();
+  const any = TIME_IDS.some(id => a[id]);
+  const rows = TIME_IDS.map(id => {
+    const v = a[id] || 0, label = v ? `${v > 0 ? '+' : ''}${v} min` : '0 min';
+    return `<div class="adj"><div><b>${TIME_NAMES[id]}</b><small>${tt && l ? fmtTime(tt[id], l.tz) : '—'}</small></div>
+      <div class="stepper"><button data-action="adj" data-id="${id}" data-step="-1" aria-label="Move ${TIME_NAMES[id]} 1 minute earlier">${Icon('minus')}</button>
+      <output aria-live="polite">${label}</output>
+      <button data-action="adj" data-id="${id}" data-step="1" aria-label="Move ${TIME_NAMES[id]} 1 minute later">${Icon('plus')}</button></div></div>`;
+  }).join('');
+  return `<section class="card" aria-label="Prayer time adjustment">
+    <h2 class="h">Prayer Time Adjustment</h2>
+    <p class="small adj-head">${any ? 'Adjusted to match your local mosque timetable.' : 'No adjustments. Move a time earlier or later to match your local mosque timetable.'}</p>
+    ${l ? '' : '<p class="small">Set a location to see the times.</p>'}
+    ${rows}
+    <button class="btn btn-ghost" style="margin-top:14px" data-action="adj-reset" ${any ? '' : 'disabled'}>Reset adjustments</button>
+  </section>`;
+}
+
+const SUBS = { theme: ThemePage, design: DesignPage, location: LocationPage, about: AboutPage };
 
 const VIEWS = { home: HomeView, stats: StatsView, history: HistoryView, settings: SettingsView };
 
@@ -836,12 +1430,49 @@ function ResetSheet() {
     <button class="btn btn-ghost" data-action="close-sheet">Cancel</button>`;
 }
 
+function MethodHelp() {
+  const cur = activeCalc().method, l = state.data.loc;
+  const items = METHOD_IDS.map(id => {
+    const m = METHODS[id];
+    const isha = m.ishaMin ? `Isha: ${m.ishaMin} minutes after Maghrib (fixed interval)` : `Isha angle: ${m.isha}°`;
+    return `<div class="mh"><b>${m.name}</b>${id === cur ? '<span class="tag">In use</span>' : ''}<small>${m.full}</small>
+      <p>Fajr angle: ${m.fajr}° · ${isha}${m.maghrib ? ` · Maghrib: ${m.maghrib}° below the horizon` : ''}</p>
+      <p class="muted">Best for: ${m.best}</p><p>${m.info}</p></div>`;
+  }).join('');
+  return `<div class="grab"></div>
+    <div class="sheet-head"><div><h2>Calculation Method</h2></div><button class="icon-btn" data-action="close-sheet" aria-label="Close">${Icon('x')}</button></div>
+    <div class="help">
+    <p class="msg">Prayer times are based on the position of the sun. Fajr begins at dawn, Dhuhr is when the sun passes its zenith, and Maghrib is at sunset. The math is well established, but scholars and organizations differ on exactly how to define "dawn" and "night" for Fajr and Isha.</p>
+    <p class="msg">That is why there are multiple calculation methods. Each one uses a slightly different sun angle for Fajr and Isha. Dhuhr, Asr and Maghrib are nearly identical across all methods.</p>
+    ${l ? `<p class="msg"><b>Auto</b> picks the method that fits your location. For you it is ${METHODS[autoMethod(l)].name}.</p>` : ''}
+    ${items}
+    <h3>How to choose</h3>
+    <p class="msg">The simplest approach is to follow your local mosque or Islamic organization.</p>
+    <ul><li>US or Canada: ISNA is the most common choice</li><li>Europe: MWL or ISNA, depending on your community</li><li>Middle East: Umm al-Qura (Gulf) or Egyptian (Levant and North Africa)</li><li>South Asia: Karachi</li><li>Southeast Asia: MWL or Egyptian</li></ul>
+    </div>
+    <button class="btn btn-primary" data-action="close-sheet">Got it</button>`;
+}
+
+function AsrHelp() {
+  const l = state.data.loc;
+  return `<div class="grab"></div>
+    <div class="sheet-head"><div><h2>Asr Calculation</h2></div><button class="icon-btn" data-action="close-sheet" aria-label="Close">${Icon('x')}</button></div>
+    <div class="help">
+    <p class="msg">Asr timing is separate from the calculation method. There are two options.</p>
+    <div class="mh"><b>Shafi (Standard)</b><p>Asr begins when the shadow of an object equals its height plus the noon shadow. This gives an earlier Asr time.</p></div>
+    <div class="mh"><b>Hanafi</b><p>Asr begins when the shadow of an object is twice its height plus the noon shadow. This gives a later Asr time.</p></div>
+    <p class="msg" style="margin-top:14px">In Sakina, you choose your madhab separately from the calculation method. This gives you the correct Asr time regardless of which overall method you use.</p>
+    ${l ? `<p class="msg"><b>Auto</b> picks the rule that fits your location. For you it is ${autoAsr(l) === 'hanafi' ? 'Hanafi' : 'Shafi'}.</p>` : ''}
+    </div>
+    <button class="btn btn-primary" data-action="close-sheet">Got it</button>`;
+}
+
 function SheetView() {
   if (!state.sheet) return '';
   const fresh = state.sheetFresh ? ' enter' : '';
-  const body = state.sheet === 'log' ? LogSheet() : ResetSheet();
+  const body = { log: LogSheet, reset: ResetSheet, 'help-method': MethodHelp, 'help-asr': AsrHelp }[state.sheet]();
   return `<div class="backdrop${fresh}" data-action="close-sheet"></div>
-    <div class="sheet${fresh}" role="dialog" aria-modal="true" aria-label="${state.sheet === 'log' ? 'Log prayers' : 'Reset all data'}" tabindex="-1">${body}</div>`;
+    <div class="sheet${fresh}" role="dialog" aria-modal="true" aria-label="${{ log: 'Log prayers', reset: 'Reset all data', 'help-method': 'Calculation methods', 'help-asr': 'Asr calculation' }[state.sheet]}" tabindex="-1">${body}</div>`;
 }
 
 function openSheet(type) {
@@ -870,6 +1501,7 @@ function render(enter) {
   if (enter) { v.classList.remove('enter'); void v.offsetWidth; v.classList.add('enter'); }
   $('#nav').innerHTML = Nav();
   $('#overlay').innerHTML = SheetView();
+  tickNext();
   document.body.classList.toggle('lock', !!state.sheet);
   state.sheetFresh = false;
   document.querySelectorAll('[data-ring]').forEach(el => {
@@ -880,8 +1512,11 @@ function render(enter) {
     }));
     ringPrev[el.dataset.ring] = pct;
   });
-  const sc = document.querySelector('.hm-scroll');      // show the newest weeks first
-  if (sc) sc.scrollLeft = state.year === new Date().getFullYear() ? sc.scrollWidth : 0;
+  const sc = document.querySelector('.hm-scroll');      // current year: end the view at today's week
+  if (sc) {
+    const cur = state.year === new Date().getFullYear() && sc.querySelector ? sc.querySelector(`[data-key="${todayKey()}"]`) : null;
+    sc.scrollLeft = cur ? Math.max(0, cur.getBoundingClientRect().right - sc.getBoundingClientRect().left + sc.scrollLeft - sc.clientWidth + 6) : 0;
+  }
 }
 
 let toastTimer;
@@ -897,20 +1532,23 @@ function toast(msg) {
    Navigation + events
    ===================================================================== */
 const parseHash = () => {
-  let v = location.hash.replace('#/', '');
-  if (v === 'profile') v = 'settings';                   // old name
-  return VIEWS[v] ? v : 'home';
+  const parts = location.hash.replace(/^#\/?/, '').split('/');
+  let view = parts[0];
+  if (view === 'profile') view = 'settings';              // old name
+  if (!VIEWS[view]) return { view: 'home', sub: null };
+  return { view, sub: view === 'settings' && SUBS[parts[1]] ? parts[1] : null };
 };
 
-function go(view) {
-  if (view === state.view) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
-  location.hash = '#/' + view;   // hashchange does the rest, so the back button works
+function go(view, sub) {
+  const target = '#/' + view + (sub ? '/' + sub : '');
+  if ((location.hash || '#/home') === target) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+  location.hash = target;      // hashchange does the rest, so the back button works
 }
 
 window.addEventListener('hashchange', () => {
-  const v = parseHash();
-  if (v === state.view) return;
-  state.view = v;
+  const r = parseHash();
+  if (r.view === state.view && r.sub === state.sub) return;
+  state.view = r.view; state.sub = r.sub;
   state.sheet = null; state.closing = false;
   $('#overlay').classList.remove('leaving');
   render(true);
@@ -930,7 +1568,6 @@ document.addEventListener('click', e => {
     case 'back-today': state.selected = todayKey(); render(); break;
     case 'open-log': openSheet('log'); break;
     case 'close-sheet': closeSheet(); break;
-    case 'scroll-prayers': $('#prayers').scrollIntoView({ behavior: 'smooth', block: 'start' }); break;
     case 'hm-pick': {
       const c = countDay(d.key), el = $('#hm-detail');
       if (el) el.textContent = `${fmtShort.format(fromKey(d.key))}: ${c.done}/${N} completed` + (c.missed ? ` · ${c.missed} missed` : '');
@@ -940,11 +1577,25 @@ document.addEventListener('click', e => {
       state.data.weekStart = Number(d.ws);
       if (!weekKeys().includes(state.selected)) state.selected = todayKey();
       save(); render(); break;
+    case 'open-sub': go('settings', d.sub); break;
+    case 'back': go('settings'); break;
+    case 'detect': detectLocation(); break;
+    case 'manual-toggle': openManual(); render(); break;
+    case 'search': searchManual(); break;
+    case 'pick-result': pickResult(Number(d.i)); break;
+    case 'save-manual': saveManual(); break;
+    case 'help': openSheet('help-' + d.topic); break;
+    case 'adj': {
+      const v = Math.max(-60, Math.min(60, (state.data.adj[d.id] || 0) + Number(d.step)));
+      if (v) state.data.adj[d.id] = v; else delete state.data.adj[d.id];
+      clearCache(); save(); render(); break;
+    }
+    case 'adj-reset': state.data.adj = {}; clearCache(); save(); render(); toast('Adjustments cleared'); break;
     case 'export': exportData(); break;
     case 'pick-file': $('#import-file').click(); break;
     case 'ask-reset': openSheet('reset'); break;
     case 'confirm-reset':
-      state.data = defaults(); state.selected = todayKey(); state.year = new Date().getFullYear(); state.histLimit = 30;
+      state.data = defaults(); state.selected = todayKey(); state.year = new Date().getFullYear(); state.histLimit = 30; clearCache(); resetUi();
       save(); state.sheet = null; state.closing = false;
       $('#overlay').classList.remove('leaving');
       render(); toast('All data cleared'); break;
@@ -956,16 +1607,24 @@ document.addEventListener('change', e => {
   if (t.id === 'year-select') { state.year = Number(t.value); render(); }
   else if (t.id === 'range-select') { state.histRange = t.value; state.histLimit = 30; render(); }
   else if (t.id === 'import-file') { handleImport(t.files && t.files[0]); t.value = ''; }
+  else if (t.id === 'method-select') { state.data.calc.method = t.value; clearCache(); save(); render(); toast('Calculation method updated'); }
+  else if (t.id === 'asr-select') { state.data.calc.asr = t.value; clearCache(); save(); render(); toast('Asr calculation updated'); }
+  else if (t.id === 'tz-select') { state.form.tz = t.value; }
 });
 
 document.addEventListener('input', e => {
-  if (e.target.id !== 'name-input') return;
-  state.data.name = e.target.value.slice(0, 30);
-  save();
-  $('#avatar').innerHTML = AvatarInner();
+  const id = e.target.id, v = e.target.value;
+  if (id === 'name-input') { state.data.name = v.slice(0, 30); save(); $('#avatar').innerHTML = AvatarInner(); }
+  else if (id === 'f-q') state.form.q = v;
+  else if (id === 'f-name') { state.form.name = v; state.form.meta = null; }
+  else if (id === 'f-lat') state.form.lat = v;
+  else if (id === 'f-lon') state.form.lon = v;
 });
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeSheet();
+  if (e.key === 'Enter' && e.target.id === 'f-q') { e.preventDefault(); searchManual(); }
+});
 
 // Keep "today" correct if the app stays open past midnight.
 let knownToday = todayKey();
@@ -978,12 +1637,13 @@ function checkDate() {
   render();
 }
 setInterval(checkDate, 30000);
+setInterval(tickNext, 1000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) checkDate(); });
 
 /* =====================================================================
    Start
    ===================================================================== */
-state.view = parseHash();
+{ const r = parseHash(); state.view = r.view; state.sub = r.sub; }
 render(true);
 })();
 </script>
