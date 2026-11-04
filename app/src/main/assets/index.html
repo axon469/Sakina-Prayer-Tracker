@@ -867,34 +867,87 @@ function placeFrom(a) {
 const lookupAddress = (lat, lon) => fetchJson(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&accept-language=en&zoom=16&lat=${lat}&lon=${lon}`).then(placeFrom);
 const searchPlaces = q => fetchJson(`https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&accept-language=en&limit=6&q=${encodeURIComponent(q)}`);
 
+
 function detectLocation() {
   const u = state.ui;
+
   if (u.status === 'locating' || u.status === 'geocoding') return;
-  const fail = msg => { u.status = 'idle'; u.msg = msg; render(); };
-  if (!('geolocation' in navigator)) { u.manual = true; return fail('This browser cannot share your location. Choose your location manually below.'); }
-  if (window.isSecureContext === false) { u.manual = true; return fail('Location sharing needs a secure page (https). Open Sakina from your GitHub Pages link, or choose your location manually below.'); }
-  u.status = 'locating'; u.msg = '';
-  render();
-  navigator.geolocation.getCurrentPosition(pos => {
-    const lat = +pos.coords.latitude.toFixed(5), lon = +pos.coords.longitude.toFixed(5);
-    setLoc({ lat, lon, tz: deviceTz(), source: 'device', address: '', city: '', region: '', country: '', cc: '' });
-    u.status = 'geocoding'; u.manual = false;
+
+  const fail = msg => {
+    u.status = 'idle';
+    u.msg = msg;
     render();
+  };
+
+  if (!('geolocation' in navigator)) {
+    u.manual = true;
+    return fail('This browser cannot share your location. Choose your location manually below.');
+  }
+
+  if (window.isSecureContext === false) {
+    u.manual = true;
+    return fail('Location sharing needs a secure page. Choose your location manually below.');
+  }
+
+  u.status = 'locating';
+  u.msg = '';
+  render();
+
+  navigator.geolocation.getCurrentPosition(pos => {
+    const lat = +pos.coords.latitude.toFixed(5);
+    const lon = +pos.coords.longitude.toFixed(5);
+
+    setLoc({
+      lat,
+      lon,
+      tz: deviceTz(),
+      source: 'device',
+      address: '',
+      city: '',
+      region: '',
+      country: '',
+      cc: ''
+    });
+
+    u.status = 'geocoding';
+    u.manual = false;
+    render();
+
     toast('Location detected');
+
     lookupAddress(lat, lon).then(place => {
       const l = state.data.loc;
-      if (l && l.lat === lat && l.lon === lon) { Object.assign(l, place); clearCache(); save(); }
-      u.status = 'idle'; u.msg = ''; render();
+
+      if (l && l.lat === lat && l.lon === lon) {
+        Object.assign(l, place);
+        clearCache();
+        save();
+      }
+
+      u.status = 'idle';
+      u.msg = '';
+      render();
+
     }).catch(() => {
       u.status = 'idle';
       u.msg = 'Could not look up the address (you may be offline). Prayer times still work from your coordinates.';
       render();
     });
+
   }, err => {
-    if (err && err.code === 1) { u.manual = true; fail('Location permission was denied. You can allow it in your browser settings, or choose your location manually below.'); }
-    else if (err && err.code === 3) fail('Finding your location took too long. Try again, or choose it manually.');
-    else fail('Your position could not be found. Try again, or choose your location manually.');
-  }, { enableHighAccuracy: false, timeout: 15000, maximumAge: 600000 });
+    if (err && err.code === 1) {
+      u.manual = true;
+      fail('Location permission was denied. You can allow it in your app settings, or choose your location manually below.');
+    } else if (err && err.code === 3) {
+      fail('Finding your location took too long. Make sure Location is enabled, try outdoors, and try again.');
+    } else {
+      fail('Your position could not be found. Make sure Location is enabled, or choose your location manually.');
+    }
+  }, {
+    enableHighAccuracy: true,
+    timeout: 60000,
+    maximumAge: 300000
+  });
 }
 
 function openManual() {
