@@ -1,20 +1,20 @@
- <div align="center">
+<div align="center">
 
 <img src="assets/logo.svg" alt="Sakina logo" width="120" height="120">
 
 # Sakina
 
 **A calm, private daily prayer tracker.**<br>
-Mark your five daily prayers, build your streak, and see your progress over time.
+See your next prayer, mark each prayer you complete, and watch your streak grow.
 
-![Version](https://img.shields.io/badge/version-1.1.0-cf9f86?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-1.1.6-cf9f86?style=for-the-badge)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 ![No dependencies](https://img.shields.io/badge/dependencies-none-1b1b1d?style=for-the-badge)
 ![Data stays on device](https://img.shields.io/badge/data-stays%20on%20device-1b1b1d?style=for-the-badge)
 
-[About](#about) · [Screenshots](#screenshots) · [Features](#features) · [How it works](#how-it-works) · [Backup and import](#backup-and-import) · [This repository](#this-repository)
+[About](#about) · [Screenshots](#screenshots) · [Features](#features) · [Prayer times](#prayer-times) · [How tracking works](#how-tracking-works) · [Backup and import](#backup-and-import) · [This repository](#this-repository)
 
 </div>
 
@@ -22,30 +22,22 @@ Mark your five daily prayers, build your streak, and see your progress over time
 
 ## About
 
-Sakina (Arabic for *calm* and *tranquility*) is a simple, mobile-first prayer tracker for keeping a personal record of the five daily prayers:
+Sakina (Arabic for *calm* and *tranquility*) is a mobile-first website for tracking the five daily prayers: **Fajr, Dhuhr, Asr, Maghrib and Isha**.
 
-**Fajr, Dhuhr, Asr, Maghrib and Isha.**
+It is one HTML file. There is no backend, no account, no framework and no library. Your records and settings are saved in your own browser and never leave your device.
 
-Sakina is designed to be calm, lightweight and easy to use. There are no accounts to create and no backend service required for tracking your prayers.
-
-The project currently has two ways to use it:
-
-- **Website:** Open Sakina in a modern web browser.
-- **Android app:** Install the Android application from the GitHub Releases page. The current Android version displays the website through a WebView and requires an internet connection to load it.
-
-A fully local Android version, with the website bundled inside the APK, is planned for a future update. This will allow the app interface to work without relying on the hosted website.
-
-Sakina does not currently calculate prayer times or automatically detect your location. You manually mark your prayers as completed.
+Prayer times are **calculated on your device** from the position of the sun, using the location and method you choose. There are no fixed or placeholder times.
 
 ## Screenshots
 
 <div align="center">
 <table>
   <tr>
-    <td align="center"><img src="screenshots/home.png" width="210" alt="Home"><br><sub><b>Home</b></sub></td>
-    <td align="center"><img src="screenshots/statistics.png" width="210" alt="Statistics"><br><sub><b>Statistics</b></sub></td>
-    <td align="center"><img src="screenshots/history.png" width="210" alt="History"><br><sub><b>History</b></sub></td>
-    <td align="center"><img src="screenshots/settings.png" width="210" alt="Settings"><br><sub><b>Settings</b></sub></td>
+    <td align="center"><img src="screenshots/home.png" width="170" alt="Home"><br><sub><b>Home</b></sub></td>
+    <td align="center"><img src="screenshots/statistics.png" width="170" alt="Statistics"><br><sub><b>Statistics</b></sub></td>
+    <td align="center"><img src="screenshots/history.png" width="170" alt="History"><br><sub><b>History</b></sub></td>
+    <td align="center"><img src="screenshots/settings.png" width="170" alt="Settings"><br><sub><b>Settings</b></sub></td>
+    <td align="center"><img src="screenshots/location.png" width="170" alt="Location and calculation method"><br><sub><b>Location &amp; Method</b></sub></td>
   </tr>
 </table>
 <sub>Screenshots use sample data.</sub>
@@ -53,39 +45,59 @@ Sakina does not currently calculate prayer times or automatically detect your lo
 
 ## Features
 
-### Home
+**Home**
+- Next prayer card with start time, live countdown and a progress ring
+- Daily progress ring and streak counter
+- One tap to mark each prayer as completed
+- Weekly activity strip. Tap a day to view or fix it
+- This week: completed, missed, completion rate and full days
+- Large center button for quick logging from any page
 
-- Today's date and prayer progress ring.
-- Current streak counter.
-- Daily focus card with a short Quran or hadith reminder and its source.
-- One-tap controls to mark each prayer as completed.
-- Weekly activity strip. Select a day to view or correct its records.
-- Weekly summary showing completed prayers, missed prayers, completion rate and full days.
-- Quick prayer logging button available from the main pages.
+**Statistics**
+- Overall completion ring, current streak, longest streak and perfect days
+- Totals for done, missed, days tracked and perfect days
+- Full-year activity map with a year dropdown. Colors show 1 to 5 prayers per day, and missed days have their own color
 
-### Statistics
+**History**
+- Prayer summary for each of the five prayers, with a time range filter
+- A detailed card for every day with all five prayers
+- Tap any prayer on any past day to correct it
 
-- Overall prayer completion rate.
-- Current and longest streaks.
-- Perfect-day count.
-- Totals for completed prayers, missed prayers and tracked days.
-- Full-year activity map.
-- Year selector to review previous years.
-- Activity colors representing zero to five completed prayers per day.
+**Settings**
+- Theme and Design style (placeholders for a future update)
+- Location & Calculation Method
+- About
+- Name, week start, backup export and import, reset
 
-### History
+## Prayer times
 
-- Individual summaries for all five prayers.
-- Time-range filtering.
-- Daily cards showing the status of all five prayers.
-- Ability to correct prayer records from previous days.
+Open **Settings → Location & Calculation Method**.
 
-### Settings
+**Location**
+- Share your device location to detect your address, city, region, country and time zone
+- Or choose a place manually: search by name, or enter latitude, longitude and time zone
+- If location permission is denied, the manual options open automatically
 
-- Personal name setting.
-- Week-start preference: Monday or Sunday.
-- Export and import of backup files.
-- Option to reset stored data.
+**Calculation**
+- Method is selected automatically for your country, and you can change it
+- Asr rule is selected automatically (Hanafi or Shafi), and you can change it
+- The **?** buttons explain each method and Asr rule
+- Times are recalculated whenever the location or settings change
+
+| Method | Fajr | Isha | Best for |
+| --- | --- | --- | --- |
+| ISNA | 15° | 15° | United States, Canada |
+| MWL | 18° | 17° | Europe, Far East, parts of the Americas |
+| Egyptian | 19.5° | 17.5° | Africa, Syria, Iraq, Lebanon, Malaysia |
+| Umm al-Qura | 18.5° | 90 min after Maghrib | Saudi Arabia, Gulf states |
+| Karachi | 18° | 18° | Pakistan, Bangladesh, India, Afghanistan |
+| Tehran | 17.7° | 14° | Iran, some Shia communities |
+
+**Adjustments:** move Fajr, Sunrise, Dhuhr, Asr, Maghrib and Isha earlier or later by up to 60 minutes to match your local mosque timetable.
+
+**Privacy:** your coordinates are sent to OpenStreetMap only when you tap detect or search, to look up an address. Prayer times themselves never need the internet.
+
+Device location needs a secure page (https). GitHub Pages is secure. If you open the file directly from your phone storage, use the manual option.
 
 ## How it works
 
