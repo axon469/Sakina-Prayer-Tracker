@@ -1,3 +1,4 @@
+
 package org.axon.sakina;
 
 import android.Manifest;
@@ -13,6 +14,8 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.webkit.GeolocationPermissions;
+import android.webkit.JavascriptInterface;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -30,6 +33,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -42,7 +46,14 @@ public class MainActivity extends Activity {
     private GeolocationPermissions.Callback locationCallback;
     private String locationOrigin;
 
+    private ValueCallback<Uri[]> fileCallback;
+
+    private String pendingBackupContent;
+    private String pendingBackupFilename;
+
     private static final int LOCATION_PERMISSION_REQUEST = 101;
+    private static final int FILE_PICKER_REQUEST = 102;
+    private static final int SAVE_BACKUP_REQUEST = 103;
 
     private static final String LOCAL_URL =
             "https://appassets.androidplatform.net/assets/index.html";
@@ -63,11 +74,13 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setStatusBarColor(android.graphics.Color.BLACK);
 
-if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-    getWindow().getDecorView().setSystemUiVisibility(0);
-}
+        getWindow().setStatusBarColor(Color.BLACK);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            getWindow().getDecorView().setSystemUiVisibility(0);
+        }
+
         assetLoader = new WebViewAssetLoader.Builder()
                 .addPathHandler(
                         "/assets/",
@@ -119,6 +132,12 @@ if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
         settings.setAllowContentAccess(true);
         settings.setGeolocationEnabled(true);
 
+        // Native backup-saving bridge for the bundled Sakina HTML.
+        webView.addJavascriptInterface(
+                new AndroidFileBridge(),
+                "AndroidFileBridge"
+        );
+
         webView.setWebViewClient(new WebViewClient() {
 
             @Override
@@ -142,8 +161,10 @@ if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                 }
 
                 try {
-                    Intent intent = new Intent(Intent.ACTION_VIEW,
-                            Uri.parse(url));
+                    Intent intent = new Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse(url)
+                    );
                     startActivity(intent);
                 } catch (Exception ignored) {
                 }
@@ -169,10 +190,92 @@ if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             ) {
                 requestLocationPermission(origin, callback);
             }
+
+            // Handles both JSON backup imports and background image selection.
+            @Override
+            public boolean onShowFileChooser(
+                    WebView webView,
+                    ValueCallback<Uri[]> callback,
+                    FileChooserParams params
+            ) {
+                if (fileCallback != null) {
+                    fileCallback.onReceiveValue(null);
+                }
+
+                fileCallback = callback;
+
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("*/*");
+
+                String[] acceptedTypes = params.getAcceptTypes();
+
+                if (acceptedTypes != null && acceptedTypes.length > 0) {
+                    java.util.ArrayList<String> mimeTypes =
+                            new java.util.ArrayList<>();
+
+                    for (String type : acceptedTypes) {
+                        if (type != null && !type.trim().isEmpty()) {
+                            mimeTypes.add(type);
+                        }
+                    }
+
+                    if (mimeTypes.size() == 1) {
+                        intent.setType(mimeTypes.get(0));
+                    } else if (!mimeTypes.isEmpty()) {
+                        intent.putExtra(
+                                Intent.EXTRA_MIME_TYPES,
+                                mimeTypes.toArray(new String[0])
+                        );
+                    }
+                }
+
+                try {
+                    startActivityForResult(intent, FILE_PICKER_REQUEST);
+                    return true;
+                } catch (Exception e) {
+                    fileCallback.onReceiveValue(null);
+                    fileCallback = null;
+                    return false;
+                }
+            }
         });
 
-        // Always open the bundled HTML, not the previous website URL.
+        // Always open the bundled HTML.
         webView.loadUrl(LOCAL_URL);
+    }
+
+    // JavaScript calls this when the user exports a backup.
+    private class AndroidFileBridge {
+
+        @JavascriptInterface
+        public void saveBackup(String filename, String content) {
+
+            if (filename == null || content == null) {
+                return;
+            }
+
+            runOnUiThread(() -> {
+
+                pendingBackupFilename = filename;
+                pendingBackupContent = content;
+
+                Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("application/json");
+                intent.putExtra(
+                        Intent.EXTRA_TITLE,
+                        pendingBackupFilename
+                );
+
+                try {
+                    startActivityForResult(intent, SAVE_BACKUP_REQUEST);
+                } catch (Exception e) {
+                    pendingBackupContent = null;
+                    pendingBackupFilename = null;
+                }
+            });
+        }
     }
 
     private void requestLocationPermission(
@@ -236,6 +339,72 @@ if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
         }
     }
 
+    @Override
+    protected void onActivityResult(
+            int requestCode,
+            int resultCode,
+            Intent data
+    ) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == FILE_PICKER_REQUEST) {
+
+            if (fileCallback != null) {
+
+                Uri[] results = null;
+
+                if (resultCode == RESULT_OK && data != null) {
+
+                    if (data.getData() != null) {
+                        results = new Uri[]{data.getData()};
+                    } else if (data.getClipData() != null) {
+                        int count = data.getClipData().getItemCount();
+                        results = new Uri[count];
+
+                        for (int i = 0; i < count; i++) {
+                            results[i] = data.getClipData()
+                                    .getItemAt(i)
+                                    .getUri();
+                        }
+                    }
+                }
+
+                fileCallback.onReceiveValue(results);
+                fileCallback = null;
+            }
+        }
+
+        if (requestCode == SAVE_BACKUP_REQUEST) {
+
+            if (resultCode == RESULT_OK
+                    && data != null
+                    && data.getData() != null
+                    && pendingBackupContent != null) {
+
+                Uri destination = data.getData();
+
+                try (OutputStream output =
+                             getContentResolver().openOutputStream(destination)) {
+
+                    if (output != null) {
+                        output.write(
+                                pendingBackupContent.getBytes(
+                                        java.nio.charset.StandardCharsets.UTF_8
+                                )
+                        );
+                        output.flush();
+                    }
+
+                } catch (Exception ignored) {
+                    // The save operation may fail if the selected provider is unavailable.
+                }
+            }
+
+            pendingBackupContent = null;
+            pendingBackupFilename = null;
+        }
+    }
+
     private void checkForUpdates() {
 
         new Thread(() -> {
@@ -276,26 +445,18 @@ if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
 
                 JSONObject data = new JSONObject(result.toString());
 
-                int latestVersionCode =
-                        data.optInt("versionCode", 0);
-
-                String latestVersionName =
-                        data.optString("versionName", "");
-
-                String title =
-                        data.optString("title", "A little update is ready.");
-
-                String message =
-                        data.optString(
-                                "message",
-                                "A newer version of Sakina is available."
-                        );
-
-                String downloadUrl =
-                        data.optString("downloadUrl", "");
-
-                JSONArray whatsNew =
-                        data.optJSONArray("whatsNew");
+                int latestVersionCode = data.optInt("versionCode", 0);
+                String latestVersionName = data.optString("versionName", "");
+                String title = data.optString(
+                        "title",
+                        "A little update is ready."
+                );
+                String message = data.optString(
+                        "message",
+                        "A newer version of Sakina is available."
+                );
+                String downloadUrl = data.optString("downloadUrl", "");
+                JSONArray whatsNew = data.optJSONArray("whatsNew");
 
                 int installedVersionCode = getInstalledVersionCode();
 
@@ -402,9 +563,7 @@ if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
 
         panel.addView(divider, dividerParams);
 
-        TextView whatsNewTitle =
-                text("WHAT'S NEW", 11, MUTED, true);
-
+        TextView whatsNewTitle = text("WHAT'S NEW", 11, MUTED, true);
         whatsNewTitle.setLetterSpacing(0.12f);
         panel.addView(whatsNewTitle, matchWrap());
 
@@ -461,7 +620,6 @@ if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                 dialog.getWindow().setBackgroundDrawableResource(
                         android.R.color.transparent
                 );
-
                 dialog.getWindow().setDimAmount(0.72f);
             }
         });
@@ -472,9 +630,7 @@ if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                         Intent.ACTION_VIEW,
                         Uri.parse(downloadUrl)
                 );
-
                 startActivity(intent);
-
             } catch (Exception ignored) {
             }
 
@@ -567,8 +723,12 @@ if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                     false,
                     false
             );
-
             locationCallback = null;
+        }
+
+        if (fileCallback != null) {
+            fileCallback.onReceiveValue(null);
+            fileCallback = null;
         }
 
         if (updateDialog != null && updateDialog.isShowing()) {
@@ -576,6 +736,7 @@ if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
         }
 
         if (webView != null) {
+            webView.removeJavascriptInterface("AndroidFileBridge");
             webView.destroy();
             webView = null;
         }
