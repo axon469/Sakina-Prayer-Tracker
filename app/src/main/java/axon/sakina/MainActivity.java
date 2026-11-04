@@ -209,25 +209,33 @@ public class MainActivity extends Activity {
 
                 String[] acceptedTypes = params.getAcceptTypes();
 
-                if (acceptedTypes != null && acceptedTypes.length > 0) {
-                    java.util.ArrayList<String> mimeTypes =
-                            new java.util.ArrayList<>();
+if (acceptedTypes != null && acceptedTypes.length > 0) {
+    java.util.ArrayList<String> mimeTypes = new java.util.ArrayList<>();
 
-                    for (String type : acceptedTypes) {
-                        if (type != null && !type.trim().isEmpty()) {
-                            mimeTypes.add(type);
-                        }
-                    }
+    for (String type : acceptedTypes) {
+        if (type == null || type.trim().isEmpty()) {
+            continue;
+        }
 
-                    if (mimeTypes.size() == 1) {
-                        intent.setType(mimeTypes.get(0));
-                    } else if (!mimeTypes.isEmpty()) {
-                        intent.putExtra(
-                                Intent.EXTRA_MIME_TYPES,
-                                mimeTypes.toArray(new String[0])
-                        );
-                    }
-                }
+        type = type.trim().toLowerCase(java.util.Locale.ROOT);
+
+        if (type.equals(".json")) {
+            mimeTypes.add("application/json");
+        } else if (type.contains("/")) {
+            mimeTypes.add(type);
+        }
+    }
+
+    if (mimeTypes.size() == 1) {
+        intent.setType(mimeTypes.get(0));
+    } else if (!mimeTypes.isEmpty()) {
+        intent.setType("*/*");
+        intent.putExtra(
+                Intent.EXTRA_MIME_TYPES,
+                mimeTypes.toArray(new String[0])
+        );
+    }
+}
 
                 try {
                     startActivityForResult(intent, FILE_PICKER_REQUEST);
