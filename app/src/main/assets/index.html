@@ -1,0 +1,1651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="description" content="Sakina is a simple, private daily prayer tracker. Mark each prayer as completed and watch your streak grow.">
+<title>Sakina – Prayer Tracker</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23cf9f86' d='M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z'/%3E%3C/svg%3E">
+<style>
+/* ---------- Tokens ---------- */
+:root{
+  --bg:#0a0a0a; --card:#1b1b1d; --card-2:#262629; --line:rgba(255,255,255,.07);
+  --text:#fff; --soft:#c9c9ce; --muted:#8f8f96; --accent:#cf9f86; --accent-dark:#392e29;
+  --danger:#e0766c; --radius:28px; --nav-h:72px;
+  --font:"Outfit","Poppins",ui-rounded,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{color-scheme:dark;-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;line-height:1.3;overflow-x:hidden}
+body.lock{overflow:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:radial-gradient(rgba(255,255,255,.13) 1.6px,transparent 1.9px);background-size:39px 39px;background-position:14px 10px}
+button,input,select{font:inherit;color:inherit}
+button{background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.ic{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* ---------- Layout ---------- */
+.app{position:relative;z-index:1;max-width:480px;margin:0 auto;
+  padding:calc(env(safe-area-inset-top) + 14px) 16px calc(var(--nav-h) + 52px + env(safe-area-inset-bottom))}
+.view.enter{animation:fade .35s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:18px 4px 20px}
+.eyebrow{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-weight:500}
+h1{font-size:clamp(26px,8vw,32px);font-weight:600;letter-spacing:-.01em;margin-top:8px}
+h3.sec{font-size:26px;font-weight:600;margin:34px 4px 14px}
+.sec-row{display:flex;justify-content:space-between;align-items:baseline;margin:34px 4px 14px}
+.sec-row h3{font-size:26px;font-weight:600}
+.muted{color:var(--muted)}
+.card{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+.card+.card,.card+.week-card,.week-card+.card{margin-top:14px}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:18px}
+.card-head h2{display:flex;align-items:center;gap:10px;font-size:19px;font-weight:600;white-space:nowrap}
+.card-head h2 .ic{color:var(--accent)}
+.back{display:inline-flex;align-items:center;gap:4px;color:var(--accent);font-size:13px;letter-spacing:.06em;text-transform:uppercase;font-weight:500}
+.back .ic{width:18px;height:18px}
+.pill{display:flex;align-items:center;gap:8px;height:48px;padding:0 20px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:19px;font-weight:600}
+.pill .ic{color:var(--accent);fill:rgba(207,159,134,.25)}
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:58px;border-radius:999px;font-size:18px;font-weight:600}
+.btn-primary{background:#fff;color:#000}
+.btn-ghost{background:var(--card-2);color:#fff}
+.btn-danger{background:rgba(224,118,108,.14);color:var(--danger);border:1px solid rgba(224,118,108,.4)}
+.btn+.btn{margin-top:10px}
+.btn:active,.pbtn:active,.day:active,.nav-main:active,.hp:active{transform:scale(.96)}
+.btn,.pbtn,.day,.nav-main,.hp{transition:transform .15s ease,background .2s ease,color .2s ease,border-color .2s ease}
+.select-pill{-webkit-appearance:none;appearance:none;height:42px;padding:0 38px 0 16px;border-radius:999px;border:1px solid #38383d;color:#fff;font-size:15px;max-width:60%;
+  background:#212124 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 13px center/14px}
+.select-pill option{background:#1b1b1d;color:#fff}
+
+/* ---------- Next prayer ---------- */
+.date{font-size:clamp(21px,6vw,25px);white-space:nowrap}
+.next{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:22px 16px 22px 22px}
+.nx-name{display:flex;align-items:center;gap:10px;font-size:30px;font-weight:700;margin:10px 0 8px;line-height:1.1}
+.live{width:10px;height:10px;border-radius:50%;background:var(--danger);box-shadow:0 0 0 4px rgba(224,118,108,.18);animation:pulse 1.8s ease-in-out infinite;flex:none}
+@keyframes pulse{50%{box-shadow:0 0 0 8px rgba(224,118,108,0)}}
+.nx-time{font-size:34px;font-weight:700;line-height:1;letter-spacing:-.01em}
+.nx-time span{font-size:16px;font-weight:500;margin-left:5px;color:var(--soft)}
+.nx-sub{font-size:14px;line-height:1.45;color:var(--muted);margin-top:10px}
+.nx-ring{position:relative;width:132px;height:132px}
+.nx-ring svg{width:100%;height:100%;display:block}
+.nx-track,.nx-arc{fill:none;stroke-width:6;stroke-linecap:round}
+.nx-track{stroke:#2c2c2f}
+.nx-arc{stroke:#fff}
+.nx-knob{fill:#fff;stroke:var(--card);stroke-width:2}
+.nx-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+.nx-center small{font-size:12px;color:var(--muted)}
+.nx-center b{font-size:19px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.01em}
+.next-empty{display:flex;gap:16px;align-items:flex-start}
+.next-empty .mi{margin-top:2px}
+.next-empty h2{font-size:21px;font-weight:600;margin-bottom:6px}
+.next-empty p{font-size:14.5px;line-height:1.5;color:var(--muted)}
+.next-empty .btn{height:50px;font-size:16px;margin-top:16px}
+
+/* ---------- Week strip ---------- */
+.week-card{background:transparent;border:1.5px solid #2a2a2d;border-radius:28px;padding:14px 10px 16px;margin-top:14px}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.wl{font-size:14px;color:var(--muted);font-weight:500}
+.wl.today{color:#fff;font-weight:700}
+.day{position:relative;display:grid;place-items:center;width:100%;max-width:46px;aspect-ratio:1;margin:10px auto 0;border-radius:50%;
+  background:conic-gradient(#fff calc(var(--p)*1%),#2c2c2f 0);color:#a5a5ab;font-size:13px;font-weight:500}
+.day::after{content:"";position:absolute;inset:4px;border-radius:50%;background:#232326}
+.day>*{position:relative;z-index:1}
+.day.full{background:#fff;color:#000}
+.day.full::after{display:none}
+.day.sel{outline:2px solid #fff;outline-offset:3px}
+.day:disabled{opacity:.3;cursor:default}
+.day .ic{width:20px;height:20px;stroke-width:2.4}
+.day .miss{position:absolute;z-index:2;right:1px;top:1px;width:9px;height:9px;border-radius:50%;background:var(--danger);border:2px solid var(--bg);box-sizing:content-box}
+
+/* ---------- Progress ---------- */
+.progress{display:grid;grid-template-columns:96px 1fr;gap:18px;align-items:center}
+.ring{position:relative;width:var(--size,96px);height:var(--size,96px)}
+.ring svg{width:100%;height:100%;display:block}
+.ring-bg{fill:none;stroke:#2c2c2f;stroke-width:7}
+.ring-fg{fill:none;stroke:#fff;stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset .9s cubic-bezier(.2,.8,.2,1)}
+.ring-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:21px;font-weight:700}
+.rl{display:flex;flex-direction:column;align-items:center}
+.rl b{font-size:28px;font-weight:700;line-height:1}
+.rl small{font-size:13px;color:var(--muted);margin-top:5px;font-weight:400}
+.big{font-size:42px;font-weight:700;line-height:1;margin-top:8px}
+.big span{font-size:22px;color:var(--muted);font-weight:500}
+.sub{font-size:14px;color:var(--muted);margin-top:6px}
+.segs{grid-column:1/-1;display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.segs i{height:6px;border-radius:9px;background:#2c2c2f;transition:background .3s}
+.segs i.done{background:#fff}
+.segs i.missed{background:var(--danger)}
+
+/* ---------- Prayer list ---------- */
+#prayers{scroll-margin-top:16px}
+.list{padding:6px 0}
+.prayer{display:flex;align-items:center;gap:14px;padding:14px 16px}
+.prayer+.prayer{border-top:1px solid var(--line)}
+.p-ic{width:46px;height:46px;border-radius:50%;background:var(--card-2);display:grid;place-items:center;color:#d3d3d8;flex:none}
+.p-txt{flex:1;min-width:0}
+.p-name{display:flex;align-items:baseline;gap:8px;font-size:19px;font-weight:600}
+.p-ar{font-size:15px;color:var(--muted);font-weight:400}
+.p-state{font-size:13.5px;color:var(--muted);margin-top:3px}
+.prayer.done .p-state{color:#fff}
+.prayer.missed .p-state{color:var(--danger)}
+.pbtn{width:50px;height:50px;border-radius:50%;border:1.5px solid #3b3b40;color:#9c9ca3;display:grid;place-items:center;flex:none}
+.pbtn .ic{width:24px;height:24px;stroke-width:2.2}
+.pbtn[aria-pressed="true"]{background:#fff;color:#000;border-color:#fff}
+.prayer.pop .pbtn[aria-pressed="true"]{animation:pop .38s ease}
+@keyframes pop{0%{transform:scale(.78)}60%{transform:scale(1.14)}100%{transform:scale(1)}}
+
+/* ---------- This week card (Home) ---------- */
+.stats-card{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:8px;align-items:center;padding:22px 18px}
+.stat-l{display:block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.stat-v{display:block;font-size:34px;font-weight:700;margin-top:10px;line-height:1}
+.ring-col{text-align:center}
+.ring-col small{display:block;margin-top:6px;font-size:13px;color:var(--muted)}
+.ring-col .ring{--size:78px;margin:0 auto}
+.ring-col .ring-label{font-size:16px}
+
+/* ---------- Statistics ---------- */
+.hero{padding:22px 18px 20px}
+.hero::before{content:"";position:absolute;right:-70px;top:-70px;width:210px;height:210px;border-radius:50%;pointer-events:none;
+  background:repeating-radial-gradient(circle,transparent 0 30px,rgba(255,255,255,.07) 30px 31.5px)}
+.hero>*{position:relative}
+.hero-top{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center}
+.hero .ring{--size:112px}
+.hl{display:flex;align-items:center;gap:9px;padding:9px 0;font-size:15px;color:var(--soft)}
+.hl .ic{width:20px;height:20px}
+.hl .ic.fl{color:var(--accent);fill:rgba(207,159,134,.25)}
+.hl b{margin-left:auto;color:#fff;font-weight:600;font-size:16px}
+.hero hr{border:0;height:1px;margin:18px 0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent)}
+.hero-bottom{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));text-align:center}
+.hero-bottom div+div{border-left:1px solid var(--line)}
+.hero-bottom b{display:block;font-size:28px;font-weight:700;line-height:1}
+.hero-bottom b.red{color:var(--danger)}
+.hero-bottom small{display:block;margin-top:8px;font-size:13px;color:var(--muted)}
+.note{font-size:13.5px;line-height:1.5;color:var(--muted);margin:12px 4px 0}
+
+.hm-wrap{--cell:24px;--gap:5px;display:flex;gap:8px}
+.hm-days{display:grid;grid-template-rows:repeat(7,var(--cell));gap:var(--gap);margin-top:calc(20px + 4px);font-size:13px;color:var(--muted);line-height:var(--cell)}
+.hm-scroll{flex:1;min-width:0;overflow-x:auto;padding-bottom:10px;scrollbar-width:thin;scrollbar-color:#333 transparent}
+.hm-inner{width:max-content}
+.hm-months{display:grid;grid-auto-columns:var(--cell);gap:var(--gap);height:20px;margin-bottom:4px}
+.hm-months span{font-size:13px;color:var(--muted);white-space:nowrap;line-height:20px}
+.hm-grid{display:grid;grid-template-rows:repeat(7,var(--cell));grid-auto-flow:column;grid-auto-columns:var(--cell);gap:var(--gap)}
+.hm-c{display:block;width:var(--cell,22px);height:var(--cell,22px);border-radius:8px;background:#27272a}
+.hm-c.l1{background:rgba(207,159,134,.28)}.hm-c.l2{background:rgba(207,159,134,.5)}
+.hm-c.l3{background:rgba(207,159,134,.72)}.hm-c.l4{background:#cf9f86}.hm-c.l5{background:#fff}
+.hm-c.lm{background:rgba(224,118,108,.38)}
+.hm-c.off{visibility:hidden}
+.hm-c[data-key]{cursor:pointer}
+.legend{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;margin-top:8px;font-size:13px;color:var(--muted)}
+.lg{display:flex;align-items:center;gap:5px}
+.lg .hm-c{--cell:20px;border-radius:6px}
+.hm-detail{margin-top:14px;font-size:14px;color:var(--soft);min-height:20px}
+.hm-hint{margin-top:6px;font-size:12.5px;color:#6f6f76}
+
+/* ---------- History ---------- */
+.sum-row{display:grid;grid-template-columns:24px 66px 1fr 62px;gap:10px;align-items:center}
+.sum-row+.sum-row{margin-top:18px}
+.sum-row .ic{color:#d3d3d8}
+.sum-row span.n{font-size:16px;font-weight:600}
+.sum-row span.c{font-size:14px;color:var(--muted);text-align:right;white-space:nowrap}
+.bar{height:8px;border-radius:9px;background:#2c2c2f;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:9px;background:#fff;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.hday{padding:18px 16px 16px}
+.hday.is-today{border:2px solid #3d3d44}
+.hday-top{display:flex;gap:14px;align-items:center}
+.hstat{width:54px;height:54px;border-radius:18px;display:grid;place-items:center;flex:none;background:#2a2a2d;color:#fff;font-weight:700;font-size:21px}
+.hstat .ic{width:26px;height:26px;stroke-width:2.4}
+.hstat.perfect{background:#fff;color:#000}
+.hstat.missed{background:rgba(224,118,108,.16);color:var(--danger)}
+.hstat.pending{color:var(--muted)}
+.hdate{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:20px;font-weight:600}
+.badge{font-size:12px;font-weight:500;padding:4px 10px;border-radius:999px;background:#2f2f33;color:var(--soft)}
+.hday .sub{margin-top:4px}
+.hbar{height:6px;border-radius:9px;background:#2c2c2f;margin:16px 0;overflow:hidden}
+.hbar.missed{background:rgba(224,118,108,.3)}
+.hbar i{display:block;height:100%;background:#fff;border-radius:9px}
+.hpr{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;text-align:center}
+.hp{display:flex;flex-direction:column;align-items:center;gap:9px;color:var(--muted);font-size:13px;min-width:0}
+.hp-c{position:relative;width:52px;height:52px;border-radius:50%;border:2px solid #3a3a3e;display:grid;place-items:center;color:#cfcfd4}
+.hp-c>.ic{width:24px;height:24px}
+.hp-b{position:absolute;right:-5px;bottom:-5px;width:23px;height:23px;border-radius:50%;display:grid;place-items:center;background:#3a3a3e;border:2px solid var(--card);color:#fff}
+.hp-b .ic{width:12px;height:12px;stroke-width:3}
+.hp.done .hp-c{border-color:#fff;background:#262629;color:#fff}
+.hp.done .hp-b{background:#fff;color:#000}
+.hp.done .hp-l{color:#fff}
+.hp.missed .hp-c{border-color:rgba(224,118,108,.7);background:rgba(224,118,108,.1)}
+.hp.missed .hp-b{background:var(--danger)}
+.hp.missed .hp-l{color:var(--danger)}
+.more{margin-top:14px}
+
+/* ---------- Settings ---------- */
+.me{display:flex;align-items:center;gap:16px}
+.avatar{width:64px;height:64px;border-radius:50%;background:var(--accent-dark);color:var(--accent);display:grid;place-items:center;font-size:26px;font-weight:600;flex:none}
+.avatar .ic{width:28px;height:28px}
+.field{flex:1;min-width:0}
+.field label{display:block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.field input{width:100%;height:46px;padding:0 16px;border-radius:16px;border:1px solid #333337;background:#121214;font-size:17px}
+.field input::placeholder{color:#66666c}
+.row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:6px 0}
+.row+.row{border-top:1px solid var(--line);margin-top:12px;padding-top:18px}
+.row b{font-weight:500;font-size:17px}
+.row .v{color:var(--muted);font-size:16px}
+.seg-ctl{display:flex;padding:5px;border-radius:999px;background:#262629}
+.seg-ctl button{height:42px;padding:0 18px;border-radius:999px;color:var(--muted);font-size:15px}
+.seg-ctl button[aria-pressed="true"]{background:#fff;color:#000;font-weight:600}
+.about{text-align:center;color:var(--muted);font-size:13px;margin-top:30px;line-height:1.6}
+
+/* ---------- Settings pages ---------- */
+.subhead{display:flex;align-items:center;gap:14px;padding:18px 0 20px}
+.subhead h1{margin:0;font-size:clamp(19px,5.4vw,23px);line-height:1.2}
+.back-btn{width:48px;height:48px;border-radius:50%;border:1.5px solid #333337;background:var(--card);display:grid;place-items:center;flex:none}
+.menu{padding:6px 0}
+.menu-row{display:flex;align-items:center;gap:14px;width:100%;padding:15px 18px;text-align:left}
+.menu-row+.menu-row{border-top:1px solid var(--line)}
+.mi{width:44px;height:44px;border-radius:14px;background:var(--card-2);display:grid;place-items:center;color:#d3d3d8;flex:none}
+.mt{flex:1;min-width:0}
+.mt b{display:block;font-size:17px;font-weight:600}
+.mt small{display:block;margin-top:3px;font-size:13.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.menu-row>.ic{color:var(--muted);width:20px;height:20px}
+.group{margin:30px 4px 12px}
+.ph{text-align:center;padding:34px 22px}
+.ph .mi{margin:0 auto 18px;width:64px;height:64px;border-radius:20px}
+.ph h2{font-size:22px;margin-bottom:8px}
+.ph p{color:var(--muted);line-height:1.5}
+.addr{font-size:16px;line-height:1.45;color:var(--soft)}
+.place{margin-top:8px;font-size:15px;font-weight:500}
+.tz{margin-top:6px;font-size:14.5px;color:var(--muted)}
+.coords{margin-top:6px;font-size:12.5px;color:#6f6f76}
+.loc .btn{height:52px;font-size:16px;margin-top:16px}
+.status{display:flex;gap:10px;align-items:flex-start;margin-top:14px;font-size:14px;line-height:1.45;color:var(--soft)}
+.status.err{color:var(--danger)}
+.spin{width:16px;height:16px;border-radius:50%;border:2px solid #444;border-top-color:#fff;animation:spin .8s linear infinite;flex:none;margin-top:2px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.inp{width:100%;height:48px;padding:0 16px;border-radius:16px;border:1px solid #333337;background:#121214;font-size:16px;margin-top:10px}
+.inp::placeholder{color:#66666c}
+.field-row{display:flex;gap:10px}
+.field-row .inp{margin-top:0;flex:1;min-width:0}
+.btn-sm{display:flex;align-items:center;gap:8px;height:48px;padding:0 16px;border-radius:16px;background:#fff;color:#000;font-weight:600;font-size:15px;flex:none}
+.btn-sm .ic{width:18px;height:18px}
+.btn-sm .spin{border-color:#bbb;border-top-color:#000;margin:0}
+.btn-sm:disabled,.icon-btn:disabled{opacity:.55;cursor:default}
+.res-list{margin-top:12px;border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.res{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;padding:12px 14px;font-size:14px;line-height:1.4;color:var(--soft)}
+.res+.res{border-top:1px solid var(--line)}
+.res .ic{width:18px;height:18px;color:var(--accent);margin-top:1px}
+.lbl{margin:20px 2px 0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.select-pill.wide{width:100%;max-width:100%;margin-top:10px;height:48px;border-radius:16px;background-color:#121214}
+.card h2.h{font-size:21px;font-weight:600}
+.card p.small{font-size:14px;line-height:1.5;color:var(--muted);margin-top:8px}
+.opt{padding:14px 14px 14px 16px;border:1.5px solid #34343a;border-radius:22px;margin-top:14px}
+.opt-l{display:flex;align-items:center;gap:10px;font-size:16px;margin-bottom:12px}
+.q{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--muted);color:var(--muted);font-size:14px;font-weight:600;display:grid;place-items:center;flex:none;line-height:1}
+.opt .select-pill{display:block;width:100%;max-width:100%;height:46px;border-radius:16px;background-color:#212124}
+.ok-note{display:flex;gap:10px;align-items:flex-start;margin-top:14px;padding:14px 16px;border-radius:18px;background:rgba(111,207,151,.1);color:#7fd6a2;font-size:14px;line-height:1.45}
+.ok-note .ic{width:20px;height:20px;margin-top:1px}
+.adj{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0}
+.adj+.adj{border-top:1px solid var(--line)}
+.adj b{display:block;font-size:17px;font-weight:600}
+.adj small{font-size:13.5px;color:var(--muted)}
+.stepper{display:flex;align-items:center;background:#262629;border-radius:999px;padding:4px}
+.stepper button{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:#34343a;color:#fff}
+.stepper button .ic{width:18px;height:18px;stroke-width:2.4}
+.stepper output{min-width:68px;text-align:center;font-size:15px;font-weight:500}
+.adj-head{margin-bottom:6px}
+.mh{padding:14px 0;border-top:1px solid var(--line)}
+.mh b{font-size:17px}
+.mh small{display:block;color:var(--muted);margin:2px 0 6px}
+.mh p{font-size:14px;line-height:1.5;color:var(--soft);margin-top:4px}
+.mh .tag{display:inline-block;margin-left:8px;padding:2px 9px;border-radius:999px;background:#fff;color:#000;font-size:11px;font-weight:600;vertical-align:2px}
+.help p.msg{padding:0 4px;margin-bottom:14px;font-size:14.5px}
+.help ul{margin:6px 4px 16px 22px;font-size:14px;line-height:1.6;color:var(--soft)}
+.help h3{font-size:16px;margin:18px 4px 6px}
+.logo-mark{display:block;width:84px;height:84px;margin:0 auto 14px}
+
+/* ---------- Bottom nav ---------- */
+.nav{position:fixed;left:0;right:0;bottom:calc(12px + env(safe-area-inset-bottom));z-index:20;padding:0 12px;pointer-events:none}
+.nav-bar{pointer-events:auto;max-width:456px;height:var(--nav-h);margin:0 auto;padding:0 8px;border-radius:38px;
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr)) 64px repeat(2,minmax(0,1fr));column-gap:4px;align-items:center;
+  background:rgba(28,28,30,.92);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid var(--line);box-shadow:0 18px 40px rgba(0,0,0,.55)}
+.nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:100%;height:56px;padding:0;border-radius:28px;min-width:0;
+  color:var(--muted);font-size:9.5px;letter-spacing:.03em;text-transform:uppercase;font-weight:500}
+.nav-item .ic{width:23px;height:23px}
+.nav-item.active{background:#2d2d30;color:#fff}
+.nav-main{justify-self:center;width:60px;height:60px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:#111;
+  box-shadow:0 8px 24px rgba(207,159,134,.32)}
+.nav-main .ic{width:28px;height:28px;stroke-width:2.4}
+
+/* ---------- Sheet + toast ---------- */
+.backdrop{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:31;max-width:480px;margin:0 auto;max-height:90vh;overflow:auto;background:#151517;border:1px solid var(--line);
+  border-radius:32px 32px 0 0;padding:12px 16px calc(20px + env(safe-area-inset-bottom))}
+.sheet.enter{animation:up .3s cubic-bezier(.2,.8,.2,1)}
+.backdrop.enter{animation:bg .25s ease}
+#overlay.leaving .sheet{animation:down .18s ease forwards}
+#overlay.leaving .backdrop{animation:bgout .18s ease forwards}
+@keyframes up{from{transform:translateY(50px);opacity:0}}
+@keyframes down{to{transform:translateY(50px);opacity:0}}
+@keyframes bg{from{opacity:0}}
+@keyframes bgout{to{opacity:0}}
+.grab{width:44px;height:5px;border-radius:9px;background:#3a3a3e;margin:0 auto 16px}
+.sheet-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px;padding:0 4px}
+.sheet-head h2{font-size:26px;font-weight:600;margin:6px 0 4px}
+.icon-btn{width:44px;height:44px;border-radius:50%;background:var(--card-2);display:grid;place-items:center;flex:none}
+.sheet .list{background:#1c1c1f;margin-bottom:16px}
+.sheet p.msg{padding:0 4px;margin-bottom:20px}
+.toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + 36px + env(safe-area-inset-bottom));z-index:40;transform:translate(-50%,16px);opacity:0;pointer-events:none;
+  max-width:calc(100% - 40px);padding:12px 20px;border-radius:999px;background:#fff;color:#000;font-size:14.5px;font-weight:500;text-align:center;transition:.25s ease}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.hidden{display:none}
+
+@media (max-width:370px){
+  .stats-card{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .ring-col{grid-column:1/-1;margin-top:8px}
+  .p-ar{display:none}
+  .hero .ring{--size:96px}
+  .rl b{font-size:23px}
+  .nav-item{font-size:9px;letter-spacing:.01em}
+  .nx-ring{width:116px;height:116px}
+  .nx-time{font-size:30px}
+  .nx-center b{font-size:16px}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="app"><div id="view" class="view"></div></main>
+<nav id="nav" class="nav" aria-label="Main"></nav>
+<div id="overlay"></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<input type="file" id="import-file" class="hidden" accept=".json,application/json" aria-hidden="true" tabindex="-1">
+
+<script>
+(() => {
+'use strict';
+
+/* =====================================================================
+   Constants
+   ===================================================================== */
+const VERSION = '1.1.6';
+const KEY = 'sakina:v1';          // same key as v1.0 so existing data carries over
+const PRAYERS = [
+  { id: 'fajr',    name: 'Fajr',    ar: 'الفجر',  icon: 'sunrise' },
+  { id: 'dhuhr',   name: 'Dhuhr',   ar: 'الظهر',  icon: 'sun' },
+  { id: 'asr',     name: 'Asr',     ar: 'العصر',  icon: 'sunlow' },
+  { id: 'maghrib', name: 'Maghrib', ar: 'المغرب', icon: 'sunset' },
+  { id: 'isha',    name: 'Isha',    ar: 'العشاء', icon: 'moon' }
+];
+const N = PRAYERS.length;
+const IDS = new Set(PRAYERS.map(p => p.id));
+
+const TIME_IDS = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'];
+const TIME_NAMES = { fajr: 'Fajr', sunrise: 'Sunrise', dhuhr: 'Dhuhr', asr: 'Asr', maghrib: 'Maghrib', isha: 'Isha' };
+
+// Calculation methods. Fajr/Isha are sun angles below the horizon (degrees).
+const METHODS = {
+  isna:      { name: 'ISNA', full: 'Islamic Society of North America', fajr: 15, isha: 15, best: 'United States, Canada',
+               info: 'The most widely used method in North America. It gives moderate Fajr and Isha times that work well for most latitudes in the US and Canada.' },
+  mwl:       { name: 'MWL', full: 'Muslim World League', fajr: 18, isha: 17, best: 'Europe, Far East, parts of the Americas',
+               info: 'Uses a wider angle for Fajr, so Fajr is earlier than with ISNA. Many mosques in Europe and Southeast Asia follow this method.' },
+  egyptian:  { name: 'Egyptian', full: 'Egyptian General Authority of Survey', fajr: 19.5, isha: 17.5, best: 'Africa, Syria, Iraq, Lebanon, Malaysia',
+               info: 'Gives the earliest Fajr among the common methods. Widely used across the Middle East and Africa.' },
+  ummalqura: { name: 'Umm al-Qura', full: 'Umm al-Qura (Saudi Arabia)', fajr: 18.5, ishaMin: 90, best: 'Saudi Arabia, Gulf states',
+               info: 'Uses a fixed interval for Isha instead of a sun angle. This is the official method in Makkah and Madinah.' },
+  karachi:   { name: 'Karachi', full: 'University of Islamic Sciences, Karachi', fajr: 18, isha: 18, best: 'Pakistan, Bangladesh, India, Afghanistan',
+               info: 'Commonly followed in South Asia. Fajr and Isha both use the same 18 degree angle.' },
+  tehran:    { name: 'Tehran', full: 'Institute of Geophysics, Tehran', fajr: 17.7, isha: 14, maghrib: 4.5, best: 'Iran, some Shia communities',
+               info: 'Uses a narrower Isha angle, so Isha is earlier than with most other methods. Maghrib is taken 4.5 degrees below the horizon.' }
+};
+const METHOD_IDS = Object.keys(METHODS);
+
+// Country groups used to pick a method and Asr rule automatically.
+const cs = s => new Set(s.split(' '));
+const CC_SOUTH_ASIA = cs('BD PK IN AF LK NP BT MV');
+const CC_GULF = cs('SA AE QA KW BH OM YE');
+const CC_EGYPTIAN = cs('EG SY IQ LB JO PS LY DZ TN MA SD SS MY MR SO DJ KM ER ET KE TZ UG NG NE ML SN GM GN GW SL LR CI BF GH TG BJ CM TD CF CG CD GA GQ AO ZM MW MZ ZW BW NA ZA MG MU SC RW BI LS SZ ST CV EH');
+const CC_HANAFI = cs('BD PK IN AF LK NP BT TR UZ TJ KG KZ TM');
+// Countries with one time zone. Used only to pre-fill the manual form and to guess a country offline.
+const TZ_BY_CC = { BD: 'Asia/Dhaka', PK: 'Asia/Karachi', IN: 'Asia/Kolkata', LK: 'Asia/Colombo', NP: 'Asia/Kathmandu', BT: 'Asia/Thimphu', MV: 'Indian/Maldives', AF: 'Asia/Kabul',
+  SA: 'Asia/Riyadh', AE: 'Asia/Dubai', QA: 'Asia/Qatar', KW: 'Asia/Kuwait', BH: 'Asia/Bahrain', OM: 'Asia/Muscat', YE: 'Asia/Aden', IQ: 'Asia/Baghdad', JO: 'Asia/Amman',
+  SY: 'Asia/Damascus', LB: 'Asia/Beirut', IR: 'Asia/Tehran', TR: 'Europe/Istanbul', EG: 'Africa/Cairo', MA: 'Africa/Casablanca', DZ: 'Africa/Algiers', TN: 'Africa/Tunis',
+  LY: 'Africa/Tripoli', SD: 'Africa/Khartoum', NG: 'Africa/Lagos', KE: 'Africa/Nairobi', MY: 'Asia/Kuala_Lumpur', SG: 'Asia/Singapore', TH: 'Asia/Bangkok', PH: 'Asia/Manila',
+  VN: 'Asia/Ho_Chi_Minh', JP: 'Asia/Tokyo', KR: 'Asia/Seoul', CN: 'Asia/Shanghai', GB: 'Europe/London', IE: 'Europe/Dublin', FR: 'Europe/Paris', DE: 'Europe/Berlin',
+  NL: 'Europe/Amsterdam', BE: 'Europe/Brussels', IT: 'Europe/Rome', ES: 'Europe/Madrid', CH: 'Europe/Zurich', AT: 'Europe/Vienna', SE: 'Europe/Stockholm',
+  NO: 'Europe/Oslo', DK: 'Europe/Copenhagen', PL: 'Europe/Warsaw' };
+const TZ_CC = Object.fromEntries(Object.entries(TZ_BY_CC).map(([c, z]) => [z, c]));
+const TZ_FALLBACK = Object.values(TZ_BY_CC).concat(['UTC', 'America/New_York', 'America/Chicago', 'America/Denver', 'America/Los_Angeles', 'America/Toronto', 'America/Sao_Paulo', 'Australia/Sydney', 'Africa/Johannesburg']);
+
+/* =====================================================================
+   Icons
+   ===================================================================== */
+const ICONS = {
+  home: '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9v11h5v-6h4v6h5V9"/>',
+  stats: '<path d="M5 20v-6M12 20V5M19 20v-9"/>',
+  history: '<path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1L3.5 8.5"/><path d="M3.5 4v4.5H8"/><path d="M12 8v4.5l3 1.8"/>',
+  settings: '<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  check: '<path d="M5 12.5 10 17.5 19 7.5"/>',
+  x: '<path d="M6 6l12 12M18 6 6 18"/>',
+  clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  flame: '<path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2 1-3.5 2-4.5.3 1.5 1 2.2 1.8 2.5C10.5 8 10.8 5.3 12 3z"/>',
+  award: '<circle cx="12" cy="9" r="5.5"/><path d="M8.7 13.6 7.5 21l4.5-2.6 4.5 2.6-1.2-7.4"/>',
+  star: '<path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.2 1 5.9L12 16.9l-5.2 2.9 1-5.9-4.3-4.2 5.9-.8z"/>',
+  chev: '<path d="M15 5l-7 7 7 7"/>',
+  trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+  download: '<path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 20h14"/>',
+  upload: '<path d="M12 15V4M7.5 8.5 12 4l4.5 4.5M5 20h14"/>',
+  mosque: '<path d="M4 20V11M20 20V11M2 20h20M7 20v-4a5 5 0 0 1 10 0v4M12 7V4M10.5 5.5h3"/>',
+  sunrise: '<path d="M3 19h18"/><path d="M7.5 19a4.5 4.5 0 0 1 9 0"/><path d="M12 4v6"/><path d="M9.5 6.5 12 4l2.5 2.5"/><path d="M4.5 12.5 6 14M19.5 12.5 18 14"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5V5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/>',
+  sunlow: '<circle cx="12" cy="10" r="3.5"/><path d="M12 3v1.5M5.6 5.6l1 1M18.4 5.6l-1 1M3.5 10H5M19 10h1.5"/><path d="M4 17h16M8 21h8"/>',
+  sunset: '<path d="M3 19h18"/><path d="M7.5 19a4.5 4.5 0 0 1 9 0"/><path d="M12 4v6"/><path d="M9.5 7.5 12 10l2.5-2.5"/><path d="M4.5 12.5 6 14M19.5 12.5 18 14"/>',
+  moon: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
+  pin: '<path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+  chevr: '<path d="M9 5l7 7-7 7"/>',
+  minus: '<path d="M5 12h14"/>',
+  search: '<circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/>',
+  palette: '<path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-1.8 0-1.2-1-1.5-1-2.7 0-1 .8-1.6 1.8-1.6H17a4 4 0 0 0 4-4C21 6.6 17 3 12 3z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7.5" r="1"/><circle cx="14.5" cy="7.5" r="1"/>',
+  layout: '<rect x="3.5" y="4" width="17" height="16" rx="3"/><path d="M3.5 10h17M10 10v10"/>',
+  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.8v.2"/>'
+};
+const Icon = (name, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICONS[name]}</svg>`;
+
+/* =====================================================================
+   Helpers
+   ===================================================================== */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const pad = n => String(n).padStart(2, '0');
+const toKey = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const fromKey = k => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d); };
+const validKey = k => typeof k === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(k) && toKey(fromKey(k)) === k;
+const addDays = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+const startOfWeek = (d, ws) => addDays(d, -((d.getDay() - ws + 7) % 7));
+const dayIndex = d => Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5);
+const todayKey = () => toKey(new Date());
+const fmtLong = new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+const fmtShort = new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+const fmtMonth = new Intl.DateTimeFormat('en-US', { month: 'short' });
+const fmtFull = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+const fmtCard = d => `${pad(d.getDate())} ${fmtMonth.format(d)} ${d.getFullYear()}`;
+
+function keysBetween(a, b) {
+  const out = [];
+  for (let d = fromKey(a), end = fromKey(b); d <= end; d = addDays(d, 1)) out.push(toKey(d));
+  return out;
+}
+
+/* =====================================================================
+   Storage
+   Model: { v, name, weekStart, start, days: { 'YYYY-MM-DD': { fajr: 1, ... } } }
+   Only completed prayers are stored. Anything not stored is "not completed".
+   ===================================================================== */
+const defaults = () => ({ v: 2, name: '', weekStart: 1, start: todayKey(), days: {}, loc: null, calc: { method: 'auto', asr: 'auto' }, adj: {} });
+const isOn = v => v === 1 || v === true || v === 'done';   // 'done' = v1.0 data
+
+function cleanDays(src) {
+  const out = {};
+  if (!src || typeof src !== 'object' || Array.isArray(src)) return out;
+  for (const [k, v] of Object.entries(src)) {
+    if (!validKey(k)) continue;
+    const day = {};
+    if (Array.isArray(v)) { for (const id of v) if (IDS.has(id)) day[id] = 1; }
+    else if (v && typeof v === 'object') { for (const id of IDS) if (isOn(v[id])) day[id] = 1; }
+    if (Object.keys(day).length) out[k] = day;
+  }
+  return out;
+}
+
+function validTz(tz) {
+  try { new Intl.DateTimeFormat('en-US', { timeZone: tz }); return typeof tz === 'string' && tz.length > 0; } catch (e) { return false; }
+}
+function deviceTz() {
+  try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'; } catch (e) { return 'UTC'; }
+}
+function cleanLoc(l) {
+  if (!l || typeof l !== 'object' || typeof l.lat !== 'number' || typeof l.lon !== 'number') return null;
+  if (!(l.lat >= -90 && l.lat <= 90 && l.lon >= -180 && l.lon <= 180) || !validTz(l.tz)) return null;
+  const t = (v, n = 160) => (typeof v === 'string' ? v.slice(0, n) : '');
+  return { lat: l.lat, lon: l.lon, tz: l.tz, source: l.source === 'manual' ? 'manual' : 'device',
+    address: t(l.address, 300), city: t(l.city), region: t(l.region), country: t(l.country), cc: t(l.cc, 2).toUpperCase() };
+}
+
+function sanitize(p) {
+  const d = defaults();
+  if (!p || typeof p !== 'object') return d;
+  if (typeof p.name === 'string') d.name = p.name.slice(0, 30);
+  if (p.weekStart === 0 || p.weekStart === 1) d.weekStart = p.weekStart;
+  d.days = cleanDays(p.days);
+  d.loc = cleanLoc(p.loc);
+  if (p.calc && typeof p.calc === 'object') {
+    if (p.calc.method === 'auto' || METHOD_IDS.includes(p.calc.method)) d.calc.method = p.calc.method;
+    if (['auto', 'hanafi', 'shafi'].includes(p.calc.asr)) d.calc.asr = p.calc.asr;
+  }
+  if (p.adj && typeof p.adj === 'object') {
+    for (const id of TIME_IDS) { const n = Math.round(Number(p.adj[id])); if (n) d.adj[id] = Math.max(-60, Math.min(60, n)); }
+  }
+  const first = Object.keys(d.days).sort()[0];
+  let s = validKey(p.start) ? p.start : (first || todayKey());
+  if (first && first < s) s = first;
+  if (s > todayKey()) s = todayKey();
+  d.start = s;
+  return d;
+}
+
+function load() {
+  try { return sanitize(JSON.parse(localStorage.getItem(KEY))); }
+  catch (e) { return defaults(); }
+}
+
+let saveWarned = false;
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify(state.data)); }
+  catch (e) {
+    if (!saveWarned) { saveWarned = true; toast('Could not save. Browser storage may be blocked.'); }
+  }
+}
+
+/* =====================================================================
+   State
+   ===================================================================== */
+const state = {
+  data: load(),
+  view: 'home',
+  selected: todayKey(),
+  year: new Date().getFullYear(),
+  histRange: 'all',
+  histLimit: 30,
+  sub: null,          // settings sub page: 'theme' | 'design' | 'location' | 'about'
+  ui: freshUi(),
+  form: freshForm(),
+  sheet: null,        // 'log' | 'reset' | 'help-method' | 'help-asr' | null
+  sheetFresh: false,
+  closing: false,
+  pop: null
+};
+save();   // writes upgraded data (v2) straight away
+const ringPrev = {};
+function freshUi() { return { status: 'idle', msg: '', manual: false, results: [], searching: false, sMsg: '', fMsg: '' }; }
+function freshForm() { return { q: '', name: '', lat: '', lon: '', tz: '', meta: null }; }
+
+/* =====================================================================
+   Tracking logic
+   A prayer is "missed" when the day has ended and it was not completed.
+   Today's unmarked prayers are "pending". Days before the start date are not counted.
+   ===================================================================== */
+const dayOf = k => state.data.days[k] || {};
+
+function countDay(k) {
+  const d = dayOf(k), t = todayKey();
+  let done = 0;
+  for (const p of PRAYERS) if (d[p.id]) done++;
+  return {
+    done,
+    missed: k < t && k >= state.data.start ? N - done : 0,
+    left: k >= t ? N - done : 0
+  };
+}
+const isComplete = k => countDay(k).done === N;
+
+function totals(keys) {
+  let done = 0, missed = 0;
+  for (const k of keys) { const c = countDay(k); done += c.done; missed += c.missed; }
+  const logged = done + missed;
+  return { done, missed, rate: logged ? Math.round(done / logged * 100) : null };
+}
+
+function overview() {
+  const keys = keysBetween(state.data.start, todayKey());
+  const t = totals(keys);
+  let perfect = 0, run = 0, best = 0;
+  for (const k of keys) {
+    if (isComplete(k)) { perfect++; run++; best = Math.max(best, run); } else run = 0;
+  }
+  let current = 0, i = keys.length - 1;
+  if (i >= 0 && !isComplete(keys[i])) i--;            // today can still be finished
+  while (i >= 0 && isComplete(keys[i])) { current++; i--; }
+  return { ...t, days: keys.length, perfect, current, best };
+}
+
+const weekKeys = () => {
+  const s = startOfWeek(new Date(), state.data.weekStart);
+  return Array.from({ length: 7 }, (_, i) => toKey(addDays(s, i)));
+};
+
+// Flip one prayer for one day. Returns the new state, or null for future days.
+function toggle(k, id) {
+  if (k > todayKey()) return null;
+  const day = state.data.days[k] || (state.data.days[k] = {});
+  const now = !day[id];
+  if (now) { day[id] = 1; if (k < state.data.start) state.data.start = k; } else delete day[id];
+  if (!Object.keys(day).length) delete state.data.days[k];
+  save();
+  return now;
+}
+
+function mark(id) {
+  const k = state.selected;
+  const now = toggle(k, id);
+  if (now === null) return;
+  state.pop = id;
+  render();
+  state.pop = null;
+  const name = PRAYERS.find(p => p.id === id).name;
+  if (now && isComplete(k)) toast('Alhamdulillah. All five prayers completed.');
+  else toast(now ? `${name} completed` : `${name} unmarked`);
+}
+
+/* ---------- Backup ---------- */
+function exportData() {
+  const days = {};
+  for (const k of Object.keys(state.data.days).sort()) days[k] = PRAYERS.filter(p => state.data.days[k][p.id]).map(p => p.id);
+  const out = { app: 'sakina', version: VERSION, exported: todayKey(), start: state.data.start, days };
+  const blob = new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `sakina-backup-${todayKey()}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+  toast('Backup file created');
+}
+
+function importData(raw) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return 0;
+  const days = cleanDays(raw.days && typeof raw.days === 'object' ? raw.days : raw);
+  const t = todayKey();
+  let n = 0;
+  for (const [k, v] of Object.entries(days)) {
+    if (k > t) continue;
+    Object.assign(state.data.days[k] || (state.data.days[k] = {}), v);
+    if (k < state.data.start) state.data.start = k;
+    n++;
+  }
+  if (n && validKey(raw.start) && raw.start < state.data.start) state.data.start = raw.start;
+  if (n) save();
+  return n;
+}
+
+function handleImport(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    let n = 0;
+    try { n = importData(JSON.parse(reader.result)); } catch (e) { n = 0; }
+    if (!n) { toast('No prayer data found in that file'); return; }
+    state.year = new Date().getFullYear();
+    render();
+    toast(`Imported ${n} ${n === 1 ? 'day' : 'days'}`);
+  };
+  reader.onerror = () => toast('Could not read that file');
+  reader.readAsText(file);
+}
+
+/* =====================================================================
+   Prayer times
+   Calculated on this device from the position of the sun. No fixed times.
+   ===================================================================== */
+const RAD = Math.PI / 180;
+const sinD = d => Math.sin(d * RAD), cosD = d => Math.cos(d * RAD), tanD = d => Math.tan(d * RAD);
+const asinD = x => Math.asin(x) / RAD, acosD = x => Math.acos(x) / RAD;
+const atan2D = (y, x) => Math.atan2(y, x) / RAD, acotD = x => Math.atan(1 / x) / RAD;
+const fixMod = (a, m) => ((a % m) + m) % m;
+
+function julian(y, m, d) {
+  if (m <= 2) { y -= 1; m += 12; }
+  const A = Math.floor(y / 100), B = 2 - A + Math.floor(A / 4);
+  return Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + d + B - 1524.5;
+}
+
+function sunPos(jd) {
+  const D = jd - 2451545.0;
+  const g = fixMod(357.529 + 0.98560028 * D, 360);
+  const q = fixMod(280.459 + 0.98564736 * D, 360);
+  const L = fixMod(q + 1.915 * sinD(g) + 0.020 * sinD(2 * g), 360);
+  const e = 23.439 - 0.00000036 * D;
+  const RA = fixMod(atan2D(cosD(e) * sinD(L), cosD(L)), 360) / 15;
+  return { decl: asinD(sinD(e) * sinD(L)), eqt: q / 15 - fixMod(RA, 24) };
+}
+
+// Returns minutes after local midnight for each time, or null if the sun never rises or sets.
+function solarTimes(y, m, d, lat, lon, tzH, P, factor) {
+  const jd = julian(y, m, d) - lon / 360;
+  const mid = h => fixMod(12 - sunPos(jd + h / 24).eqt, 24);
+  const at = (angle, h, dir) => {
+    const { decl } = sunPos(jd + h / 24);
+    const x = (-sinD(angle) - sinD(decl) * sinD(lat)) / (cosD(decl) * cosD(lat));
+    return mid(h) + dir * acosD(x) / 15;
+  };
+  const asrAt = (f, h) => at(-acotD(f + tanD(Math.abs(lat - sunPos(jd + h / 24).decl))), h, 1);
+  let t = { fajr: 5, sunrise: 6, dhuhr: 12, asr: 13, sunset: 18, maghrib: 18, isha: 18 };
+  for (let i = 0; i < 2; i++) {
+    t = {
+      fajr: at(P.fajr, t.fajr, -1), sunrise: at(0.833, t.sunrise, -1), dhuhr: mid(t.dhuhr), asr: asrAt(factor, t.asr),
+      sunset: at(0.833, t.sunset, 1), maghrib: at(P.maghrib || 0.833, t.maghrib, 1), isha: P.ishaMin ? t.isha : at(P.isha, t.isha, 1)
+    };
+  }
+  const off = tzH - lon / 15;
+  for (const k of Object.keys(t)) t[k] += off;
+  if (isNaN(t.sunrise) || isNaN(t.sunset)) return null;
+  // Very high latitudes: when the sun never reaches the Fajr/Isha angle, use the angle-based night portion.
+  const night = fixMod(t.sunrise - t.sunset, 24);
+  const fix = (time, base, angle, dir) => {
+    const portion = angle / 60 * night;
+    const diff = dir < 0 ? fixMod(base - time, 24) : fixMod(time - base, 24);
+    return isNaN(time) || diff > portion ? base + dir * portion : time;
+  };
+  t.fajr = fix(t.fajr, t.sunrise, P.fajr, -1);
+  if (P.ishaMin) t.isha = t.maghrib + P.ishaMin / 60; else t.isha = fix(t.isha, t.sunset, P.isha, 1);
+  const out = {};
+  for (const id of TIME_IDS) { if (isNaN(t[id])) return null; out[id] = t[id] * 60; }
+  return out;
+}
+
+/* ---------- Time zones ---------- */
+const dtfCache = {}, tfCache = {};
+function partsAt(tz, ms) {
+  const f = dtfCache[tz] || (dtfCache[tz] = new Intl.DateTimeFormat('en-US', { timeZone: tz, hourCycle: 'h23', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' }));
+  const p = {};
+  for (const x of f.formatToParts(new Date(ms))) p[x.type] = Number(x.value);
+  p.hour = p.hour % 24;
+  return p;
+}
+function tzOffsetMin(tz, ms) {
+  const p = partsAt(tz, ms);
+  return Math.round((Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute, p.second) - Math.floor(ms / 1000) * 1000) / 60000);
+}
+function fmtTime(ms, tz) {
+  const f = tfCache[tz] || (tfCache[tz] = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit', hour12: true }));
+  return f.format(new Date(ms)).replace(/\u202f/g, ' ');
+}
+const fmtClock = ms => {
+  const t = Math.max(0, Math.floor(ms / 1000));
+  return `${pad(Math.floor(t / 3600))}:${pad(Math.floor(t % 3600 / 60))}:${pad(t % 60)}`;
+};
+function fmtLeft(ms) {
+  const m = Math.floor(ms / 60000), h = Math.floor(m / 60);
+  if (m < 1) return 'Less than a minute left';
+  return h ? `${h} hr ${m % 60} min left` : `${m} min left`;
+}
+
+/* ---------- Method choice ---------- */
+const ccOf = l => (l && (l.cc || TZ_CC[l.tz])) || '';
+function autoMethod(l) {
+  const cc = ccOf(l);
+  if (cc === 'IR') return 'tehran';
+  if (CC_SOUTH_ASIA.has(cc)) return 'karachi';
+  if (CC_GULF.has(cc)) return 'ummalqura';
+  if (CC_EGYPTIAN.has(cc)) return 'egyptian';
+  if (cc === 'US' || cc === 'CA' || (!cc && l && /^America\//.test(l.tz))) return 'isna';
+  return 'mwl';
+}
+const autoAsr = l => (CC_HANAFI.has(ccOf(l)) ? 'hanafi' : 'shafi');
+function activeCalc() {
+  const l = state.data.loc, c = state.data.calc;
+  return { method: c.method === 'auto' ? autoMethod(l) : c.method, asr: c.asr === 'auto' ? autoAsr(l) : c.asr };
+}
+
+/* ---------- Day times (cached) ---------- */
+let timesCache = {};
+const clearCache = () => { timesCache = {}; };
+
+function dayTimes(y, m, d) {
+  const l = state.data.loc;
+  if (!l) return null;
+  const { method, asr } = activeCalc();
+  const key = [l.lat, l.lon, l.tz, method, asr, JSON.stringify(state.data.adj), y, m, d].join('|');
+  if (key in timesCache) return timesCache[key];
+  let out = null;
+  try {
+    const offMin = tzOffsetMin(l.tz, Date.UTC(y, m - 1, d, 12));
+    const raw = solarTimes(y, m, d, l.lat, l.lon, offMin / 60, METHODS[method], asr === 'hanafi' ? 2 : 1);
+    if (raw) {
+      out = {};
+      const base = Date.UTC(y, m - 1, d) - offMin * 60000;
+      for (const id of TIME_IDS) out[id] = base + (Math.round(raw[id]) + (state.data.adj[id] || 0)) * 60000;
+    }
+  } catch (e) { out = null; }
+  timesCache[key] = out;
+  return out;
+}
+
+function todayTimes() {
+  const l = state.data.loc;
+  if (!l) return null;
+  try { const p = partsAt(l.tz, Date.now()); return dayTimes(p.year, p.month, p.day); } catch (e) { return null; }
+}
+
+function nextInfo(now = Date.now()) {
+  const l = state.data.loc;
+  if (!l) return { none: true };
+  try {
+    const p = partsAt(l.tz, now), ev = [];
+    for (let k = -1; k <= 1; k++) {
+      const dt = new Date(Date.UTC(p.year, p.month - 1, p.day + k));
+      const t = dayTimes(dt.getUTCFullYear(), dt.getUTCMonth() + 1, dt.getUTCDate());
+      if (!t) return { error: true };
+      for (const pr of PRAYERS) ev.push({ id: pr.id, ms: t[pr.id] });
+    }
+    ev.sort((a, b) => a.ms - b.ms);
+    const i = ev.findIndex(e => e.ms > now);
+    if (i < 1) return { error: true };
+    return { prev: ev[i - 1], next: ev[i] };
+  } catch (e) { return { error: true }; }
+}
+
+/* =====================================================================
+   Location (device, search, manual)
+   Coordinates are only sent to OpenStreetMap when you ask to detect or search,
+   to look up an address. Prayer times are always calculated on the device.
+   ===================================================================== */
+function resetUi() { state.ui = freshUi(); state.form = freshForm(); }
+
+function setLoc(loc) {
+  state.data.loc = loc;
+  clearCache();
+  save();
+}
+
+async function fetchJson(url) {
+  const ac = new AbortController(), to = setTimeout(() => ac.abort(), 9000);
+  try {
+    const r = await fetch(url, { signal: ac.signal, headers: { Accept: 'application/json' } });
+    if (!r.ok) throw new Error('http ' + r.status);
+    return await r.json();
+  } finally { clearTimeout(to); }
+}
+function placeFrom(a) {
+  const ad = (a && a.address) || {};
+  return {
+    address: (a && a.display_name) || '',
+    city: ad.city || ad.town || ad.village || ad.municipality || ad.suburb || ad.county || '',
+    region: ad.state || ad.state_district || ad.region || '',
+    country: ad.country || '',
+    cc: (ad.country_code || '').toUpperCase()
+  };
+}
+const lookupAddress = (lat, lon) => fetchJson(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&accept-language=en&zoom=16&lat=${lat}&lon=${lon}`).then(placeFrom);
+const searchPlaces = q => fetchJson(`https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&accept-language=en&limit=6&q=${encodeURIComponent(q)}`);
+
+function detectLocation() {
+  const u = state.ui;
+  if (u.status === 'locating' || u.status === 'geocoding') return;
+  const fail = msg => { u.status = 'idle'; u.msg = msg; render(); };
+  if (!('geolocation' in navigator)) { u.manual = true; return fail('This browser cannot share your location. Choose your location manually below.'); }
+  if (window.isSecureContext === false) { u.manual = true; return fail('Location sharing needs a secure page (https). Open Sakina from your GitHub Pages link, or choose your location manually below.'); }
+  u.status = 'locating'; u.msg = '';
+  render();
+  navigator.geolocation.getCurrentPosition(pos => {
+    const lat = +pos.coords.latitude.toFixed(5), lon = +pos.coords.longitude.toFixed(5);
+    setLoc({ lat, lon, tz: deviceTz(), source: 'device', address: '', city: '', region: '', country: '', cc: '' });
+    u.status = 'geocoding'; u.manual = false;
+    render();
+    toast('Location detected');
+    lookupAddress(lat, lon).then(place => {
+      const l = state.data.loc;
+      if (l && l.lat === lat && l.lon === lon) { Object.assign(l, place); clearCache(); save(); }
+      u.status = 'idle'; u.msg = ''; render();
+    }).catch(() => {
+      u.status = 'idle';
+      u.msg = 'Could not look up the address (you may be offline). Prayer times still work from your coordinates.';
+      render();
+    });
+  }, err => {
+    if (err && err.code === 1) { u.manual = true; fail('Location permission was denied. You can allow it in your browser settings, or choose your location manually below.'); }
+    else if (err && err.code === 3) fail('Finding your location took too long. Try again, or choose it manually.');
+    else fail('Your position could not be found. Try again, or choose your location manually.');
+  }, { enableHighAccuracy: false, timeout: 15000, maximumAge: 600000 });
+}
+
+function openManual() {
+  const u = state.ui, f = state.form, l = state.data.loc;
+  u.manual = !u.manual;
+  if (!u.manual) return;
+  u.results = []; u.sMsg = ''; u.fMsg = '';
+  f.q = ''; f.meta = null;
+  f.name = l ? (l.address || [l.city, l.country].filter(Boolean).join(', ')) : '';
+  f.lat = l ? String(l.lat) : ''; f.lon = l ? String(l.lon) : ''; f.tz = l ? l.tz : deviceTz();
+}
+
+function searchManual() {
+  const u = state.ui, q = state.form.q.trim();
+  if (q.length < 2) { u.sMsg = 'Type at least 2 letters.'; render(); return; }
+  u.searching = true; u.sMsg = ''; u.results = [];
+  render();
+  searchPlaces(q).then(list => {
+    u.searching = false;
+    u.results = Array.isArray(list) ? list.slice(0, 6) : [];
+    u.sMsg = u.results.length ? '' : 'No places found. Try another spelling, or enter the coordinates below.';
+    render();
+  }).catch(() => {
+    u.searching = false;
+    u.sMsg = 'Search needs an internet connection. You can still enter latitude, longitude and time zone below.';
+    render();
+  });
+}
+
+function pickResult(i) {
+  const r = state.ui.results[i], f = state.form;
+  if (!r) return;
+  const pl = placeFrom(r);
+  f.lat = String(+(+r.lat).toFixed(5)); f.lon = String(+(+r.lon).toFixed(5));
+  f.name = pl.address || r.display_name || ''; f.meta = pl;
+  f.tz = TZ_BY_CC[pl.cc] || f.tz || deviceTz();
+  state.ui.results = []; state.ui.fMsg = '';
+  render();
+}
+
+function saveManual() {
+  const u = state.ui, f = state.form;
+  const lat = parseFloat(f.lat), lon = parseFloat(f.lon);
+  if (!(lat >= -90 && lat <= 90) || !(lon >= -180 && lon <= 180) || f.lat.trim() === '' || f.lon.trim() === '') { u.fMsg = 'Enter a latitude from -90 to 90 and a longitude from -180 to 180.'; render(); return; }
+  if (!validTz(f.tz)) { u.fMsg = 'Choose a time zone.'; render(); return; }
+  const m = f.meta, name = f.name.trim();
+  setLoc({ lat: +lat.toFixed(5), lon: +lon.toFixed(5), tz: f.tz, source: 'manual',
+    address: m ? m.address : name, city: m ? m.city : name, region: m ? m.region : '', country: m ? m.country : '', cc: m ? m.cc : '' });
+  u.manual = false; u.msg = ''; u.fMsg = '';
+  render();
+  toast('Location saved');
+}
+
+function tzList() {
+  let list = [];
+  try { list = Intl.supportedValuesOf('timeZone').slice(); } catch (e) { /* older browsers */ }
+  if (!list.length) list = Array.from(new Set(TZ_FALLBACK)).sort();
+  for (const z of [state.form.tz, state.data.loc && state.data.loc.tz, deviceTz()]) if (z && !list.includes(z)) list.push(z);
+  return list;
+}
+
+/* =====================================================================
+   Components (each returns an HTML string)
+   ===================================================================== */
+const RING_C = 2 * Math.PI * 34;
+
+function Ring(id, pct, label, size) {
+  const prev = ringPrev[id] ?? 0;
+  const style = size ? ` style="--size:${size}px"` : '';
+  return `<div class="ring" data-ring="${id}" data-pct="${pct}"${style}>
+    <svg viewBox="0 0 80 80" aria-hidden="true"><circle class="ring-bg" cx="40" cy="40" r="34"/>
+    <circle class="ring-fg" cx="40" cy="40" r="34" stroke-dasharray="${RING_C}" stroke-dashoffset="${RING_C * (1 - prev / 100)}" transform="rotate(-90 40 40)"/></svg>
+    <div class="ring-label">${label}</div></div>`;
+}
+
+function PrayerRow(p, k) {
+  const done = !!dayOf(k)[p.id], t = todayKey();
+  const label = done ? 'Completed' : k === t ? 'Pending' : k < t && k >= state.data.start ? 'Missed' : 'Not recorded';
+  const cls = done ? 'done' : label === 'Missed' ? 'missed' : '';
+  return `<div class="prayer ${cls} ${state.pop === p.id ? 'pop' : ''}">
+    <div class="p-ic">${Icon(p.icon)}</div>
+    <div class="p-txt"><div class="p-name">${p.name}<span class="p-ar" lang="ar" dir="rtl">${p.ar}</span></div><div class="p-state">${label}</div></div>
+    <button class="pbtn" data-action="mark" data-prayer="${p.id}" aria-pressed="${done}" aria-label="${done ? 'Unmark' : 'Mark'} ${p.name} as completed">${Icon('check')}</button>
+  </div>`;
+}
+const PrayerList = k => `<div class="card list">${PRAYERS.map(p => PrayerRow(p, k)).join('')}</div>`;
+
+function WeekStrip() {
+  const today = todayKey(), ws = state.data.weekStart;
+  const letters = ws === 1 ? ['M', 'T', 'W', 'T', 'F', 'S', 'S'] : ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+  const keys = weekKeys();
+  const head = keys.map((k, i) => `<div class="wl ${k === today ? 'today' : ''}">${letters[i]}</div>`).join('');
+  const days = keys.map(k => {
+    const c = countDay(k), future = k > today, d = fromKey(k);
+    const cls = ['day', c.done === N ? 'full' : '', k === state.selected ? 'sel' : ''].join(' ');
+    const inner = c.done === N ? Icon('check') : `<span>${d.getDate()}</span>`;
+    return `<button class="${cls}" style="--p:${c.done / N * 100}" data-action="select-day" data-key="${k}" ${future ? 'disabled' : ''}
+      aria-label="${fmtShort.format(d)}: ${c.done} of ${N} completed" aria-pressed="${k === state.selected}">${inner}${c.missed ? '<i class="miss"></i>' : ''}</button>`;
+  }).join('');
+  return `<section class="week-card" aria-label="This week"><div class="week">${head}</div><div class="week">${days}</div></section>`;
+}
+
+function Nav() {
+  const item = (to, icon, label) => `<button class="nav-item ${state.view === to ? 'active' : ''}" data-action="nav" data-to="${to}" ${state.view === to ? 'aria-current="page"' : ''}>${Icon(icon)}<span>${label}</span></button>`;
+  return `<div class="nav-bar">${item('home', 'home', 'Home')}${item('stats', 'stats', 'Stats')}
+    <button class="nav-main" data-action="open-log" aria-label="Log prayers">${Icon('plus')}</button>
+    ${item('history', 'history', 'History')}${item('settings', 'settings', 'Settings')}</div>`;
+}
+
+/* =====================================================================
+   Views
+   ===================================================================== */
+const NX_C = 2 * Math.PI * 42, NX_ARC = 0.75;
+function ringGeom(p) {
+  const a = (135 + 270 * p) * RAD;
+  return { dash: `${(NX_C * NX_ARC * p).toFixed(2)} ${NX_C.toFixed(2)}`, x: (50 + 42 * Math.cos(a)).toFixed(2), y: (50 + 42 * Math.sin(a)).toFixed(2) };
+}
+
+function NextCard() {
+  const l = state.data.loc;
+  if (!l) return `<section class="card next-empty" aria-label="Next prayer">
+    <div class="mi">${Icon('pin')}</div>
+    <div><h2>Set your location</h2>
+    <p>Sakina calculates prayer times on your device. Add your location to see the next prayer and the time left.</p>
+    <button class="btn btn-primary" data-action="open-sub" data-sub="location">Set location</button></div></section>`;
+  const info = nextInfo();
+  if (!info.next) return `<section class="card next-empty" aria-label="Next prayer">
+    <div class="mi">${Icon('info')}</div>
+    <div><h2>Times unavailable</h2>
+    <p>Prayer times could not be calculated for this location. Check your location and calculation settings.</p>
+    <button class="btn btn-primary" data-action="open-sub" data-sub="location">Open settings</button></div></section>`;
+  const { prev, next } = info, now = Date.now();
+  const p = Math.min(1, Math.max(0, (now - prev.ms) / (next.ms - prev.ms)));
+  const g = ringGeom(p), left = next.ms - now, name = TIME_NAMES[next.id];
+  const [clock, ap] = fmtTime(next.ms, l.tz).split(' ');
+  return `<section class="card next" id="next-card" data-next="${next.ms}" aria-label="Next prayer">
+    <div>
+      <p class="eyebrow">Next prayer</p>
+      <div class="nx-name">${name}<i class="live" aria-hidden="true"></i></div>
+      <div class="nx-time">${clock}<span>${ap || ''}</span></div>
+      <p class="nx-sub">Start time<br><span id="nx-left">${fmtLeft(left)}</span></p>
+    </div>
+    <div class="nx-ring" role="timer" aria-label="Time left until ${name}">
+      <svg viewBox="0 0 100 100" aria-hidden="true">
+        <circle class="nx-track" cx="50" cy="50" r="42" stroke-dasharray="${(NX_C * NX_ARC).toFixed(2)} ${NX_C.toFixed(2)}" transform="rotate(135 50 50)"/>
+        <circle id="nx-arc" class="nx-arc" cx="50" cy="50" r="42" stroke-dasharray="${g.dash}" transform="rotate(135 50 50)"/>
+        <circle id="nx-knob" class="nx-knob" cx="${g.x}" cy="${g.y}" r="4.6"/>
+      </svg>
+      <div class="nx-center"><small>Time left</small><b id="nx-clock">${fmtClock(left)}</b></div>
+    </div></section>`;
+}
+
+// Updates the countdown in place every second without redrawing the page.
+function tickNext() {
+  const root = $('#next-card');
+  if (!root || !root.dataset || !root.dataset.next) return;
+  const info = nextInfo();
+  if (!info.next) return;
+  if (String(info.next.ms) !== root.dataset.next) { render(); return; }
+  const now = Date.now(), p = Math.min(1, Math.max(0, (now - info.prev.ms) / (info.next.ms - info.prev.ms)));
+  const g = ringGeom(p), left = info.next.ms - now;
+  $('#nx-clock').textContent = fmtClock(left);
+  $('#nx-left').textContent = fmtLeft(left);
+  $('#nx-arc').setAttribute('stroke-dasharray', g.dash);
+  $('#nx-knob').setAttribute('cx', g.x);
+  $('#nx-knob').setAttribute('cy', g.y);
+}
+
+function HomeView() {
+  const today = todayKey(), sel = state.selected, isToday = sel === today;
+  const c = countDay(sel), pct = Math.round(c.done / N * 100);
+  const name = state.data.name.trim();
+  const { current } = overview();
+  const wt = totals(weekKeys()), fullDays = weekKeys().filter(isComplete).length;
+  const eyebrow = isToday ? (name ? `Salam, ${esc(name)}` : 'Today')
+    : `<button class="back" data-action="back-today">${Icon('chev')}Back to today</button>`;
+  const sub = sel < today ? `${c.done} completed · ${c.missed} missed` : `${c.done} completed · ${c.left} left`;
+  const segs = PRAYERS.map(p => `<i class="${dayOf(sel)[p.id] ? 'done' : c.missed ? 'missed' : ''}"></i>`).join('');
+
+  return `
+  <header class="top">
+    <div><p class="eyebrow">${eyebrow}</p><h1 class="date">${fmtLong.format(fromKey(sel))}</h1></div>
+    <button class="pill" data-action="nav" data-to="stats" aria-label="Prayer streak: ${current} ${current === 1 ? 'day' : 'days'}">${Icon('flame')}<span>${current}</span></button>
+  </header>
+
+  ${NextCard()}
+
+  ${WeekStrip()}
+
+  <section class="card progress" aria-label="Daily progress">
+    ${Ring('day', pct, pct + '%')}
+    <div>
+      <p class="eyebrow">${isToday ? "Today's progress" : 'Progress'}</p>
+      <div class="big">${c.done}<span>/${N}</span></div>
+      <p class="sub">${sub}</p>
+    </div>
+    <div class="segs" aria-hidden="true">${segs}</div>
+  </section>
+
+  <div class="sec-row" id="prayers"><h3>${isToday ? "Today's prayers" : 'Prayers'}</h3><span class="muted">${isToday ? '' : fmtShort.format(fromKey(sel))}</span></div>
+  ${PrayerList(sel)}
+
+  <h3 class="sec">This week</h3>
+  <section class="card stats-card" aria-label="This week's statistics">
+    <div><span class="stat-l">Completed</span><span class="stat-v">${wt.done}</span></div>
+    <div><span class="stat-l">Missed</span><span class="stat-v">${wt.missed}</span></div>
+    <div><span class="stat-l">Rate</span><span class="stat-v">${wt.rate === null ? '—' : wt.rate + '%'}</span></div>
+    <div class="ring-col">${Ring('week', Math.round(fullDays / 7 * 100), fullDays + '/7')}<small>full days</small></div>
+  </section>`;
+}
+
+/* ---------- Statistics ---------- */
+function yearsList() {
+  const first = fromKey(state.data.start).getFullYear(), last = new Date().getFullYear(), out = [];
+  for (let y = last; y >= first; y--) out.push(y);     // newest first
+  return out;
+}
+
+function Heatmap(year) {
+  const ws = state.data.weekStart, t = todayKey(), start = state.data.start;
+  const jan1 = new Date(year, 0, 1), dec31 = new Date(year, 11, 31);
+  const first = startOfWeek(jan1, ws);
+  const cols = Math.ceil((dayIndex(dec31) - dayIndex(first) + 1) / 7);
+  const names = ws === 1 ? ['M', 'T', 'W', 'T', 'F', 'S', 'S'] : ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+  let months = '', cells = '', last = -1;
+  for (let c = 0; c < cols; c++) {
+    let labelled = false;
+    for (let r = 0; r < 7; r++) {
+      const d = addDays(first, c * 7 + r);
+      if (d.getFullYear() !== year) { cells += '<i class="hm-c off"></i>'; continue; }
+      if (!labelled) {
+        labelled = true;
+        if (d.getMonth() !== last) { months += `<span style="grid-column:${c + 1}">${fmtMonth.format(d)}</span>`; last = d.getMonth(); }
+      }
+      const k = toKey(d);
+      if (k > t) { cells += '<i class="hm-c"></i>'; continue; }
+      const x = countDay(k);
+      const cls = x.done ? 'l' + x.done : x.missed ? 'lm' : '';
+      cells += `<i class="hm-c ${cls}" data-action="hm-pick" data-key="${k}" title="${fmtShort.format(d)}: ${x.done}/${N} completed"></i>`;
+    }
+  }
+  return `<div class="hm-wrap">
+    <div class="hm-days" aria-hidden="true">${names.map(n => `<span>${n}</span>`).join('')}</div>
+    <div class="hm-scroll"><div class="hm-inner">
+      <div class="hm-months" style="grid-template-columns:repeat(${cols},var(--cell))">${months}</div>
+      <div class="hm-grid" role="img" aria-label="Prayer activity for ${year}">${cells}</div>
+    </div></div></div>`;
+}
+
+function ActivityCard() {
+  const years = yearsList();
+  if (!years.includes(state.year)) state.year = years[0];
+  const opts = years.map(y => `<option value="${y}" ${y === state.year ? 'selected' : ''}>${y}</option>`).join('');
+  const legend = ['l1', 'l2', 'l3', 'l4', 'l5'].map(c => `<i class="hm-c ${c}"></i>`).join('');
+  return `<section class="card">
+    <div class="card-head"><h2>${Icon('mosque')}Activity</h2>
+      <select class="select-pill" id="year-select" aria-label="Year">${opts}</select></div>
+    ${Heatmap(state.year)}
+    <div class="legend">
+      <span class="lg">Less ${legend} More</span>
+      <span class="lg"><i class="hm-c lm"></i>Missed</span>
+    </div>
+    <p class="hm-detail" id="hm-detail">Tap a day to see details.</p>
+    <p class="hm-hint">Swipe sideways to see other weeks.</p>
+  </section>`;
+}
+
+function StatsView() {
+  const o = overview();
+  const label = `<span class="rl"><b>${o.rate === null ? '—' : o.rate + '%'}</b><small>Overall</small></span>`;
+  return `
+  <header class="top"><div><p class="eyebrow">Insights</p><h1>Statistics</h1></div></header>
+  <section class="card hero" aria-label="Overall statistics">
+    <div class="hero-top">
+      ${Ring('overall', o.rate || 0, label)}
+      <div>
+        <div class="hl">${Icon('flame', 'fl')}Streak<b>${o.current}</b></div>
+        <div class="hl">${Icon('award')}Longest<b>${o.best}</b></div>
+        <div class="hl">${Icon('star')}Perfect days<b>${o.perfect}/${o.days}</b></div>
+      </div>
+    </div>
+    <hr>
+    <div class="hero-bottom">
+      <div><b>${o.done}</b><small>Done</small></div>
+      <div><b class="red">${o.missed}</b><small>Missed</small></div>
+      <div><b>${o.days}</b><small>Days</small></div>
+      <div><b>${o.perfect}</b><small>Perfect</small></div>
+    </div>
+  </section>
+  <p class="note">A prayer you did not complete counts as missed once the day ends. Today's open prayers are not counted yet.</p>
+  <div style="height:14px"></div>
+  ${ActivityCard()}`;
+}
+
+/* ---------- History ---------- */
+const RANGES = [['all', 'All time'], ['year', 'This year'], ['30', 'Last 30 days'], ['7', 'Last 7 days']];
+
+function rangeKeys() {
+  const t = fromKey(todayKey());
+  const from = { all: state.data.start, year: `${t.getFullYear()}-01-01`, 30: toKey(addDays(t, -29)), 7: toKey(addDays(t, -6)) }[state.histRange];
+  return keysBetween(from < state.data.start ? state.data.start : from, todayKey());
+}
+
+function SummaryCard(keys) {
+  const rows = PRAYERS.map(p => {
+    const done = keys.filter(k => dayOf(k)[p.id]).length;
+    const w = keys.length ? Math.round(done / keys.length * 100) : 0;
+    return `<div class="sum-row">${Icon(p.icon)}<span class="n">${p.name}</span><div class="bar"><i style="width:${w}%"></i></div><span class="c">${done}/${keys.length}</span></div>`;
+  }).join('');
+  const opts = RANGES.map(([v, l]) => `<option value="${v}" ${v === state.histRange ? 'selected' : ''}>${l}</option>`).join('');
+  return `<section class="card">
+    <div class="card-head"><h2>${Icon('mosque')}Prayer Summary</h2><select class="select-pill" id="range-select" aria-label="Time range">${opts}</select></div>${rows}</section>`;
+}
+
+function DayCard(k) {
+  const c = countDay(k), t = todayKey(), d = fromKey(k), isT = k === t;
+  const tone = c.done === N ? 'perfect' : c.done > 0 ? 'partial' : isT ? 'pending' : 'missed';
+  const stat = tone === 'perfect' ? Icon('check') : tone === 'partial' ? c.done : tone === 'pending' ? Icon('clock') : Icon('x');
+  const btns = PRAYERS.map(p => {
+    const done = !!dayOf(k)[p.id];
+    const st = done ? 'done' : isT ? 'pending' : 'missed';
+    const badge = done ? 'check' : isT ? 'clock' : 'x';
+    return `<button class="hp ${st}" data-action="hist-mark" data-key="${k}" data-prayer="${p.id}" aria-pressed="${done}"
+      aria-label="${p.name}, ${fmtCard(d)}: ${done ? 'completed' : isT ? 'pending' : 'missed'}. Tap to change.">
+      <span class="hp-c">${Icon(p.icon)}<span class="hp-b">${Icon(badge)}</span></span><span class="hp-l">${p.name}</span></button>`;
+  }).join('');
+  return `<article class="card hday ${isT ? 'is-today' : ''}">
+    <div class="hday-top"><div class="hstat ${tone}">${stat}</div>
+      <div><div class="hdate">${fmtCard(d)}${isT ? '<span class="badge">Today</span>' : ''}</div>
+      <p class="sub">${c.done}/${N} prayers completed</p></div></div>
+    <div class="hbar ${tone === 'missed' ? 'missed' : ''}"><i style="width:${c.done / N * 100}%"></i></div>
+    <div class="hpr">${btns}</div></article>`;
+}
+
+function HistoryView() {
+  const keys = rangeKeys(), list = keys.slice().reverse();
+  const shown = list.slice(0, state.histLimit);
+  return `
+  <header class="top"><div><p class="eyebrow">Records</p><h1>History</h1></div></header>
+  ${SummaryCard(keys)}
+  <div class="sec-row"><h3>All days</h3><span class="muted">${list.length} ${list.length === 1 ? 'entry' : 'entries'}</span></div>
+  ${shown.map(DayCard).join('')}
+  ${list.length > shown.length ? `<button class="btn btn-ghost more" data-action="more">Show more days</button>` : ''}
+  <p class="note">Tap a prayer to change it. Unmarked prayers on past days count as missed.</p>`;
+}
+
+/* ---------- Settings ---------- */
+function AvatarInner() {
+  const n = state.data.name.trim();
+  return n ? esc([...n][0].toUpperCase()) : Icon('moon');
+}
+
+function MenuRow(icon, title, sub, to) {
+  return `<button class="menu-row" data-action="open-sub" data-sub="${to}"><span class="mi">${Icon(icon)}</span>
+    <span class="mt"><b>${title}</b><small>${esc(sub)}</small></span>${Icon('chevr')}</button>`;
+}
+
+function SubHead(title) {
+  return `<header class="subhead"><button class="back-btn" data-action="back" aria-label="Back to settings">${Icon('chev')}</button><h1>${title}</h1></header>`;
+}
+
+function locSummary() {
+  const l = state.data.loc;
+  if (!l) return 'Not set';
+  const place = [l.city, l.country].filter(Boolean).join(', ') || l.tz;
+  return `${place} · ${METHODS[activeCalc().method].name}`;
+}
+
+function SettingsView() {
+  if (state.sub && SUBS[state.sub]) return SUBS[state.sub]();
+  const ws = state.data.weekStart, o = overview();
+  return `
+  <header class="top"><div><p class="eyebrow">Preferences</p><h1>Settings</h1></div></header>
+  <section class="card menu">
+    ${MenuRow('palette', 'Theme', 'Dark', 'theme')}
+    ${MenuRow('layout', 'Design style', 'Default', 'design')}
+    ${MenuRow('pin', 'Location & Calculation Method', locSummary(), 'location')}
+    ${MenuRow('info', 'About', 'Version ' + VERSION, 'about')}
+  </section>
+
+  <p class="eyebrow group">General</p>
+  <section class="card me">
+    <div class="avatar" id="avatar">${AvatarInner()}</div>
+    <div class="field"><label for="name-input">Your name</label><input id="name-input" type="text" maxlength="30" autocomplete="off" placeholder="Optional" value="${esc(state.data.name)}"></div>
+  </section>
+  <section class="card">
+    <div class="row"><b>Week starts on</b>
+      <div class="seg-ctl" role="group" aria-label="Week starts on">
+        <button data-action="set-week" data-ws="1" aria-pressed="${ws === 1}">Mon</button>
+        <button data-action="set-week" data-ws="0" aria-pressed="${ws === 0}">Sun</button>
+      </div></div>
+    <div class="row"><b>Tracking since</b><span class="v">${fmtFull.format(fromKey(state.data.start))}</span></div>
+    <div class="row"><b>Prayers completed</b><span class="v">${o.done}</span></div>
+  </section>
+
+  <p class="eyebrow group">Data</p>
+  <section class="card">
+    <button class="btn btn-ghost" data-action="export">${Icon('download')}Export backup</button>
+    <button class="btn btn-ghost" data-action="pick-file">${Icon('upload')}Import backup</button>
+    <button class="btn btn-danger" data-action="ask-reset">${Icon('trash')}Reset all data</button>
+  </section>
+  <p class="note">Everything is saved only in this browser on this device. Clearing browser data removes it, so export a backup now and then. Importing a backup adds its prayers to your history and unlocks earlier years in Statistics.</p>`;
+}
+
+function Placeholder(title, icon, text) {
+  return `${SubHead(title)}
+  <section class="card ph"><div class="mi">${Icon(icon)}</div><h2>Coming soon</h2><p>${text}</p></section>`;
+}
+const ThemePage = () => Placeholder('Theme', 'palette', 'Theme options will be added in a future update. Sakina uses its dark theme for now.');
+const DesignPage = () => Placeholder('Design style', 'layout', 'Design style options will be added in a future update.');
+
+function AboutPage() {
+  return `${SubHead('About')}
+  <section class="card" style="text-align:center">
+    <svg class="logo-mark" viewBox="0 0 512 512" aria-hidden="true"><defs><linearGradient id="ab1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#202023"/><stop offset="1" stop-color="#0a0a0a"/></linearGradient><linearGradient id="ab2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ecc9b4"/><stop offset="1" stop-color="#c48f74"/></linearGradient></defs>
+      <rect width="512" height="512" rx="116" fill="url(#ab1)"/><path transform="translate(70 76) scale(15.5)" fill="url(#ab2)" d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/><path fill="#fff" d="M338 128l13 34 34 13-34 13-13 34-13-34-34-13 34-13z"/></svg>
+    <h2 class="h">Sakina</h2>
+    <p class="small">A calm, private daily prayer tracker.</p>
+  </section>
+  <section class="card">
+    <div class="row"><b>Version</b><span class="v">${VERSION}</span></div>
+    <div class="row"><b>Prayer times</b><span class="v">Calculated on device</span></div>
+    <div class="row"><b>Your records</b><span class="v">Saved in this browser</span></div>
+  </section>
+  <p class="note">Sakina has no account and no server. Your prayer records and settings stay on this device. Your coordinates are sent to OpenStreetMap only when you tap detect or search, to look up an address.</p>`;
+}
+
+function LocationPage() {
+  const l = state.data.loc, u = state.ui, c = state.data.calc;
+  const busy = u.status === 'locating' || u.status === 'geocoding';
+  const cap = x => x[0].toUpperCase() + x.slice(1);
+  let body;
+  if (l) {
+    const place = [l.city, l.region, l.country].filter(Boolean).join(', ');
+    body = `${l.address ? `<p class="addr">${esc(l.address)}</p>` : ''}
+      ${place && !(l.address || '').includes(place) ? `<p class="place">${esc(place)}</p>` : ''}
+      <p class="tz">Time Zone: ${esc(l.tz)}</p>
+      <p class="coords">${l.lat.toFixed(4)}, ${l.lon.toFixed(4)} · ${l.source === 'device' ? 'From your device' : 'Set manually'}</p>`;
+  } else body = '<p class="small" style="margin-top:0">No location set yet. Share your device location or choose a place manually to get accurate prayer times.</p>';
+  const status = u.status === 'locating' ? `<p class="status"><i class="spin"></i>Waiting for your device. Allow location access if your browser asks.</p>`
+    : u.status === 'geocoding' ? `<p class="status"><i class="spin"></i>Finding your address…</p>` : '';
+  const err = u.msg ? `<p class="status err" role="alert">${esc(u.msg)}</p>` : '';
+
+  const mOpts = `<option value="auto" ${c.method === 'auto' ? 'selected' : ''}>Auto${l ? ': ' + METHODS[autoMethod(l)].name : ''}</option>` +
+    METHOD_IDS.map(id => `<option value="${id}" ${c.method === id ? 'selected' : ''}>${METHODS[id].name}</option>`).join('');
+  const aOpts = `<option value="auto" ${c.asr === 'auto' ? 'selected' : ''}>Auto${l ? ': ' + cap(autoAsr(l)) : ''}</option>
+    <option value="hanafi" ${c.asr === 'hanafi' ? 'selected' : ''}>Hanafi</option><option value="shafi" ${c.asr === 'shafi' ? 'selected' : ''}>Shafi</option>`;
+  const auto = l && (c.method === 'auto' || c.asr === 'auto');
+  const act = activeCalc();
+  const note = auto ? `<div class="ok-note">${Icon('check')}<span>${c.method === 'auto' ? 'Calculation method' : 'Asr calculation'} automatically set based on your location. Using ${METHODS[act.method].name} and ${cap(act.asr)}.</span></div>`
+    : (!l ? `<p class="small">Set your location to let Sakina pick the right method for your area.</p>` : '');
+
+  return `${SubHead('Location & Calculation Method')}
+  <section class="card loc" aria-label="Your location">
+    <div class="card-head" style="margin-bottom:12px"><h2 class="h">Your Location</h2>
+      <button class="icon-btn" data-action="detect" aria-label="Detect my location" ${busy ? 'disabled' : ''}>${Icon('pin')}</button></div>
+    ${body}${status}${err}
+    <button class="btn btn-primary" data-action="detect" ${busy ? 'disabled' : ''}>${Icon('pin')}${l && l.source === 'device' ? 'Update from my device' : 'Share my device location'}</button>
+    <button class="btn btn-ghost" data-action="manual-toggle">${u.manual ? 'Hide manual options' : 'Choose location manually'}</button>
+  </section>
+  ${u.manual ? ManualCard() : ''}
+  <section class="card" aria-label="Prayer time calculation">
+    <h2 class="h">Prayer Time Calculation</h2>
+    <p class="small">Select your preferred calculation method or let Sakina choose one for your area.</p>
+    <div class="opt"><span class="opt-l">Calculation Method <button class="q" data-action="help" data-topic="method" aria-label="About calculation methods">?</button></span>
+      <select id="method-select" class="select-pill" aria-label="Calculation method">${mOpts}</select></div>
+    <div class="opt"><span class="opt-l">Asr Calculation <button class="q" data-action="help" data-topic="asr" aria-label="About Asr calculation">?</button></span>
+      <select id="asr-select" class="select-pill" aria-label="Asr calculation">${aOpts}</select></div>
+    ${note}
+  </section>
+  ${AdjCard()}
+  <p class="note">Prayer times are calculated on your device from the position of the sun. Your coordinates are sent to OpenStreetMap only when you detect your location or search for a place, to look up an address.</p>`;
+}
+
+function ManualCard() {
+  const u = state.ui, f = state.form;
+  const results = u.results.map((r, i) => `<button class="res" data-action="pick-result" data-i="${i}">${Icon('pin')}<span>${esc(r.display_name || '')}</span></button>`).join('');
+  const tzs = tzList().map(z => `<option value="${esc(z)}" ${z === f.tz ? 'selected' : ''}>${esc(z)}</option>`).join('');
+  return `<section class="card" aria-label="Choose location manually">
+    <h2 class="h">Choose manually</h2>
+    <div class="field-row" style="margin-top:14px"><input id="f-q" type="search" class="inp" placeholder="Search city or place" value="${esc(f.q)}" autocomplete="off" enterkeyhint="search">
+      <button class="btn-sm" data-action="search" ${u.searching ? 'disabled' : ''}>${u.searching ? '<i class="spin"></i>' : Icon('search')}<span>Search</span></button></div>
+    ${u.sMsg ? `<p class="status err" role="alert">${esc(u.sMsg)}</p>` : ''}
+    ${results ? `<div class="res-list">${results}</div>` : ''}
+    <p class="lbl">Location details</p>
+    <input id="f-name" class="inp" placeholder="Place name (optional)" value="${esc(f.name)}" autocomplete="off">
+    <div class="two"><input id="f-lat" class="inp" inputmode="decimal" placeholder="Latitude" value="${esc(f.lat)}" aria-label="Latitude"><input id="f-lon" class="inp" inputmode="decimal" placeholder="Longitude" value="${esc(f.lon)}" aria-label="Longitude"></div>
+    <select id="tz-select" class="select-pill wide" aria-label="Time zone">${tzs}</select>
+    ${u.fMsg ? `<p class="status err" role="alert">${esc(u.fMsg)}</p>` : ''}
+    <button class="btn btn-primary" style="margin-top:16px" data-action="save-manual">Save location</button>
+  </section>`;
+}
+
+function AdjCard() {
+  const l = state.data.loc, a = state.data.adj, tt = todayTimes();
+  const any = TIME_IDS.some(id => a[id]);
+  const rows = TIME_IDS.map(id => {
+    const v = a[id] || 0, label = v ? `${v > 0 ? '+' : ''}${v} min` : '0 min';
+    return `<div class="adj"><div><b>${TIME_NAMES[id]}</b><small>${tt && l ? fmtTime(tt[id], l.tz) : '—'}</small></div>
+      <div class="stepper"><button data-action="adj" data-id="${id}" data-step="-1" aria-label="Move ${TIME_NAMES[id]} 1 minute earlier">${Icon('minus')}</button>
+      <output aria-live="polite">${label}</output>
+      <button data-action="adj" data-id="${id}" data-step="1" aria-label="Move ${TIME_NAMES[id]} 1 minute later">${Icon('plus')}</button></div></div>`;
+  }).join('');
+  return `<section class="card" aria-label="Prayer time adjustment">
+    <h2 class="h">Prayer Time Adjustment</h2>
+    <p class="small adj-head">${any ? 'Adjusted to match your local mosque timetable.' : 'No adjustments. Move a time earlier or later to match your local mosque timetable.'}</p>
+    ${l ? '' : '<p class="small">Set a location to see the times.</p>'}
+    ${rows}
+    <button class="btn btn-ghost" style="margin-top:14px" data-action="adj-reset" ${any ? '' : 'disabled'}>Reset adjustments</button>
+  </section>`;
+}
+
+const SUBS = { theme: ThemePage, design: DesignPage, location: LocationPage, about: AboutPage };
+
+const VIEWS = { home: HomeView, stats: StatsView, history: HistoryView, settings: SettingsView };
+
+/* ---------- Sheets ---------- */
+function LogSheet() {
+  const k = state.selected, c = countDay(k);
+  return `<div class="grab"></div>
+    <div class="sheet-head"><div><p class="eyebrow">${k === todayKey() ? 'Today' : 'Selected day'}</p><h2>Log prayers</h2>
+      <p class="muted">${fmtLong.format(fromKey(k))} · ${c.done}/${N} completed</p></div>
+      <button class="icon-btn" data-action="close-sheet" aria-label="Close">${Icon('x')}</button></div>
+    ${PrayerList(k)}
+    <button class="btn btn-primary" data-action="close-sheet">Done</button>`;
+}
+
+function ResetSheet() {
+  return `<div class="grab"></div>
+    <div class="sheet-head"><div><h2>Reset all data?</h2></div><button class="icon-btn" data-action="close-sheet" aria-label="Close">${Icon('x')}</button></div>
+    <p class="msg">This deletes every prayer record and your settings from this device. You cannot undo it.</p>
+    <button class="btn btn-danger" data-action="confirm-reset">Delete everything</button>
+    <button class="btn btn-ghost" data-action="close-sheet">Cancel</button>`;
+}
+
+function MethodHelp() {
+  const cur = activeCalc().method, l = state.data.loc;
+  const items = METHOD_IDS.map(id => {
+    const m = METHODS[id];
+    const isha = m.ishaMin ? `Isha: ${m.ishaMin} minutes after Maghrib (fixed interval)` : `Isha angle: ${m.isha}°`;
+    return `<div class="mh"><b>${m.name}</b>${id === cur ? '<span class="tag">In use</span>' : ''}<small>${m.full}</small>
+      <p>Fajr angle: ${m.fajr}° · ${isha}${m.maghrib ? ` · Maghrib: ${m.maghrib}° below the horizon` : ''}</p>
+      <p class="muted">Best for: ${m.best}</p><p>${m.info}</p></div>`;
+  }).join('');
+  return `<div class="grab"></div>
+    <div class="sheet-head"><div><h2>Calculation Method</h2></div><button class="icon-btn" data-action="close-sheet" aria-label="Close">${Icon('x')}</button></div>
+    <div class="help">
+    <p class="msg">Prayer times are based on the position of the sun. Fajr begins at dawn, Dhuhr is when the sun passes its zenith, and Maghrib is at sunset. The math is well established, but scholars and organizations differ on exactly how to define "dawn" and "night" for Fajr and Isha.</p>
+    <p class="msg">That is why there are multiple calculation methods. Each one uses a slightly different sun angle for Fajr and Isha. Dhuhr, Asr and Maghrib are nearly identical across all methods.</p>
+    ${l ? `<p class="msg"><b>Auto</b> picks the method that fits your location. For you it is ${METHODS[autoMethod(l)].name}.</p>` : ''}
+    ${items}
+    <h3>How to choose</h3>
+    <p class="msg">The simplest approach is to follow your local mosque or Islamic organization.</p>
+    <ul><li>US or Canada: ISNA is the most common choice</li><li>Europe: MWL or ISNA, depending on your community</li><li>Middle East: Umm al-Qura (Gulf) or Egyptian (Levant and North Africa)</li><li>South Asia: Karachi</li><li>Southeast Asia: MWL or Egyptian</li></ul>
+    </div>
+    <button class="btn btn-primary" data-action="close-sheet">Got it</button>`;
+}
+
+function AsrHelp() {
+  const l = state.data.loc;
+  return `<div class="grab"></div>
+    <div class="sheet-head"><div><h2>Asr Calculation</h2></div><button class="icon-btn" data-action="close-sheet" aria-label="Close">${Icon('x')}</button></div>
+    <div class="help">
+    <p class="msg">Asr timing is separate from the calculation method. There are two options.</p>
+    <div class="mh"><b>Shafi (Standard)</b><p>Asr begins when the shadow of an object equals its height plus the noon shadow. This gives an earlier Asr time.</p></div>
+    <div class="mh"><b>Hanafi</b><p>Asr begins when the shadow of an object is twice its height plus the noon shadow. This gives a later Asr time.</p></div>
+    <p class="msg" style="margin-top:14px">In Sakina, you choose your madhab separately from the calculation method. This gives you the correct Asr time regardless of which overall method you use.</p>
+    ${l ? `<p class="msg"><b>Auto</b> picks the rule that fits your location. For you it is ${autoAsr(l) === 'hanafi' ? 'Hanafi' : 'Shafi'}.</p>` : ''}
+    </div>
+    <button class="btn btn-primary" data-action="close-sheet">Got it</button>`;
+}
+
+function SheetView() {
+  if (!state.sheet) return '';
+  const fresh = state.sheetFresh ? ' enter' : '';
+  const body = { log: LogSheet, reset: ResetSheet, 'help-method': MethodHelp, 'help-asr': AsrHelp }[state.sheet]();
+  return `<div class="backdrop${fresh}" data-action="close-sheet"></div>
+    <div class="sheet${fresh}" role="dialog" aria-modal="true" aria-label="${{ log: 'Log prayers', reset: 'Reset all data', 'help-method': 'Calculation methods', 'help-asr': 'Asr calculation' }[state.sheet]}" tabindex="-1">${body}</div>`;
+}
+
+function openSheet(type) {
+  state.sheet = type; state.sheetFresh = true; state.closing = false;
+  render();
+  const s = $('.sheet'); if (s) s.focus({ preventScroll: true });
+}
+
+function closeSheet() {
+  if (!state.sheet || state.closing) return;
+  state.closing = true;
+  $('#overlay').classList.add('leaving');
+  setTimeout(() => {
+    state.sheet = null; state.closing = false;
+    $('#overlay').classList.remove('leaving');
+    render();
+  }, 180);
+}
+
+/* =====================================================================
+   Render
+   ===================================================================== */
+function render(enter) {
+  const v = $('#view');
+  v.innerHTML = VIEWS[state.view]();
+  if (enter) { v.classList.remove('enter'); void v.offsetWidth; v.classList.add('enter'); }
+  $('#nav').innerHTML = Nav();
+  $('#overlay').innerHTML = SheetView();
+  tickNext();
+  document.body.classList.toggle('lock', !!state.sheet);
+  state.sheetFresh = false;
+  document.querySelectorAll('[data-ring]').forEach(el => {
+    const pct = Number(el.dataset.pct);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const fg = el.querySelector('.ring-fg');
+      if (fg) fg.style.strokeDashoffset = RING_C * (1 - pct / 100);
+    }));
+    ringPrev[el.dataset.ring] = pct;
+  });
+  const sc = document.querySelector('.hm-scroll');      // current year: end the view at today's week
+  if (sc) {
+    const cur = state.year === new Date().getFullYear() && sc.querySelector ? sc.querySelector(`[data-key="${todayKey()}"]`) : null;
+    sc.scrollLeft = cur ? Math.max(0, cur.getBoundingClientRect().right - sc.getBoundingClientRect().left + sc.scrollLeft - sc.clientWidth + 6) : 0;
+  }
+}
+
+let toastTimer;
+function toast(msg) {
+  const el = $('#toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+/* =====================================================================
+   Navigation + events
+   ===================================================================== */
+const parseHash = () => {
+  const parts = location.hash.replace(/^#\/?/, '').split('/');
+  let view = parts[0];
+  if (view === 'profile') view = 'settings';              // old name
+  if (!VIEWS[view]) return { view: 'home', sub: null };
+  return { view, sub: view === 'settings' && SUBS[parts[1]] ? parts[1] : null };
+};
+
+function go(view, sub) {
+  const target = '#/' + view + (sub ? '/' + sub : '');
+  if ((location.hash || '#/home') === target) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+  location.hash = target;      // hashchange does the rest, so the back button works
+}
+
+window.addEventListener('hashchange', () => {
+  const r = parseHash();
+  if (r.view === state.view && r.sub === state.sub) return;
+  state.view = r.view; state.sub = r.sub;
+  state.sheet = null; state.closing = false;
+  $('#overlay').classList.remove('leaving');
+  render(true);
+  window.scrollTo(0, 0);
+});
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-action]');
+  if (!t) return;
+  const d = t.dataset;
+  switch (d.action) {
+    case 'nav': go(d.to); break;
+    case 'mark': mark(d.prayer); break;
+    case 'hist-mark': toggle(d.key, d.prayer); render(); break;
+    case 'more': state.histLimit += 30; render(); break;
+    case 'select-day': state.selected = d.key; render(); break;
+    case 'back-today': state.selected = todayKey(); render(); break;
+    case 'open-log': openSheet('log'); break;
+    case 'close-sheet': closeSheet(); break;
+    case 'hm-pick': {
+      const c = countDay(d.key), el = $('#hm-detail');
+      if (el) el.textContent = `${fmtShort.format(fromKey(d.key))}: ${c.done}/${N} completed` + (c.missed ? ` · ${c.missed} missed` : '');
+      break;
+    }
+    case 'set-week':
+      state.data.weekStart = Number(d.ws);
+      if (!weekKeys().includes(state.selected)) state.selected = todayKey();
+      save(); render(); break;
+    case 'open-sub': go('settings', d.sub); break;
+    case 'back': go('settings'); break;
+    case 'detect': detectLocation(); break;
+    case 'manual-toggle': openManual(); render(); break;
+    case 'search': searchManual(); break;
+    case 'pick-result': pickResult(Number(d.i)); break;
+    case 'save-manual': saveManual(); break;
+    case 'help': openSheet('help-' + d.topic); break;
+    case 'adj': {
+      const v = Math.max(-60, Math.min(60, (state.data.adj[d.id] || 0) + Number(d.step)));
+      if (v) state.data.adj[d.id] = v; else delete state.data.adj[d.id];
+      clearCache(); save(); render(); break;
+    }
+    case 'adj-reset': state.data.adj = {}; clearCache(); save(); render(); toast('Adjustments cleared'); break;
+    case 'export': exportData(); break;
+    case 'pick-file': $('#import-file').click(); break;
+    case 'ask-reset': openSheet('reset'); break;
+    case 'confirm-reset':
+      state.data = defaults(); state.selected = todayKey(); state.year = new Date().getFullYear(); state.histLimit = 30; clearCache(); resetUi();
+      save(); state.sheet = null; state.closing = false;
+      $('#overlay').classList.remove('leaving');
+      render(); toast('All data cleared'); break;
+  }
+});
+
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.id === 'year-select') { state.year = Number(t.value); render(); }
+  else if (t.id === 'range-select') { state.histRange = t.value; state.histLimit = 30; render(); }
+  else if (t.id === 'import-file') { handleImport(t.files && t.files[0]); t.value = ''; }
+  else if (t.id === 'method-select') { state.data.calc.method = t.value; clearCache(); save(); render(); toast('Calculation method updated'); }
+  else if (t.id === 'asr-select') { state.data.calc.asr = t.value; clearCache(); save(); render(); toast('Asr calculation updated'); }
+  else if (t.id === 'tz-select') { state.form.tz = t.value; }
+});
+
+document.addEventListener('input', e => {
+  const id = e.target.id, v = e.target.value;
+  if (id === 'name-input') { state.data.name = v.slice(0, 30); save(); $('#avatar').innerHTML = AvatarInner(); }
+  else if (id === 'f-q') state.form.q = v;
+  else if (id === 'f-name') { state.form.name = v; state.form.meta = null; }
+  else if (id === 'f-lat') state.form.lat = v;
+  else if (id === 'f-lon') state.form.lon = v;
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeSheet();
+  if (e.key === 'Enter' && e.target.id === 'f-q') { e.preventDefault(); searchManual(); }
+});
+
+// Keep "today" correct if the app stays open past midnight.
+let knownToday = todayKey();
+function checkDate() {
+  const t = todayKey();
+  if (t === knownToday) return;
+  const followed = state.selected === knownToday;
+  knownToday = t;
+  if (followed || !weekKeys().includes(state.selected)) state.selected = t;
+  render();
+}
+setInterval(checkDate, 30000);
+setInterval(tickNext, 1000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) checkDate(); });
+
+/* =====================================================================
+   Start
+   ===================================================================== */
+{ const r = parseHash(); state.view = r.view; state.sub = r.sub; }
+render(true);
+})();
+</script>
+</body>
+</html>
