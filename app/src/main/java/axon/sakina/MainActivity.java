@@ -1,15 +1,21 @@
+
 package org.axon.sakina;
 
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.AlarmManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.Gravity;
 import android.view.View;
 import android.webkit.GeolocationPermissions;
@@ -53,6 +59,7 @@ public class MainActivity extends Activity {
     private static final int LOCATION_PERMISSION_REQUEST = 101;
     private static final int FILE_PICKER_REQUEST = 102;
     private static final int SAVE_BACKUP_REQUEST = 103;
+    private static final int NOTIFICATION_PERMISSION_REQUEST = 104;
 
     private static final String LOCAL_URL =
             "https://appassets.androidplatform.net/assets/index.html";
@@ -68,6 +75,9 @@ public class MainActivity extends Activity {
     private static final int SOFT = Color.rgb(201, 201, 206);
     private static final int MUTED = Color.rgb(143, 143, 150);
 
+    private static final String NOTIFICATION_PREFS =
+            "sakina_notification_permissions";
+
     private WebViewAssetLoader assetLoader;
 
     @Override
@@ -76,7 +86,7 @@ public class MainActivity extends Activity {
 
         getWindow().setStatusBarColor(Color.BLACK);
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getWindow().getDecorView().setSystemUiVisibility(0);
         }
 
@@ -131,10 +141,15 @@ public class MainActivity extends Activity {
         settings.setAllowContentAccess(true);
         settings.setGeolocationEnabled(true);
 
-        // Native backup-saving bridge for the bundled Sakina HTML.
         webView.addJavascriptInterface(
                 new AndroidFileBridge(),
                 "AndroidFileBridge"
+        );
+
+        // Native prayer notification bridge.
+        webView.addJavascriptInterface(
+                new SakinaAndroidBridge(),
+                "SakinaAndroid"
         );
 
         webView.setWebViewClient(new WebViewClient() {
@@ -190,7 +205,7 @@ public class MainActivity extends Activity {
                 requestLocationPermission(origin, callback);
             }
 
-            // Handles both JSON backup imports and background image selection.
+            // Handles JSON backup imports and background image selection.
             @Override
             public boolean onShowFileChooser(
                     WebView webView,
@@ -209,33 +224,36 @@ public class MainActivity extends Activity {
 
                 String[] acceptedTypes = params.getAcceptTypes();
 
-if (acceptedTypes != null && acceptedTypes.length > 0) {
-    java.util.ArrayList<String> mimeTypes = new java.util.ArrayList<>();
+                if (acceptedTypes != null && acceptedTypes.length > 0) {
+                    java.util.ArrayList<String> mimeTypes =
+                            new java.util.ArrayList<>();
 
-    for (String type : acceptedTypes) {
-        if (type == null || type.trim().isEmpty()) {
-            continue;
-        }
+                    for (String type : acceptedTypes) {
+                        if (type == null || type.trim().isEmpty()) {
+                            continue;
+                        }
 
-        type = type.trim().toLowerCase(java.util.Locale.ROOT);
+                        type = type.trim().toLowerCase(
+                                java.util.Locale.ROOT
+                        );
 
-        if (type.equals(".json")) {
-            mimeTypes.add("application/json");
-        } else if (type.contains("/")) {
-            mimeTypes.add(type);
-        }
-    }
+                        if (type.equals(".json")) {
+                            mimeTypes.add("application/json");
+                        } else if (type.contains("/")) {
+                            mimeTypes.add(type);
+                        }
+                    }
 
-    if (mimeTypes.size() == 1) {
-        intent.setType(mimeTypes.get(0));
-    } else if (!mimeTypes.isEmpty()) {
-        intent.setType("*/*");
-        intent.putExtra(
-                Intent.EXTRA_MIME_TYPES,
-                mimeTypes.toArray(new String[0])
-        );
-    }
-}
+                    if (mimeTypes.size() == 1) {
+                        intent.setType(mimeTypes.get(0));
+                    } else if (!mimeTypes.isEmpty()) {
+                        intent.setType("*/*");
+                        intent.putExtra(
+                                Intent.EXTRA_MIME_TYPES,
+                                mimeTypes.toArray(new String[0])
+                        );
+                    }
+                }
 
                 try {
                     startActivityForResult(intent, FILE_PICKER_REQUEST);
@@ -248,11 +266,10 @@ if (acceptedTypes != null && acceptedTypes.length > 0) {
             }
         });
 
-        // Always open the bundled HTML.
         webView.loadUrl(LOCAL_URL);
     }
 
-    // JavaScript calls this when the user exports a backup.
+    // Existing native backup-saving bridge.
     private class AndroidFileBridge {
 
         @JavascriptInterface
@@ -282,6 +299,205 @@ if (acceptedTypes != null && acceptedTypes.length > 0) {
                     pendingBackupFilename = null;
                 }
             });
+        }
+    }
+
+    // Native notification bridge used by the v1.2.4 HTML.
+    private class SakinaAndroidBridge {
+
+        @JavascriptInterface
+        public String scheduleNotifications(String scheduleJson) {
+
+            JSONObject result =
+                    SakinaNotificationScheduler.scheduleNotifications(
+                            getApplicationContext(),
+                            scheduleJson
+                    );
+
+            return result.toString();
+        }
+
+        @JavascriptInterface
+        public String cancelNotifications(String idsJson) {
+
+            SakinaNotificationScheduler.cancelNotifications(
+                    getApplicationContext(),
+                    idsJson
+            );
+
+            return "{\"ok\":true}";
+        }
+
+        @JavascriptInterface
+        public String cancelAll() {
+
+            SakinaNotificationScheduler.cancelAll(
+                    getApplicationContext()
+            );
+
+            return "{\"ok\":true}";
+        }
+
+        @JavascriptInterface
+        public String getPermissionState() {
+
+            if (Build.VERSION.SDK_INT < 33) {
+                return "granted";
+            }
+
+            if (checkSelfPermission(
+                    Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED) {
+                return "granted";
+            }
+
+            SharedPreferences prefs = getSharedPreferences(
+                    NOTIFICATION_PREFS,
+                    MODE_PRIVATE
+            );
+
+            return prefs.getBoolean("asked", false)
+                    ? "denied" : "default";
+        }
+
+        @JavascriptInterface
+        public String requestPermission() {
+
+            if (Build.VERSION.SDK_INT < 33) {
+                return "granted";
+            }
+
+            if (checkSelfPermission(
+                    Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED) {
+                return "granted";
+            }
+
+            getSharedPreferences(
+                    NOTIFICATION_PREFS,
+                    MODE_PRIVATE
+            ).edit().putBoolean("asked", true).apply();
+
+            runOnUiThread(() -> {
+
+                if (!isFinishing() && !isDestroyed()) {
+                    requestPermissions(
+                            new String[]{
+                                    Manifest.permission.POST_NOTIFICATIONS
+                            },
+                            NOTIFICATION_PERMISSION_REQUEST
+                    );
+                }
+            });
+
+            return "pending";
+        }
+
+        @JavascriptInterface
+        public int getScheduledCount() {
+
+            return SakinaNotificationScheduler.getScheduledCount(
+                    getApplicationContext()
+            );
+        }
+
+        @JavascriptInterface
+        public boolean canScheduleExactAlarms() {
+
+            if (Build.VERSION.SDK_INT < 31) {
+                return true;
+            }
+
+            AlarmManager alarmManager =
+                    (AlarmManager) getSystemService(
+                            Context.ALARM_SERVICE
+                    );
+
+            return alarmManager != null
+                    && alarmManager.canScheduleExactAlarms();
+        }
+
+        @JavascriptInterface
+        public void openNotificationSettings() {
+
+            runOnUiThread(() -> {
+
+                try {
+                    Intent intent = new Intent(
+                            Settings.ACTION_APP_NOTIFICATION_SETTINGS
+                    );
+
+                    intent.putExtra(
+                            Settings.EXTRA_APP_PACKAGE,
+                            getPackageName()
+                    );
+
+                    startActivity(intent);
+
+                } catch (Exception e) {
+
+                    try {
+                        Intent fallback = new Intent(
+                                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                Uri.parse("package:" + getPackageName())
+                        );
+
+                        startActivity(fallback);
+
+                    } catch (Exception ignored) {
+                    }
+                }
+            });
+        }
+
+        @JavascriptInterface
+        public boolean sendTestNotification() {
+
+            if (Build.VERSION.SDK_INT >= 33 &&
+                    checkSelfPermission(
+                            Manifest.permission.POST_NOTIFICATIONS
+                    ) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+
+            Intent intent = new Intent(
+                    MainActivity.this,
+                    SakinaNotificationReceiver.class
+            );
+
+            intent.putExtra(
+                    SakinaNotificationReceiver.EXTRA_ID,
+                    "sakina_test_notification"
+            );
+
+            intent.putExtra(
+                    SakinaNotificationReceiver.EXTRA_TITLE,
+                    "Sakina test notification"
+            );
+
+            intent.putExtra(
+                    SakinaNotificationReceiver.EXTRA_BODY,
+                    "Your Sakina notifications are working."
+            );
+
+            intent.putExtra(
+                    SakinaNotificationReceiver.EXTRA_SOUND,
+                    true
+            );
+
+            intent.putExtra(
+                    SakinaNotificationReceiver.EXTRA_VIBRATE,
+                    true
+            );
+
+            sendBroadcast(intent);
+
+            return true;
+        }
+
+        @JavascriptInterface
+        public int getBridgeVersion() {
+            return 1;
         }
     }
 
@@ -344,6 +560,26 @@ if (acceptedTypes != null && acceptedTypes.length > 0) {
             locationCallback = null;
             locationOrigin = null;
         }
+
+        if (requestCode == NOTIFICATION_PERMISSION_REQUEST) {
+
+            boolean granted =
+                    Build.VERSION.SDK_INT < 33 ||
+                    checkSelfPermission(
+                            Manifest.permission.POST_NOTIFICATIONS
+                    ) == PackageManager.PERMISSION_GRANTED;
+
+            String state = granted ? "granted" : "denied";
+
+            if (webView != null) {
+                webView.post(() -> webView.evaluateJavascript(
+                        "if(window.onSakinaPermissionResult){" +
+                                "window.onSakinaPermissionResult('" +
+                                state + "');}",
+                        null
+                ));
+            }
+        }
     }
 
     @Override
@@ -403,7 +639,6 @@ if (acceptedTypes != null && acceptedTypes.length > 0) {
                     }
 
                 } catch (Exception ignored) {
-                    // The save operation may fail if the selected provider is unavailable.
                 }
             }
 
@@ -484,7 +719,6 @@ if (acceptedTypes != null && acceptedTypes.length > 0) {
                 }
 
             } catch (Exception ignored) {
-                // The app continues working if the internet is unavailable.
             } finally {
                 if (connection != null) {
                     connection.disconnect();
@@ -744,6 +978,7 @@ if (acceptedTypes != null && acceptedTypes.length > 0) {
 
         if (webView != null) {
             webView.removeJavascriptInterface("AndroidFileBridge");
+            webView.removeJavascriptInterface("SakinaAndroid");
             webView.destroy();
             webView = null;
         }
