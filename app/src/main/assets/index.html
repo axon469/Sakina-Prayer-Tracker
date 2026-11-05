@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- Sakina Prayer Tracker v1.2.4 | Android WebView version -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -11,27 +12,27 @@
 <style>
 /* ---------- Tokens ---------- */
 :root,html[data-theme="dark"]{
-  --bg:#0a0a0a; --card:#1b1b1d; --card-2:#262629; --track:#2c2c2f; --inner:#232326; --cell:#27272a;
+  --bg:#0a0a0a; --card:#1b1b1d; --card-2:#262629; --track:#2c2c2f; --inner:#232326; --skel:#27272a;
   --b1:#2a2a2d; --b2:#34343a; --b3:#3a3a3e; --input:#121214; --select:#212124; --sheet:#151517; --sheet-list:#1c1c1f;
   --nav-bg:rgba(28,28,30,.92); --nav-active:#2d2d30; --line:rgba(255,255,255,.07); --hr:rgba(255,255,255,.2); --ring-line:rgba(255,255,255,.07);
   --text:#fff; --soft:#c9c9ce; --muted:#8f8f96; --faint:#6f6f76; --fg:#fff; --on-fg:#000; --bgc:#fff;
-  --accent:#cf9f86; --accent-dark:#392e29; --danger:#e0766c; --ok:#7fd6a2; --ok-bg:rgba(111,207,151,.1);
+  --accent:#cf9f86; --accent-dark:#392e29; --danger:#e0766c; --ok:#7fd6a2; --ok-bg:rgba(111,207,151,.1); --warn:#e6b866; --warn-bg:rgba(230,184,102,.12);
   --chev:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
   --radius:28px; --nav-h:72px;
   --font:"Outfit","Poppins",ui-rounded,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
 }
 html[data-theme="amoled"]{
-  --bg:#000; --card:#0f0f11; --card-2:#1a1a1d; --track:#222225; --inner:#141416; --cell:#18181b;
+  --bg:#000; --card:#0f0f11; --card-2:#1a1a1d; --track:#222225; --inner:#141416; --skel:#18181b;
   --b1:#1f1f22; --b2:#2c2c31; --b3:#35353a; --input:#09090a; --select:#16161a; --sheet:#0a0a0b; --sheet-list:#121214;
   --nav-bg:rgba(10,10,12,.94); --nav-active:#202024; --line:rgba(255,255,255,.08);
 }
 html[data-theme="light"]{
   color-scheme:light;
-  --bg:#f2f2f5; --card:#ffffff; --card-2:#eeeef2; --track:#e3e3e8; --inner:#f4f4f7; --cell:#e9e9ee;
+  --bg:#f2f2f5; --card:#ffffff; --card-2:#eeeef2; --track:#e3e3e8; --inner:#f4f4f7; --skel:#e9e9ee;
   --b1:#dcdce2; --b2:#d0d0d8; --b3:#c2c2cb; --input:#f4f4f7; --select:#f1f1f5; --sheet:#ffffff; --sheet-list:#f6f6f9;
   --nav-bg:rgba(255,255,255,.92); --nav-active:#e9e9ee; --line:rgba(0,0,0,.08); --hr:rgba(0,0,0,.15); --ring-line:rgba(0,0,0,.06);
   --text:#111114; --soft:#3d3d44; --muted:#6b6b73; --faint:#9a9aa3; --fg:#111114; --on-fg:#ffffff; --bgc:#000;
-  --accent:#b97f62; --accent-dark:#f0e2da; --danger:#d14a3f; --ok:#1f8a4c; --ok-bg:rgba(31,138,76,.1);
+  --accent:#b97f62; --accent-dark:#f0e2da; --danger:#d14a3f; --ok:#1f8a4c; --ok-bg:rgba(31,138,76,.1); --warn:#8a5a0c; --warn-bg:rgba(150,96,15,.1);
   --chev:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -186,7 +187,7 @@ h3.sec{font-size:26px;font-weight:600;margin:34px 4px 14px}
 .hm-months{display:grid;grid-auto-columns:var(--cell);gap:var(--gap);height:20px;margin-bottom:4px}
 .hm-months span{font-size:13px;color:var(--muted);white-space:nowrap;line-height:20px}
 .hm-grid{display:grid;grid-template-rows:repeat(7,var(--cell));grid-auto-flow:column;grid-auto-columns:var(--cell);gap:var(--gap)}
-.hm-c{display:block;width:var(--cell,22px);height:var(--cell,22px);border-radius:8px;background:var(--cell)}
+.hm-c{display:block;width:var(--cell,22px);height:var(--cell,22px);border-radius:8px;background:var(--skel)}
 .hm-c.l1{background:rgba(207,159,134,.28)}.hm-c.l2{background:rgba(207,159,134,.5)}
 .hm-c.l3{background:rgba(207,159,134,.72)}.hm-c.l4{background:#cf9f86}.hm-c.l5{background:var(--fg)}
 .hm-c.lm{background:rgba(224,118,108,.38)}
@@ -375,6 +376,32 @@ h3.sec{font-size:26px;font-weight:600;margin:34px 4px 14px}
 .imp-row b{font-weight:600;text-align:right}
 .sheet .note{margin:0 4px 16px}
 
+/* ---------- Notifications ---------- */
+.sw{position:relative;width:52px;height:32px;border-radius:999px;background:var(--track);border:1px solid var(--b2);flex:none;transition:background .2s,border-color .2s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:var(--muted);transition:transform .2s,background .2s}
+.sw[aria-checked="true"]{background:var(--fg);border-color:var(--fg)}
+.sw[aria-checked="true"]::after{transform:translateX(20px);background:var(--on-fg)}
+.sw:disabled{opacity:.4;cursor:default}
+.nrow{display:flex;align-items:center;gap:14px;padding:14px 0}
+.nrow+.nrow,.nopt+.nrow{border-top:1px solid var(--line)}
+.nrow .mi{width:40px;height:40px;border-radius:12px}
+.nt{flex:1;min-width:0;text-align:left}
+.nt b{display:block;font-size:16.5px;font-weight:600}
+.nt small{display:block;margin-top:3px;font-size:13px;line-height:1.4;color:var(--muted)}
+button.nt{display:block;padding:0}
+.nopt{display:flex;align-items:center;gap:10px;padding:0 0 14px;font-size:14px;color:var(--muted)}
+.nopt .select-pill{flex:none}
+.notice{display:block;margin-top:14px;padding:14px 16px;border-radius:18px;font-size:13.5px;line-height:1.5;background:var(--card-2);color:var(--soft)}
+.notice.warn{background:var(--warn-bg);color:var(--warn)}
+.linkbtn{color:var(--accent);text-decoration:underline;font:inherit}
+.btn-sm.sm{height:38px;padding:0 14px;font-size:14px;border-radius:14px}
+.card h2.h+.small{margin-bottom:6px}
+.chips{display:flex;gap:6px;margin-top:10px}
+.chip{flex:1;min-width:0;height:42px;border-radius:12px;border:1px solid var(--b2);color:var(--muted);font-size:14px}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--on-fg);border-color:var(--fg);font-weight:600}
+.card .btn{height:50px;font-size:16px}
+.card .nrow + .btn{margin-top:10px}
+
 /* ---------- Sheet + toast ---------- */
 .backdrop{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
 .sheet{position:fixed;left:0;right:0;bottom:0;z-index:31;max-width:480px;margin:0 auto;max-height:90vh;overflow:auto;background:var(--sheet);border:1px solid var(--line);
@@ -435,7 +462,7 @@ h3.sec{font-size:26px;font-weight:600;margin:34px 4px 14px}
 /* =====================================================================
    Constants
    ===================================================================== */
-const VERSION = '1.2.0';
+const VERSION = '1.2.4';
 const KEY = 'sakina:v1';          // same key as v1.0 so existing data carries over
 const PRAYERS = [
   { id: 'fajr',    name: 'Fajr',    ar: 'الفجر',  icon: 'sunrise' },
@@ -491,6 +518,13 @@ const THEMES = { dark: ['Dark', 'The default look', 'moon'], light: ['Light', 'B
 const THEME_COLOR = { dark: '#0a0a0a', light: '#f2f2f5', amoled: '#000000' };
 const PHOTO_KEY = 'sakina:bgphoto';
 const STAR_TILE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M25 13Q25 25 37 25Q25 25 25 37Q25 25 13 25Q25 25 25 13ZM75 63Q75 75 87 75Q75 75 75 87Q75 75 63 75Q75 75 75 63Z'/%3E%3C/svg%3E";
+// Notifications
+const SCHED_KEY = 'sakina:notifsched';
+const PRE_MINUTES = [5, 10, 15, 20, 30, 45, 60];
+const MISSED_MINUTES = [15, 30, 45, 60, 90];
+const CUSTOM_MINUTES = [5, 10, 15, 20, 30, 45, 60, 90, 120];
+const CUSTOM_MAX = 10;
+const DAYS3 = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const DEV_LINKS = [['GitHub', 'https://github.com/axon469', 'github'], ['Discord', 'https://discord.gg/WRvjXndt', 'discord'], ['Instagram', 'https://instagram.com/abu_bokkor_siddiki', 'instagram']];
 
 /* =====================================================================
@@ -532,7 +566,8 @@ const ICONS = {
   dots: '<path d="M6 6h.01M12 6h.01M18 6h.01M6 12h.01M12 12h.01M18 12h.01M6 18h.01M12 18h.01M18 18h.01" stroke-width="2.6"/>',
   spark: '<path d="M12 4Q12 12 20 12Q12 12 12 20Q12 12 4 12Q12 12 12 4Z"/>',
   grid: '<rect x="4" y="4" width="16" height="16" rx="2.5"/><path d="M12 4v16M4 12h16"/>',
-  image: '<rect x="3.5" y="4.5" width="17" height="15" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M4 17l5-4.5 3.5 3 3-2.5 4.5 4"/>'
+  image: '<rect x="3.5" y="4.5" width="17" height="15" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M4 17l5-4.5 3.5 3 3-2.5 4.5 4"/>',
+  bell: '<path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>'
 };
 const BRANDS = {
   github: '<path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.9a3.4 3.4 0 0 0-.9-2.6c3.100-.3 6.400-1.500 6.400-7A5.400 5.400 0 0 0 20 4.800 5.100 5.100 0 0 0 19.900 1S18.700.7 16 2.500a13.400 13.400 0 0 0-7 0C6.300.7 5.100 1 5.100 1A5.100 5.100 0 0 0 5 4.800a5.400 5.400 0 0 0-1.500 3.800c0 5.400 3.300 6.600 6.400 7A3.400 3.400 0 0 0 9 18.100V22"/>',
@@ -572,7 +607,7 @@ function keysBetween(a, b) {
    Model: { v, name, weekStart, start, days: { 'YYYY-MM-DD': { fajr: 1, ... } } }
    Only completed prayers are stored. Anything not stored is "not completed".
    ===================================================================== */
-const defaults = () => ({ v: 2, name: '', weekStart: 1, start: todayKey(), days: {}, loc: null, calc: { method: 'auto', asr: 'auto' }, adj: {}, theme: 'dark', bg: defaultBg() });
+const defaults = () => ({ v: 2, name: '', weekStart: 1, start: todayKey(), days: {}, loc: null, calc: { method: 'auto', asr: 'auto' }, adj: {}, theme: 'dark', bg: defaultBg(), notif: defaultNotif() });
 const isOn = v => v === 1 || v === true || v === 'done';   // 'done' = v1.0 data
 
 function cleanDays(src) {
@@ -586,6 +621,35 @@ function cleanDays(src) {
     if (Object.keys(day).length) out[k] = day;
   }
   return out;
+}
+
+function defaultNotif() {
+  return { enabled: false, atTime: true, pre: { on: false, min: 15 }, missed: { on: false, min: 30 },
+    prayers: { fajr: true, dhuhr: true, asr: true, maghrib: true, isha: true }, sound: true, vibrate: true, custom: [] };
+}
+function cleanCustom(c) {
+  if (!c || typeof c !== 'object') return null;
+  if (typeof c.id !== 'string' || !/^[\w-]{1,24}$/.test(c.id)) return null;
+  if (c.anchor !== 'clock' && !TIME_IDS.includes(c.anchor)) return null;
+  let off = Math.round(Number(c.offset));
+  if (!(off >= -180 && off <= 180)) off = 0;
+  return { id: c.id, label: typeof c.label === 'string' ? c.label.slice(0, 40) : '', anchor: c.anchor,
+    time: /^([01]\d|2[0-3]):[0-5]\d$/.test(c.time) ? c.time : '09:00', offset: off,
+    days: Array.isArray(c.days) && c.days.length === 7 ? c.days.map(Boolean) : Array(7).fill(true), on: c.on !== false };
+}
+function cleanNotif(x) {
+  const d = defaultNotif();
+  if (!x || typeof x !== 'object') return d;
+  const isB = v => typeof v === 'boolean';
+  for (const k of ['enabled', 'atTime', 'sound', 'vibrate']) if (isB(x[k])) d[k] = x[k];
+  if (x.pre && typeof x.pre === 'object') { if (isB(x.pre.on)) d.pre.on = x.pre.on; if (PRE_MINUTES.includes(x.pre.min)) d.pre.min = x.pre.min; }
+  if (x.missed && typeof x.missed === 'object') { if (isB(x.missed.on)) d.missed.on = x.missed.on; if (MISSED_MINUTES.includes(x.missed.min)) d.missed.min = x.missed.min; }
+  if (x.prayers && typeof x.prayers === 'object') for (const id of IDS) if (isB(x.prayers[id])) d.prayers[id] = x.prayers[id];
+  if (Array.isArray(x.custom)) {
+    const seen = new Set();
+    for (const c of x.custom) { const k = cleanCustom(c); if (k && !seen.has(k.id) && d.custom.length < CUSTOM_MAX) { seen.add(k.id); d.custom.push(k); } }
+  }
+  return d;
 }
 
 function defaultBg() {
@@ -632,6 +696,7 @@ function sanitize(p) {
   }
   if (p.theme === 'light' || p.theme === 'amoled') d.theme = p.theme;
   d.bg = cleanBg(p.bg);
+  d.notif = cleanNotif(p.notif);
   if (p.adj && typeof p.adj === 'object') {
     for (const id of TIME_IDS) { const n = Math.round(Number(p.adj[id])); if (n) d.adj[id] = Math.max(-60, Math.min(60, n)); }
   }
@@ -654,7 +719,9 @@ function save() {
   catch (e) {
     if (!saveWarned) { saveWarned = true; toast('Could not save. Browser storage may be blocked.'); }
   }
+  scheduleRefresh();
 }
+var refreshTimer;
 
 /* =====================================================================
    State
@@ -666,11 +733,12 @@ const state = {
   year: new Date().getFullYear(),
   histRange: 'all',
   histLimit: 30,
-  sub: null,          // settings sub page: 'theme' | 'design' | 'general' | 'location' | 'about'
+  sub: null,          // settings sub page: 'theme' | 'design' | 'general' | 'location' | 'notifications' | 'about'
   importPlan: null,
+  cform: null,
   ui: freshUi(),
   form: freshForm(),
-  sheet: null,        // 'log' | 'reset' | 'import' | 'help-method' | 'help-asr' | null
+  sheet: null,        // 'log' | 'reset' | 'import' | 'custom' | 'help-method' | 'help-asr' | null
   sheetFresh: false,
   closing: false,
   pop: null
@@ -752,31 +820,49 @@ function mark(id) {
 /* ---------- Backup ---------- */
 function exportData() {
   const days = {};
-  for (const k of Object.keys(state.data.days).sort()) days[k] = PRAYERS.filter(p => state.data.days[k][p.id]).map(p => p.id);
-  const out = { app: 'sakina', version: VERSION, exported: todayKey(), start: state.data.start, days };
-const filename = `sakina-backup-${todayKey()}.json`;
-const backupJSON = JSON.stringify(out, null, 2);
 
-// Use Android's native save-file dialog inside the app.
-if (window.AndroidFileBridge &&
-    typeof window.AndroidFileBridge.saveBackup === 'function') {
+  for (const k of Object.keys(state.data.days).sort()) {
+    days[k] = PRAYERS
+      .filter(p => state.data.days[k][p.id])
+      .map(p => p.id);
+  }
 
-  window.AndroidFileBridge.saveBackup(filename, backupJSON);
-  toast('Choose where to save your backup');
+  const out = {
+    app: 'sakina',
+    version: VERSION,
+    exported: todayKey(),
+    start: state.data.start,
+    days
+  };
 
-} else {
-  // Keep normal browser downloading on the website.
-  const blob = new Blob([backupJSON], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(a.href), 1500);
-  toast('Backup file created');
-}
+  const filename = `sakina-backup-${todayKey()}.json`;
+  const backupJSON = JSON.stringify(out, null, 2);
 
+  // Native Android save-file dialog.
+  if (
+    window.AndroidFileBridge &&
+    typeof window.AndroidFileBridge.saveBackup === 'function'
+  ) {
+    window.AndroidFileBridge.saveBackup(filename, backupJSON);
+    toast('Choose where to save your backup');
+
+  } else {
+    // Normal browser download.
+    const blob = new Blob([backupJSON], {
+      type: 'application/json'
+    });
+
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+    toast('Backup file created');
+  }
 }
 
 /* ---------- Import: Sakina and Deen backups, always previewed first ---------- */
@@ -1146,6 +1232,279 @@ function tzList() {
   for (const z of [state.form.tz, state.data.loc && state.data.loc.tz, deviceTz()]) if (z && !list.includes(z)) list.push(z);
   return list;
 }
+
+/* =====================================================================
+   Notifications: shared scheduling model
+   The same schedule is built on every platform. Only the platform layer below
+   decides how it is delivered (browser timers or the native Android bridge).
+   ===================================================================== */
+const notifStatus = { ok: false, count: 0, reason: 'off', msg: '', items: [] };
+
+function hashStr(str) {
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return (h >>> 0).toString(36);
+}
+function fmtHM(hhmm) {
+  const [h, m] = hhmm.split(':').map(Number);
+  return `${h % 12 || 12}:${pad(m)} ${h < 12 ? 'AM' : 'PM'}`;
+}
+function customWhen(c) {
+  const days = c.days.every(Boolean) ? 'Every day' : c.days.map((v, i) => (v ? DAYS3[i] : null)).filter(Boolean).join(', ');
+  let what;
+  if (c.anchor === 'clock') what = `At ${fmtHM(c.time)}`;
+  else if (c.offset === 0) what = `At ${TIME_NAMES[c.anchor]}`;
+  else what = `${Math.abs(c.offset)} min ${c.offset < 0 ? 'before' : 'after'} ${TIME_NAMES[c.anchor]}`;
+  return `${what} · ${days}`;
+}
+
+function windowEnd(id, t, y, m, d) {
+  const nextOf = { fajr: 'sunrise', dhuhr: 'asr', asr: 'maghrib', maghrib: 'isha' };
+  if (nextOf[id]) return t[nextOf[id]];
+  const dt = new Date(Date.UTC(y, m - 1, d + 1));
+  const nx = dayTimes(dt.getUTCFullYear(), dt.getUTCMonth() + 1, dt.getUTCDate());
+  return nx ? nx.fajr : t.isha + 4 * 3600e3;
+}
+
+function mkItem(kind, prayer, date, ms, title, body, tz, extra) {
+  const p = partsAt(tz, ms), n = state.data.notif;
+  return Object.assign({ id: `${prayer}|${date}|${kind}`, kind, prayer, date, time: `${pad(p.hour)}:${pad(p.minute)}`, triggerAt: ms,
+    title, body, enabled: true, sound: n.sound, vibrate: n.vibrate }, extra || {});
+}
+
+// Builds every upcoming reminder for the next `days` days. Ids are deterministic (prayer|date|kind),
+// so the same reminder always has the same id and can never be scheduled twice.
+function buildSchedule(now = Date.now(), days = 14) {
+  const n = state.data.notif, l = state.data.loc, tz = (l && l.tz) || deviceTz(), items = [];
+  const p0 = partsAt(tz, now), guard = now + 5000;
+  const add = it => { if (it.triggerAt > guard) items.push(it); };
+  for (let k = 0; k < days; k++) {
+    const dt = new Date(Date.UTC(p0.year, p0.month - 1, p0.day + k));
+    const y = dt.getUTCFullYear(), m = dt.getUTCMonth() + 1, d = dt.getUTCDate(), wd = dt.getUTCDay();
+    const date = `${y}-${pad(m)}-${pad(d)}`;
+    const t = l ? dayTimes(y, m, d) : null;
+    if (t) {
+      for (const pr of PRAYERS) {
+        if (!n.prayers[pr.id]) continue;
+        const at = t[pr.id], nm = pr.name, clock = fmtTime(at, tz);
+        if (n.atTime) add(mkItem('at', pr.id, date, at, nm, `It's time for ${nm} · ${clock}`, tz));
+        if (n.pre.on) add(mkItem('pre', pr.id, date, at - n.pre.min * 60000, `${nm} in ${n.pre.min} min`, `Starts at ${clock}`, tz));
+        // Missed-prayer reminders only for today, and only for prayers not completed yet.
+        if (n.missed.on && k === 0 && !dayOf(date)[pr.id]) {
+          const when = at + n.missed.min * 60000;
+          if (when < windowEnd(pr.id, t, y, m, d) - 5 * 60000) add(mkItem('missed', pr.id, date, when, `Missed ${nm}?`, `You have not marked ${nm} as completed yet.`, tz));
+        }
+      }
+    }
+    for (const c of n.custom) {
+      if (!c.on || !c.days[wd]) continue;
+      let ms = null;
+      if (c.anchor === 'clock') {
+        const [h, mi] = c.time.split(':').map(Number);
+        ms = Date.UTC(y, m - 1, d, h, mi) - tzOffsetMin(tz, Date.UTC(y, m - 1, d, 12)) * 60000;
+      } else if (t) ms = t[c.anchor] + c.offset * 60000;
+      if (ms === null) continue;
+      add(mkItem('custom', c.anchor === 'clock' ? null : c.anchor, date, ms, c.label || 'Reminder', (c.anchor === 'clock' ? fmtTime(ms, tz) : customWhen(c).split(' · ')[0] + ' · ' + fmtTime(ms, tz)), tz,
+        { id: `custom:${c.id}|${date}`, customId: c.id }));
+    }
+  }
+  items.sort((a, b) => a.triggerAt - b.triggerAt || (a.id < b.id ? -1 : 1));
+  const seen = new Set();
+  return items.filter(i => !seen.has(i.id) && seen.add(i.id));
+}
+
+function scheduleSignature(items) {
+  return hashStr(JSON.stringify(items.map(i => [i.id, i.triggerAt, i.title, i.body, i.sound, i.vibrate])));
+}
+function loadSched() { try { return JSON.parse(localStorage.getItem(SCHED_KEY)); } catch (e) { return null; } }
+function saveSched(rec) {
+  try { if (rec) localStorage.setItem(SCHED_KEY, JSON.stringify(rec)); else localStorage.removeItem(SCHED_KEY); } catch (e) { /* storage blocked */ }
+}
+
+function scheduleRefresh(force) { clearTimeout(refreshTimer); refreshTimer = setTimeout(() => refreshNotifications(force), 500); }
+
+// Rebuilds the schedule and hands it to the platform layer. Safe to call as often as needed.
+function refreshNotifications(force) {
+  const n = state.data.notif, st = notifStatus, before = `${st.ok}|${st.count}|${st.reason}|${st.msg}`;
+  const finish = (ok, count, reason, msg, items) => {
+    Object.assign(st, { ok, count, reason, msg: msg || '', items: items || [] });
+    const changed = before !== `${st.ok}|${st.count}|${st.reason}|${st.msg}`;
+    if (changed && state.view === 'settings' && (!state.sub || state.sub === 'notifications') && state.sheet !== 'custom') render();
+  };
+  const last = loadSched();
+  const stop = () => { if (!Notifier.persistent || (last && last.count > 0)) Notifier.cancelAll(); saveSched(null); };
+  if (!Notifier.supported()) return finish(false, 0, 'unsupported');
+  if (!n.enabled) { stop(); return finish(false, 0, 'off'); }
+  const perm = Notifier.permission();
+  if (perm !== 'granted') { stop(); return finish(false, 0, perm === 'denied' ? 'denied' : 'permission'); }
+  const items = buildSchedule(Date.now(), Notifier.horizonDays);
+  const sig = scheduleSignature(items) + ':' + Notifier.platform;
+  if (!force && Notifier.persistent && last && last.sig === sig && last.ok && Notifier.isInSync(last)) return finish(true, last.count, '', '', items);
+  const tz = (state.data.loc && state.data.loc.tz) || deviceTz();
+  const res = Notifier.sync(items, { timezone: tz, preferences: JSON.parse(JSON.stringify(n)) });
+  if (res.ok) { saveSched({ v: 1, platform: Notifier.platform, sig, at: Date.now(), count: res.count, ok: true, tz, items: items.slice(0, 300) }); return finish(true, res.count, '', '', items); }
+  saveSched(null);
+  return finish(false, 0, res.reason || 'error', res.msg || '');
+}
+
+function resetNotifications() {
+  try { Notifier.cancelAll(); } catch (e) { /* ignore */ }
+  saveSched(null);
+  Object.assign(notifStatus, { ok: false, count: 0, reason: 'off', msg: '', items: [] });
+}
+
+function notifSummary() {
+  const n = state.data.notif, st = notifStatus;
+  if (!n.enabled) return 'Off';
+  if (st.ok) return st.count ? `On · ${st.count} scheduled` : 'On · no reminders yet';
+  return 'On · not scheduled';
+}
+
+async function setMaster(on) {
+  const n = state.data.notif;
+  if (!on) { n.enabled = false; save(); render(); toast('Notifications turned off'); return; }
+  const perm = Notifier.permission();
+  if (perm === 'unsupported' && Notifier.platform === 'web') { toast('This browser does not support notifications.'); return; }
+  if (perm === 'denied') { toast('Notifications are blocked. Allow them in settings first.'); render(); return; }
+  if (perm === 'default') {
+    const r = await Notifier.requestPermission();      // only asked now, after the user turned notifications on
+    if (r !== 'granted') { toast(r === 'denied' ? 'Permission was not granted.' : 'Notifications could not be turned on.'); render(); return; }
+  }
+  n.enabled = true; save(); render(); toast('Notifications turned on');
+}
+
+function toggleNotif(k) {
+  const n = state.data.notif;
+  if (k.startsWith('p:')) { const id = k.slice(2); if (IDS.has(id)) n.prayers[id] = !n.prayers[id]; }
+  else if (k === 'preOn') n.pre.on = !n.pre.on;
+  else if (k === 'missedOn') n.missed.on = !n.missed.on;
+  else if (k === 'atTime' || k === 'sound' || k === 'vibrate') n[k] = !n[k];
+  save(); render();
+}
+
+async function testNotification() {
+  let ok = false;
+  try { ok = await Notifier.test(); } catch (e) { ok = false; }
+  toast(ok ? 'Test notification sent' : 'A test notification could not be sent here.');
+}
+
+/* ---------- Custom reminders ---------- */
+const newCform = () => ({ id: null, label: '', type: 'clock', anchor: 'fajr', time: '21:00', min: 15, days: Array(7).fill(true), err: '' });
+function cformFrom(c) {
+  return { id: c.id, label: c.label, type: c.anchor === 'clock' ? 'clock' : (c.offset < 0 ? 'before' : 'after'), anchor: c.anchor === 'clock' ? 'fajr' : c.anchor,
+    time: c.time, min: CUSTOM_MINUTES.includes(Math.abs(c.offset)) ? Math.abs(c.offset) : 15, days: c.days.slice(), err: '' };
+}
+function saveCustom() {
+  const f = state.cform, n = state.data.notif;
+  if (!f) return;
+  if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(f.time) && f.type === 'clock') { f.err = 'Choose a valid time.'; render(); return; }
+  if (!f.days.some(Boolean)) { f.err = 'Choose at least one day.'; render(); return; }
+  const item = { id: f.id || ('c' + Date.now().toString(36)), label: f.label.trim().slice(0, 40), anchor: f.type === 'clock' ? 'clock' : f.anchor,
+    time: /^([01]\d|2[0-3]):[0-5]\d$/.test(f.time) ? f.time : '09:00', offset: f.type === 'before' ? -f.min : f.type === 'after' ? f.min : 0, days: f.days.slice(), on: true };
+  const i = n.custom.findIndex(c => c.id === item.id);
+  if (i >= 0) { item.on = n.custom[i].on; n.custom[i] = item; } else n.custom.push(item);
+  save(); state.cform = null; closeSheet(); toast('Reminder saved');
+}
+function deleteCustom() {
+  const f = state.cform, n = state.data.notif;
+  if (!f || !f.id) return;
+  n.custom = n.custom.filter(c => c.id !== f.id);
+  save(); state.cform = null; closeSheet(); toast('Reminder deleted');
+}
+
+/* ---------------------------------------------------------------------
+   Platform layer: ANDROID WEBVIEW (index.android.html)
+   Talks only to a native bridge object named SakinaAndroid (added with
+   addJavascriptInterface). Browser notifications are never used here.
+   If the bridge is missing the app keeps working and nothing is scheduled.
+
+   Bridge methods (all arguments and results are strings, numbers or booleans):
+     scheduleNotifications(json) -> '{"ok":true,"scheduled":N}'   replaces the whole schedule; same id = update
+     cancelNotifications(idsJson) -> '{"ok":true}'                cancels the listed ids (JSON array of strings)
+     cancelAll()                                                  cancels every Sakina notification
+     getPermissionState() -> 'granted' | 'denied' | 'default'
+     requestPermission() -> 'granted' | 'denied' | 'pending'      'pending' = answer comes via onSakinaPermissionResult
+     getScheduledCount() -> number                                optional, used to detect a lost schedule
+     canScheduleExactAlarms() -> boolean                          optional
+     openNotificationSettings()                                   optional
+     sendTestNotification() -> boolean                            optional
+     getBridgeVersion() -> number                                 optional, 1 for this contract
+   Native to JS:  window.onSakinaPermissionResult('granted' | 'denied' | 'default')
+                  window.SakinaApp.resyncNotifications()          call after boot or a time zone change
+   --------------------------------------------------------------------- */
+const PLATFORM = 'android';
+const Notifier = (() => {
+  let waiting = null;
+  const bridge = () => {
+    try { const b = window.SakinaAndroid; return b && typeof b.scheduleNotifications === 'function' ? b : null; } catch (e) { return null; }
+  };
+  const call = (name, ...args) => {
+    const b = bridge();
+    if (!b || typeof b[name] !== 'function') return undefined;
+    try { return b[name](...args); } catch (e) { return undefined; }
+  };
+  const flag = v => v === true || v === 'true';
+  const valid = s => s === 'granted' || s === 'denied' || s === 'default';
+
+  const self = {
+    platform: 'android', horizonDays: 14, persistent: true,
+    supported: () => !!bridge(),
+    permission() {
+      if (!bridge()) return 'unsupported';
+      const r = call('getPermissionState');
+      return valid(r) ? r : 'granted';                                // no permission API: native side handles it
+    },
+    requestPermission() {
+      return new Promise(res => {
+        if (!bridge()) return res('unsupported');
+        if (self.permission() === 'granted') return res('granted');
+        waiting = res;
+        const r = call('requestPermission');
+        if (r === 'granted' || r === 'denied') { waiting = null; return res(r); }
+        setTimeout(() => { if (waiting === res) { waiting = null; res(self.permission()); } }, 60000);
+      });
+    },
+    sync(items, meta) {
+      if (!bridge()) return { ok: false, reason: 'unsupported' };
+      const n = state.data.notif;
+      const payload = { version: 1, app: 'sakina', appVersion: VERSION, generatedAt: Date.now(), timezone: meta.timezone, enabled: true,
+        options: { sound: n.sound, vibrate: n.vibrate }, preferences: meta.preferences, notifications: items };
+      const out = call('scheduleNotifications', JSON.stringify(payload));
+      let r = null;
+      try { r = typeof out === 'string' ? JSON.parse(out) : out; } catch (e) { r = null; }
+      if (r && r.ok === true) return { ok: true, count: Number.isFinite(Number(r.scheduled)) ? Number(r.scheduled) : items.length };
+      return { ok: false, reason: 'native', msg: r && r.error ? String(r.error).slice(0, 120) : 'The app did not confirm the schedule.' };
+    },
+    cancelAll() { call('cancelAll'); },
+    isInSync(last) {
+      const c = call('getScheduledCount');
+      if (c !== undefined && Number(c) !== last.count) return false;   // native lost its schedule
+      return Date.now() - last.at < 6 * 3600e3;                        // otherwise refresh at least every 6 hours
+    },
+    test: () => Promise.resolve(flag(call('sendTestNotification'))),
+    notice(st) {
+      const n = state.data.notif;
+      if (!bridge()) return { tone: 'warn', text: 'Native Android notifications are not available in this build. Your choices are saved, but no reminders are scheduled.' };
+      if (self.permission() === 'denied') return { tone: 'warn', text: 'Notifications are blocked for this app in Android settings.' };
+      if (n.enabled && st.reason === 'native') return { tone: 'warn', text: `Android did not accept the schedule. ${st.msg}` };
+      const exact = call('canScheduleExactAlarms');
+      if (n.enabled && st.ok && exact !== undefined && !flag(exact)) return { tone: 'warn', text: `${st.count} reminders are scheduled, but exact alarms are turned off, so Android may delay them.` };
+      if (n.enabled && st.ok) return { tone: 'info', text: `${st.count} ${st.count === 1 ? 'reminder is' : 'reminders are'} scheduled with Android. They can arrive even when Sakina is closed.` };
+      return { tone: 'info', text: 'Reminders are scheduled with Android, so they can arrive even when Sakina is closed.' };
+    }
+  };
+  if (typeof self.openSettings === 'undefined') self.openSettings = () => { call('openNotificationSettings'); };
+
+  window.onSakinaPermissionResult = s => {
+    const st = valid(s) ? s : self.permission();
+    if (waiting) { const w = waiting; waiting = null; w(st); }
+    scheduleRefresh(true);
+    if (state.view === 'settings' && (!state.sub || state.sub === 'notifications') && state.sheet !== 'custom') render();
+  };
+  window.SakinaApp = { version: VERSION, resyncNotifications: () => refreshNotifications(true), getSchedule: () => JSON.stringify(buildSchedule(Date.now(), 14)) };
+  return self;
+})();
+
 
 /* =====================================================================
    Theme and background
@@ -1535,16 +1894,17 @@ function SettingsView() {
   const bgName = BG_TYPES.find(t => t[0] === state.data.bg.type)[1];
   return `
   <header class="top"><div><p class="eyebrow">Preferences</p><h1>Settings</h1></div></header>
+  <section class="card me">
+    <div class="avatar" id="avatar">${AvatarInner()}</div>
+    <div class="field"><label for="name-input">Your name</label><input id="name-input" type="text" maxlength="30" autocomplete="off" placeholder="Optional" value="${esc(state.data.name)}"></div>
+  </section>
   <section class="card menu">
     ${MenuRow('palette', 'Theme', THEMES[state.data.theme][0], 'theme')}
     ${MenuRow('layout', 'Design style', 'Background: ' + bgName, 'design')}
     ${MenuRow('list', 'General', 'Week start, backup and data', 'general')}
     ${MenuRow('pin', 'Location & Calculation Method', locSummary(), 'location')}
+    ${MenuRow('bell', 'Notifications & Reminders', notifSummary(), 'notifications')}
     ${MenuRow('info', 'About', 'Version ' + VERSION, 'about')}
-  </section>
-  <section class="card me">
-    <div class="avatar" id="avatar">${AvatarInner()}</div>
-    <div class="field"><label for="name-input">Your name</label><input id="name-input" type="text" maxlength="30" autocomplete="off" placeholder="Optional" value="${esc(state.data.name)}"></div>
   </section>`;
 }
 
@@ -1711,7 +2071,89 @@ function AdjCard() {
   </section>`;
 }
 
-const SUBS = { theme: ThemePage, design: DesignPage, general: GeneralPage, location: LocationPage, about: AboutPage };
+const Sw = (action, key, on, label, extra) =>
+  `<button class="sw" role="switch" aria-checked="${on}" aria-label="${esc(label)}" data-action="${action}" data-k="${esc(key)}" ${extra || ''}></button>`;
+
+function NotificationsPage() {
+  const n = state.data.notif, l = state.data.loc, st = notifStatus;
+  const sup = Notifier.supported(), perm = Notifier.permission(), nt = Notifier.notice(st);
+  const tz = (l && l.tz) || deviceTz(), tt = todayTimes();
+  const permText = { granted: 'Allowed', denied: 'Blocked', default: 'Not asked yet', unsupported: 'Not available' }[perm] || 'Unknown';
+  const permBtn = perm === 'default' && sup ? '<button class="btn-sm sm" data-action="n-perm">Allow</button>'
+    : (perm === 'denied' && typeof Notifier.openSettings === 'function' ? '<button class="btn-sm sm" data-action="n-settings">Open settings</button>' : '');
+  const lockMaster = Notifier.platform === 'web' && !sup;
+  const mSub = !n.enabled ? 'Turn on to receive reminders'
+    : st.ok ? (st.count ? `${st.count} reminders scheduled` : 'On, nothing to schedule yet')
+    : st.reason === 'denied' ? 'On, but blocked' : st.reason === 'permission' ? 'On, waiting for permission' : 'On, not scheduled';
+  const opts = (arr, cur) => arr.map(m => `<option value="${m}" ${m === cur ? 'selected' : ''}>${m} min</option>`).join('');
+  const up = st.ok ? st.items.slice(0, 5).map(it => {
+    const f = new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'short', hour: 'numeric', minute: '2-digit' });
+    return `<div class="imp-row"><span>${esc(it.title)}</span><b>${f.format(new Date(it.triggerAt)).replace(/\u202f/g, ' ')}</b></div>`;
+  }).join('') : '';
+  const prayerRows = PRAYERS.map(p => `<div class="nrow"><div class="mi">${Icon(p.icon)}</div>
+    <div class="nt"><b>${p.name}</b><small>${tt && l ? fmtTime(tt[p.id], tz) : 'Set a location to see the time'}</small></div>
+    ${Sw('n-toggle', 'p:' + p.id, n.prayers[p.id], p.name + ' notifications')}</div>`).join('');
+  const customRows = n.custom.map(c => `<div class="nrow"><button class="nt" data-action="c-edit" data-id="${esc(c.id)}"><b>${esc(c.label || 'Reminder')}</b><small>${esc(customWhen(c))}</small></button>
+    ${Sw('c-toggle', c.id, c.on, (c.label || 'Reminder') + ' reminder').replace('data-k=', 'data-id=')}</div>`).join('');
+
+  return `${SubHead('Notifications & Reminders')}
+  <section class="card" aria-label="Notification status">
+    <div class="nrow"><div class="nt"><b>Notifications</b><small>${mSub}</small></div>${Sw('n-master', 'master', n.enabled, 'Notifications', lockMaster ? 'disabled' : '')}</div>
+    <div class="nrow"><div class="nt"><b>Permission</b><small>${permText}</small></div>${permBtn}</div>
+    <div class="notice ${nt.tone}" role="status">${esc(nt.text)}</div>
+    ${!l ? `<div class="notice">Set your location to get prayer reminders. <button class="linkbtn" data-action="open-sub" data-sub="location">Set location</button></div>` : ''}
+    ${perm === 'granted' && sup ? '<button class="btn btn-ghost" style="margin-top:14px" data-action="n-test">Send a test notification</button>' : ''}
+  </section>
+  <section class="card" aria-label="Reminder types">
+    <h2 class="h">Reminders</h2>
+    <div class="nrow"><div class="nt"><b>Prayer-time reminders</b><small>Notify when each prayer begins</small></div>${Sw('n-toggle', 'atTime', n.atTime, 'Prayer-time reminders')}</div>
+    <div class="nrow"><div class="nt"><b>Before the prayer</b><small>An early heads-up</small></div>${Sw('n-toggle', 'preOn', n.pre.on, 'Reminder before the prayer')}</div>
+    ${n.pre.on ? `<div class="nopt"><span>Remind me</span><select id="n-pre-min" class="select-pill" aria-label="Minutes before the prayer">${opts(PRE_MINUTES, n.pre.min)}</select><span>before</span></div>` : ''}
+    <div class="nrow"><div class="nt"><b>Missed-prayer reminder</b><small>If a prayer is still not marked as completed</small></div>${Sw('n-toggle', 'missedOn', n.missed.on, 'Missed-prayer reminder')}</div>
+    ${n.missed.on ? `<div class="nopt"><span>Remind me</span><select id="n-missed-min" class="select-pill" aria-label="Minutes after the prayer starts">${opts(MISSED_MINUTES, n.missed.min)}</select><span>after it starts</span></div>` : ''}
+  </section>
+  <section class="card" aria-label="Prayers">
+    <h2 class="h">Prayers</h2>
+    <p class="small">Choose which prayers send notifications.</p>
+    ${prayerRows}
+  </section>
+  <section class="card" aria-label="Sound and vibration">
+    <h2 class="h">Sound and vibration</h2>
+    <div class="nrow"><div class="nt"><b>Sound</b><small>Play the notification sound</small></div>${Sw('n-toggle', 'sound', n.sound, 'Sound')}</div>
+    <div class="nrow"><div class="nt"><b>Vibration</b><small>Vibrate when a reminder arrives</small></div>${Sw('n-toggle', 'vibrate', n.vibrate, 'Vibration')}</div>
+  </section>
+  <section class="card" aria-label="Custom reminders">
+    <h2 class="h">Custom reminders</h2>
+    <p class="small">Add your own reminder at a set time, or before or after a prayer.</p>
+    ${customRows}
+    <button class="btn btn-ghost" style="margin-top:12px" data-action="c-add" ${n.custom.length >= CUSTOM_MAX ? 'disabled' : ''}>${Icon('plus')}Add reminder</button>
+  </section>
+  ${up ? `<section class="card" aria-label="Next reminders"><h2 class="h">Next reminders</h2><div style="margin-top:8px">${up}</div></section>` : ''}`;
+}
+
+function CustomSheet() {
+  const f = state.cform;
+  if (!f) return '';
+  const chips = ['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((x, i) => `<button class="chip" data-action="c-day" data-i="${i}" aria-pressed="${f.days[i]}" aria-label="${DAYS3[i]}">${x}</button>`).join('');
+  const types = [['clock', 'At a set time'], ['before', 'Before a prayer'], ['after', 'After a prayer']].map(([v, t]) => `<option value="${v}" ${f.type === v ? 'selected' : ''}>${t}</option>`).join('');
+  const anchors = TIME_IDS.map(id => `<option value="${id}" ${f.anchor === id ? 'selected' : ''}>${TIME_NAMES[id]}</option>`).join('');
+  const mins = CUSTOM_MINUTES.map(m => `<option value="${m}" ${f.min === m ? 'selected' : ''}>${m} min</option>`).join('');
+  return `<div class="grab"></div>
+    <div class="sheet-head"><div><p class="eyebrow">Custom reminder</p><h2>${f.id ? 'Edit reminder' : 'New reminder'}</h2></div>
+      <button class="icon-btn" data-action="close-sheet" aria-label="Close">${Icon('x')}</button></div>
+    <input id="c-label" class="inp" style="margin-top:0" maxlength="40" placeholder="Name (for example, Read Quran)" value="${esc(f.label)}" autocomplete="off">
+    <select id="c-type" class="select-pill wide" aria-label="When">${types}</select>
+    ${f.type === 'clock' ? `<input id="c-time" type="time" class="inp" value="${esc(f.time)}" aria-label="Time">`
+      : `<div class="two"><select id="c-anchor" class="select-pill wide" aria-label="Prayer">${anchors}</select><select id="c-min" class="select-pill wide" aria-label="Minutes">${mins}</select></div>
+         ${state.data.loc ? '' : '<p class="small muted" style="margin-top:10px;font-size:13px">This reminder needs a location to know the prayer time.</p>'}`}
+    <p class="lbl">Repeat on</p><div class="chips">${chips}</div>
+    ${f.err ? `<p class="status err" role="alert">${esc(f.err)}</p>` : ''}
+    <button class="btn btn-primary" style="margin-top:18px" data-action="c-save">Save reminder</button>
+    ${f.id ? '<button class="btn btn-danger" data-action="c-delete">Delete reminder</button>' : ''}
+    <button class="btn btn-ghost" data-action="close-sheet">Cancel</button>`;
+}
+
+const SUBS = { theme: ThemePage, design: DesignPage, general: GeneralPage, location: LocationPage, notifications: NotificationsPage, about: AboutPage };
 
 const VIEWS = { home: HomeView, stats: StatsView, history: HistoryView, settings: SettingsView };
 
@@ -1798,9 +2240,9 @@ function ImportSheet() {
 function SheetView() {
   if (!state.sheet) return '';
   const fresh = state.sheetFresh ? ' enter' : '';
-  const body = { log: LogSheet, reset: ResetSheet, import: ImportSheet, 'help-method': MethodHelp, 'help-asr': AsrHelp }[state.sheet]();
+  const body = { log: LogSheet, reset: ResetSheet, import: ImportSheet, custom: CustomSheet, 'help-method': MethodHelp, 'help-asr': AsrHelp }[state.sheet]();
   return `<div class="backdrop${fresh}" data-action="close-sheet"></div>
-    <div class="sheet${fresh}" role="dialog" aria-modal="true" aria-label="${{ log: 'Log prayers', reset: 'Reset all data', import: 'Import preview', 'help-method': 'Calculation methods', 'help-asr': 'Asr calculation' }[state.sheet]}" tabindex="-1">${body}</div>`;
+    <div class="sheet${fresh}" role="dialog" aria-modal="true" aria-label="${{ log: 'Log prayers', reset: 'Reset all data', import: 'Import preview', custom: 'Custom reminder', 'help-method': 'Calculation methods', 'help-asr': 'Asr calculation' }[state.sheet]}" tabindex="-1">${body}</div>`;
 }
 
 function openSheet(type) {
@@ -1898,7 +2340,8 @@ document.addEventListener('click', e => {
     case 'close-sheet': closeSheet(); break;
     case 'hm-pick': {
       const c = countDay(d.key), el = $('#hm-detail');
-      if (el) el.textContent = `${fmtShort.format(fromKey(d.key))}: ${c.done}/${N} completed` + (c.missed ? ` · ${c.missed} missed` : '');
+      if (el) el.textContent = d.key < state.data.start ? `${fmtShort.format(fromKey(d.key))}: no record (before tracking started)`
+        : `${fmtShort.format(fromKey(d.key))}: ${c.done}/${N} completed` + (c.missed ? ` · ${c.missed} missed` : c.left ? ` · ${c.left} left` : '');
       break;
     }
     case 'set-week':
@@ -1919,6 +2362,19 @@ document.addEventListener('click', e => {
       clearCache(); save(); render(); break;
     }
     case 'adj-reset': state.data.adj = {}; clearCache(); save(); render(); toast('Adjustments cleared'); break;
+    case 'n-master': setMaster(!state.data.notif.enabled); break;
+    case 'n-perm': setMaster(true); break;
+    case 'n-toggle': toggleNotif(d.k); break;
+    case 'n-test': testNotification(); break;
+    case 'n-settings': if (typeof Notifier.openSettings === 'function') Notifier.openSettings(); break;
+    case 'c-add':
+      if (state.data.notif.custom.length >= CUSTOM_MAX) { toast('You can add up to ' + CUSTOM_MAX + ' reminders.'); break; }
+      state.cform = newCform(); openSheet('custom'); break;
+    case 'c-edit': { const c = state.data.notif.custom.find(x => x.id === d.id); if (c) { state.cform = cformFrom(c); openSheet('custom'); } break; }
+    case 'c-toggle': { const c = state.data.notif.custom.find(x => x.id === d.id); if (c) { c.on = !c.on; save(); render(); } break; }
+    case 'c-day': if (state.cform) { state.cform.days[Number(d.i)] = !state.cform.days[Number(d.i)]; state.cform.err = ''; render(); } break;
+    case 'c-save': saveCustom(); break;
+    case 'c-delete': deleteCustom(); break;
     case 'set-theme': state.data.theme = d.mode; applyTheme(); save(); render(); break;
     case 'bg-type': state.data.bg.type = d.t; save(); applyBackground(); render(); break;
     case 'bg-dark': state.data.bg.dark = d.d; save(); applyBackground(); render(); break;
@@ -1937,7 +2393,7 @@ document.addEventListener('click', e => {
     case 'pick-file': $('#import-file').click(); break;
     case 'ask-reset': openSheet('reset'); break;
     case 'confirm-reset':
-      state.data = defaults(); state.selected = todayKey(); state.year = new Date().getFullYear(); state.histLimit = 30; clearCache(); resetUi(); bgPhoto = null; try { localStorage.removeItem(PHOTO_KEY); } catch (e) { /* ignore */ } applyTheme(); applyBackground();
+      state.data = defaults(); state.selected = todayKey(); state.year = new Date().getFullYear(); state.histLimit = 30; clearCache(); resetUi(); resetNotifications(); bgPhoto = null; try { localStorage.removeItem(PHOTO_KEY); } catch (e) { /* ignore */ } applyTheme(); applyBackground();
       save(); state.sheet = null; state.closing = false;
       $('#overlay').classList.remove('leaving');
       render(); toast('All data cleared'); break;
@@ -1953,11 +2409,19 @@ document.addEventListener('change', e => {
   else if (t.id === 'asr-select') { state.data.calc.asr = t.value; clearCache(); save(); render(); toast('Asr calculation updated'); }
   else if (t.id === 'tz-select') { state.form.tz = t.value; }
   else if (t.id === 'bg-file') { loadPhoto(t.files && t.files[0]); t.value = ''; }
+  else if (t.id === 'n-pre-min') { state.data.notif.pre.min = Number(t.value); save(); render(); }
+  else if (t.id === 'n-missed-min') { state.data.notif.missed.min = Number(t.value); save(); render(); }
+  else if (state.cform && t.id === 'c-type') { state.cform.type = t.value; state.cform.err = ''; render(); }
+  else if (state.cform && t.id === 'c-anchor') { state.cform.anchor = t.value; }
+  else if (state.cform && t.id === 'c-min') { state.cform.min = Number(t.value); }
+  else if (state.cform && t.id === 'c-time') { state.cform.time = t.value; }
 });
 
 document.addEventListener('input', e => {
   const id = e.target.id, v = e.target.value;
   if (id === 'name-input') { state.data.name = v.slice(0, 30); save(); $('#avatar').innerHTML = AvatarInner(); }
+  else if (state.cform && id === 'c-label') state.cform.label = v;
+  else if (state.cform && id === 'c-time') state.cform.time = v;
   else if (id === 'f-q') state.form.q = v;
   else if (id === 'f-name') { state.form.name = v; state.form.meta = null; }
   else if (id === 'f-lat') state.form.lat = v;
@@ -1986,10 +2450,11 @@ function checkDate() {
   knownToday = t;
   if (followed || !weekKeys().includes(state.selected)) state.selected = t;
   render();
+  scheduleRefresh(true);
 }
 setInterval(checkDate, 30000);
 setInterval(tickNext, 1000);
-document.addEventListener('visibilitychange', () => { if (!document.hidden) checkDate(); });
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { checkDate(); scheduleRefresh(); } });
 
 /* =====================================================================
    Start
@@ -1998,6 +2463,7 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden) chec
 applyTheme();
 applyBackground();
 render(true);
+scheduleRefresh(true);
 })();
 </script>
 </body>
