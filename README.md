@@ -7,7 +7,7 @@
 **A calm, private daily prayer tracker android app.**<br>
 See your next prayer, mark each prayer you complete, and watch your streak grow.
 
-![Version](https://img.shields.io/badge/version-1.2.0-cf9f86?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-1.2.4-cf9f86?style=for-the-badge)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
