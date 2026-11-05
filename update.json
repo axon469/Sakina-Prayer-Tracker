@@ -1,12 +1,13 @@
 {
-  "versionCode": 4,
-  "versionName": "1.2.0",
+  "versionCode": 5,
+  "versionName": "1.2.4",
   "title": "A little update is ready.",
-  "message": "Sakina 1.2.0 is here with improved backup import and export.",
+  "message": "Sakina 1.2.4 is here with improved notifications and other enhancements.",
   "whatsNew": [
+    "Native Android prayer notifications",
+    "Notification scheduling and permission support",
+    "Notification restoration after device restart",
     "Improved backup import and export",
-    "Import supported Deen prayer tracker backups",
-    "Choose where to save your backup files",
     "More improvements and fixes"
   ],
   "downloadUrl": "https://github.com/axon469/Sakina-Prayer-Tracker/releases/latest"
