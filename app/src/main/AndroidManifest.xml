@@ -1,8 +1,19 @@
+
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Internet and location permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- Notification permissions -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Exact alarm permission -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+
+    <!-- Restore reminders after phone restart -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -12,6 +23,7 @@
         android:theme="@android:style/Theme.Material.Light.NoActionBar"
         android:usesCleartextTraffic="false">
 
+        <!-- Main application screen -->
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -23,6 +35,26 @@
             </intent-filter>
 
         </activity>
+
+        <!-- Displays scheduled prayer notifications -->
+        <receiver
+            android:name=".SakinaNotificationReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
+        <!-- Restores scheduled reminders after restart -->
+        <receiver
+            android:name=".SakinaBootReceiver"
+            android:enabled="true"
+            android:exported="false">
+
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+
+        </receiver>
+
     </application>
 
 </manifest>
