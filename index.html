@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Sakina Prayer Tracker v1.2.4 | Website version -->
+<!-- Sakina Prayer Tracker v1.2.6 | Website version -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -402,6 +402,17 @@ button.nt{display:block;padding:0}
 .card .btn{height:50px;font-size:16px}
 .card .nrow + .btn{margin-top:10px}
 
+/* ---------- v1.2.6 ---------- */
+.stepper button.adj-val{width:auto;min-width:78px;height:40px;padding:0 6px;border-radius:12px;background:transparent;color:var(--text);font-size:15px;font-weight:500;
+  text-decoration:underline dotted var(--faint);text-underline-offset:5px}
+.adj-entry{display:flex;align-items:center;gap:10px;margin:6px 0 10px}
+.adj-entry .sign{width:58px;height:58px;border-radius:16px;background:var(--card-2);color:var(--text);font-size:28px;font-weight:600;flex:none;line-height:1}
+.adj-entry .inp{margin-top:0;flex:1;min-width:0;height:58px;font-size:26px;font-weight:600;text-align:center}
+.adj-entry .unit{color:var(--muted);font-size:16px}
+.lbl-row{display:flex;justify-content:space-between;align-items:baseline;margin-top:18px}
+.lbl-row .lbl{margin:0}
+.lbl-row output{color:var(--muted);font-size:13px}
+
 /* ---------- Sheet + toast ---------- */
 .backdrop{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
 .sheet{position:fixed;left:0;right:0;bottom:0;z-index:31;max-width:480px;margin:0 auto;max-height:90vh;overflow:auto;background:var(--sheet);border:1px solid var(--line);
@@ -462,7 +473,7 @@ button.nt{display:block;padding:0}
 /* =====================================================================
    Constants
    ===================================================================== */
-const VERSION = '1.2.4';
+const VERSION = '1.2.6';
 const KEY = 'sakina:v1';          // same key as v1.0 so existing data carries over
 const PRAYERS = [
   { id: 'fajr',    name: 'Fajr',    ar: 'الفجر',  icon: 'sunrise' },
@@ -524,6 +535,7 @@ const PRE_MINUTES = [5, 10, 15, 20, 30, 45, 60];
 const MISSED_MINUTES = [15, 30, 45, 60, 90];
 const CUSTOM_MINUTES = [5, 10, 15, 20, 30, 45, 60, 90, 120];
 const CUSTOM_MAX = 10;
+const ADJ_MAX = 180;
 const DAYS3 = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const DEV_LINKS = [['GitHub', 'https://github.com/axon469', 'github'], ['Discord', 'https://discord.gg/WRvjXndt', 'discord'], ['Instagram', 'https://instagram.com/abu_bokkor_siddiki', 'instagram']];
 
@@ -653,7 +665,7 @@ function cleanNotif(x) {
 }
 
 function defaultBg() {
-  return { type: 'dots', dots: { o: 13, s: 39 }, star: { o: 22, s: 56 }, grid: { o: 9, s: 40 }, dark: 'medium' };
+  return { type: 'dots', dots: { o: 13, s: 39 }, star: { o: 22, s: 56 }, grid: { o: 9, s: 40 }, dark: 60 };
 }
 function cleanBg(b) {
   const d = defaultBg();
@@ -665,7 +677,9 @@ function cleanBg(b) {
       if (n >= lo && n <= hi) d[k][f] = Math.round(n);
     }
   }
-  if (['soft', 'medium', 'strong'].includes(b.dark)) d.dark = b.dark;
+  const OLD_DARK = { soft: 35, medium: 60, strong: 80 };                  // choices saved by older versions
+  if (typeof b.dark === 'string' && Object.prototype.hasOwnProperty.call(OLD_DARK, b.dark)) d.dark = OLD_DARK[b.dark];
+  else if (typeof b.dark === 'number' && b.dark >= 0 && b.dark <= 90) d.dark = Math.round(b.dark);
   return d;
 }
 
@@ -698,7 +712,7 @@ function sanitize(p) {
   d.bg = cleanBg(p.bg);
   d.notif = cleanNotif(p.notif);
   if (p.adj && typeof p.adj === 'object') {
-    for (const id of TIME_IDS) { const n = Math.round(Number(p.adj[id])); if (n) d.adj[id] = Math.max(-60, Math.min(60, n)); }
+    for (const id of TIME_IDS) { const n = Math.round(Number(p.adj[id])); if (n) d.adj[id] = Math.max(-ADJ_MAX, Math.min(ADJ_MAX, n)); }
   }
   const first = Object.keys(d.days).sort()[0];
   let s = validKey(p.start) ? p.start : (first || todayKey());
@@ -736,6 +750,7 @@ const state = {
   sub: null,          // settings sub page: 'theme' | 'design' | 'general' | 'location' | 'notifications' | 'about'
   importPlan: null,
   cform: null,
+  aform: null,
   ui: freshUi(),
   form: freshForm(),
   sheet: null,        // 'log' | 'reset' | 'import' | 'custom' | 'help-method' | 'help-asr' | null
@@ -822,10 +837,15 @@ function exportData() {
   const days = {};
   for (const k of Object.keys(state.data.days).sort()) days[k] = PRAYERS.filter(p => state.data.days[k][p.id]).map(p => p.id);
   const out = { app: 'sakina', version: VERSION, exported: todayKey(), start: state.data.start, days };
-  const blob = new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' });
+  const filename = `sakina-backup-${todayKey()}.json`;
+  const backupJSON = JSON.stringify(out, null, 2);
+  // The Android app can open its own save-file dialog. The website never has one.
+  if (PlatformFiles.saveBackup(filename, backupJSON)) { toast('Choose where to save your backup'); return; }
+  // Normal browser download.
+  const blob = new Blob([backupJSON], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `sakina-backup-${todayKey()}.json`;
+  a.download = filename;
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 1500);
   toast('Backup file created');
@@ -1385,6 +1405,8 @@ function deleteCustom() {
    set with timers for the next 36 hours and are re-set on every page load.
    --------------------------------------------------------------------- */
 const PLATFORM = 'web';
+const PlatformFiles = { saveBackup: () => false };      // the website always uses a normal browser download
+const PlatformImages = { pick: () => false };       // the website always uses the normal image picker
 const Notifier = (() => {
   const HOURS = 36 * 3600e3;
   const timers = [], fired = new Set();
@@ -1468,7 +1490,7 @@ function applyBackground() {
   if (b.type === 'photo') {
     if (!bgPhoto) { st.display = 'none'; return; }
     st.backgroundImage = `url("${bgPhoto}")`; st.backgroundSize = 'cover'; st.backgroundPosition = 'center';
-    st.opacity = { soft: 0.65, medium: 0.4, strong: 0.2 }[b.dark];     // the page color shows through, so a lower opacity means a darker photo
+    st.opacity = 1 - b.dark / 100;     // the page color shows through, so a lower opacity means a darker photo
     return;
   }
   const { o, s } = b[b.type];
@@ -1494,11 +1516,11 @@ function applyBackground() {
 let saveTimer;
 const saveSoon = () => { clearTimeout(saveTimer); saveTimer = setTimeout(save, 250); };
 
-function loadPhoto(file) {
-  if (!file || !/^image\//.test(file.type)) { toast('Please choose an image file.'); return; }
-  const url = URL.createObjectURL(file), img = new Image();
+// Shrinks the picked image and stores it as the background. `done` runs once the image has loaded.
+function usePhotoSource(src, done) {
+  const img = new Image();
   img.onload = () => {
-    URL.revokeObjectURL(url);
+    if (done) done();
     for (const [max, q] of [[1280, 0.72], [800, 0.6]]) {              // shrink the photo so it fits in browser storage
       const sc = Math.min(1, max / Math.max(img.width, img.height));
       const c = document.createElement('canvas');
@@ -1514,8 +1536,19 @@ function loadPhoto(file) {
     }
     toast('This photo is too large to save. Try a smaller one.');
   };
-  img.onerror = () => { URL.revokeObjectURL(url); toast('Could not open that image.'); };
-  img.src = url;
+  img.onerror = () => { if (done) done(); toast('Could not open that image.'); };
+  img.src = src;
+}
+
+function loadPhoto(file) {
+  if (!file || !/^image\//.test(file.type)) { toast('Please choose an image file.'); return; }
+  const url = URL.createObjectURL(file);
+  usePhotoSource(url, () => URL.revokeObjectURL(url));
+}
+
+function loadPhotoDataUrl(dataUrl) {
+  if (typeof dataUrl !== 'string' || !/^data:image\/[a-z0-9.+-]+;base64,/i.test(dataUrl)) { toast('Could not read that photo.'); return; }
+  usePhotoSource(dataUrl);
 }
 
 /* =====================================================================
@@ -1883,13 +1916,12 @@ function BgControls(id) {
   const b = state.data.bg;
   if (id === 'none') return '';
   if (id === 'photo') {
-    const dk = ['soft', 'medium', 'strong'].map(d => `<button data-action="bg-dark" data-d="${d}" aria-pressed="${b.dark === d}">${d[0].toUpperCase() + d.slice(1)}</button>`).join('');
     return `<div class="ctl">
       ${bgPhoto ? `<img class="thumb" src="${bgPhoto}" alt="Your background photo">` : ''}
       <button class="btn btn-ghost" data-action="bg-pick">${Icon('image')}${bgPhoto ? 'Change photo' : 'Choose a photo'}</button>
-      ${bgPhoto ? `<button class="btn btn-ghost" data-action="bg-remove">${Icon('trash')}Remove photo</button>` : ''}
-      <p class="lbl">How dark</p>
-      <div class="seg-ctl three" role="group" aria-label="How dark">${dk}</div></div>`;
+      ${bgPhoto ? `<button class="btn btn-ghost" data-action="bg-remove">${Icon('trash')}Remove photo</button>
+      <div class="lbl-row"><p class="lbl">How dark</p><output id="bg-dark-v">${b.dark}%</output></div>
+      <input id="bg-dark" class="rng" type="range" min="0" max="90" step="1" value="${b.dark}" aria-label="How dark the photo is">` : ''}</div>`;
   }
   const { o, s } = b[id], L = BG_LIMITS[id];
   return `<div class="ctl">
@@ -2003,12 +2035,12 @@ function AdjCard() {
     const v = a[id] || 0, label = v ? `${v > 0 ? '+' : ''}${v} min` : '0 min';
     return `<div class="adj"><div><b>${TIME_NAMES[id]}</b><small>${tt && l ? fmtTime(tt[id], l.tz) : '—'}</small></div>
       <div class="stepper"><button data-action="adj" data-id="${id}" data-step="-1" aria-label="Move ${TIME_NAMES[id]} 1 minute earlier">${Icon('minus')}</button>
-      <output aria-live="polite">${label}</output>
+      <button class="adj-val" data-action="adj-edit" data-id="${id}" aria-label="${TIME_NAMES[id]} adjustment: ${label}. Tap to type a number.">${label}</button>
       <button data-action="adj" data-id="${id}" data-step="1" aria-label="Move ${TIME_NAMES[id]} 1 minute later">${Icon('plus')}</button></div></div>`;
   }).join('');
   return `<section class="card" aria-label="Prayer time adjustment">
     <h2 class="h">Prayer Time Adjustment</h2>
-    <p class="small adj-head">${any ? 'Adjusted to match your local mosque timetable.' : 'No adjustments. Move a time earlier or later to match your local mosque timetable.'}</p>
+    <p class="small adj-head">${any ? 'Adjusted to match your local mosque timetable.' : 'No adjustments. Move a time earlier or later to match your local mosque timetable. Tap the minutes to type a number.'}</p>
     ${l ? '' : '<p class="small">Set a location to see the times.</p>'}
     ${rows}
     <button class="btn btn-ghost" style="margin-top:14px" data-action="adj-reset" ${any ? '' : 'disabled'}>Reset adjustments</button>
@@ -2073,6 +2105,53 @@ function NotificationsPage() {
     <button class="btn btn-ghost" style="margin-top:12px" data-action="c-add" ${n.custom.length >= CUSTOM_MAX ? 'disabled' : ''}>${Icon('plus')}Add reminder</button>
   </section>
   ${up ? `<section class="card" aria-label="Next reminders"><h2 class="h">Next reminders</h2><div style="margin-top:8px">${up}</div></section>` : ''}`;
+}
+
+/* ---------- Typed prayer-time adjustment ---------- */
+const adjHint = f => (f.capped ? `The most you can enter is ${ADJ_MAX} minutes, so it was changed to ${ADJ_MAX}.`
+  : `${f.sign < 0 ? 'Minus moves' : 'Plus moves'} ${TIME_NAMES[f.id]} ${f.sign < 0 ? 'earlier' : 'later'}. The most you can enter is ${ADJ_MAX} minutes.`);
+const adjSignLabel = f => (f.sign < 0 ? 'Earlier. Tap to make it later.' : 'Later. Tap to make it earlier.');
+
+// Keeps digits only (a typed minus sets the sign) and caps the number at ADJ_MAX, so 999 becomes 180.
+function cleanAdjText(raw) {
+  const neg = String(raw).includes('-');
+  let digits = String(raw).replace(/\D/g, '').replace(/^0+(?=\d)/, '');
+  const capped = digits !== '' && Number(digits) > ADJ_MAX;
+  if (capped) digits = String(ADJ_MAX);
+  return { neg, capped, text: digits };
+}
+
+function syncAdjSheet() {
+  const f = state.aform;
+  if (!f) return;
+  const b = document.querySelector('[data-action="adj-sign"]'), h = $('#adj-hint');
+  if (b) { b.textContent = f.sign < 0 ? '\u2212' : '+'; b.setAttribute('aria-label', adjSignLabel(f)); }
+  if (h) { h.textContent = adjHint(f); h.style.color = f.capped ? 'var(--warn)' : ''; }
+}
+
+function saveAdj() {
+  const f = state.aform;
+  if (!f) return;
+  const m = Math.min(ADJ_MAX, parseInt(f.text || '0', 10) || 0), v = f.sign * m, name = TIME_NAMES[f.id];
+  if (v) state.data.adj[f.id] = v; else delete state.data.adj[f.id];
+  clearCache(); save(); state.aform = null; closeSheet();
+  toast(v ? `${name} ${v > 0 ? '+' : ''}${v} min` : `${name} adjustment cleared`);
+}
+
+function AdjSheet() {
+  const f = state.aform;
+  if (!f) return '';
+  return `<div class="grab"></div>
+    <div class="sheet-head"><div><p class="eyebrow">Prayer time adjustment</p><h2>${TIME_NAMES[f.id]}</h2><p class="muted">From -${ADJ_MAX} to +${ADJ_MAX} minutes</p></div>
+      <button class="icon-btn" data-action="close-sheet" aria-label="Close">${Icon('x')}</button></div>
+    <div class="adj-entry">
+      <button class="sign" data-action="adj-sign" aria-label="${adjSignLabel(f)}">${f.sign < 0 ? '\u2212' : '+'}</button>
+      <input id="adj-input" class="inp" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" enterkeyhint="done" placeholder="0" value="${esc(f.text)}" aria-label="Minutes">
+      <span class="unit">min</span>
+    </div>
+    <p class="note" id="adj-hint">${adjHint(f)}</p>
+    <button class="btn btn-primary" data-action="adj-save">Save</button>
+    <button class="btn btn-ghost" data-action="close-sheet">Cancel</button>`;
 }
 
 function CustomSheet() {
@@ -2184,9 +2263,9 @@ function ImportSheet() {
 function SheetView() {
   if (!state.sheet) return '';
   const fresh = state.sheetFresh ? ' enter' : '';
-  const body = { log: LogSheet, reset: ResetSheet, import: ImportSheet, custom: CustomSheet, 'help-method': MethodHelp, 'help-asr': AsrHelp }[state.sheet]();
+  const body = { log: LogSheet, reset: ResetSheet, import: ImportSheet, custom: CustomSheet, adj: AdjSheet, 'help-method': MethodHelp, 'help-asr': AsrHelp }[state.sheet]();
   return `<div class="backdrop${fresh}" data-action="close-sheet"></div>
-    <div class="sheet${fresh}" role="dialog" aria-modal="true" aria-label="${{ log: 'Log prayers', reset: 'Reset all data', import: 'Import preview', custom: 'Custom reminder', 'help-method': 'Calculation methods', 'help-asr': 'Asr calculation' }[state.sheet]}" tabindex="-1">${body}</div>`;
+    <div class="sheet${fresh}" role="dialog" aria-modal="true" aria-label="${{ log: 'Log prayers', reset: 'Reset all data', import: 'Import preview', custom: 'Custom reminder', adj: 'Adjust prayer time', 'help-method': 'Calculation methods', 'help-asr': 'Asr calculation' }[state.sheet]}" tabindex="-1">${body}</div>`;
 }
 
 function openSheet(type) {
@@ -2301,7 +2380,7 @@ document.addEventListener('click', e => {
     case 'save-manual': saveManual(); break;
     case 'help': openSheet('help-' + d.topic); break;
     case 'adj': {
-      const v = Math.max(-60, Math.min(60, (state.data.adj[d.id] || 0) + Number(d.step)));
+      const v = Math.max(-ADJ_MAX, Math.min(ADJ_MAX, (state.data.adj[d.id] || 0) + Number(d.step)));
       if (v) state.data.adj[d.id] = v; else delete state.data.adj[d.id];
       clearCache(); save(); render(); break;
     }
@@ -2311,6 +2390,16 @@ document.addEventListener('click', e => {
     case 'n-toggle': toggleNotif(d.k); break;
     case 'n-test': testNotification(); break;
     case 'n-settings': if (typeof Notifier.openSettings === 'function') Notifier.openSettings(); break;
+    case 'adj-edit': {
+      const v = state.data.adj[d.id] || 0;
+      state.aform = { id: d.id, sign: v < 0 ? -1 : 1, text: v ? String(Math.abs(v)) : '' };
+      openSheet('adj');
+      const inp = $('#adj-input');
+      if (inp) { inp.focus(); if (inp.select) inp.select(); }       // opens the number keyboard
+      break;
+    }
+    case 'adj-sign': if (state.aform) { state.aform.sign *= -1; state.aform.capped = false; syncAdjSheet(); } break;
+    case 'adj-save': saveAdj(); break;
     case 'c-add':
       if (state.data.notif.custom.length >= CUSTOM_MAX) { toast('You can add up to ' + CUSTOM_MAX + ' reminders.'); break; }
       state.cform = newCform(); openSheet('custom'); break;
@@ -2321,8 +2410,7 @@ document.addEventListener('click', e => {
     case 'c-delete': deleteCustom(); break;
     case 'set-theme': state.data.theme = d.mode; applyTheme(); save(); render(); break;
     case 'bg-type': state.data.bg.type = d.t; save(); applyBackground(); render(); break;
-    case 'bg-dark': state.data.bg.dark = d.d; save(); applyBackground(); render(); break;
-    case 'bg-pick': $('#bg-file').click(); break;
+    case 'bg-pick': if (!PlatformImages.pick()) $('#bg-file').click(); break;     // gallery on Android, normal picker elsewhere
     case 'bg-remove':
       bgPhoto = null; try { localStorage.removeItem(PHOTO_KEY); } catch (e) { /* ignore */ }
       state.data.bg.type = 'dots'; save(); applyBackground(); render(); toast('Photo removed'); break;
@@ -2364,6 +2452,20 @@ document.addEventListener('change', e => {
 document.addEventListener('input', e => {
   const id = e.target.id, v = e.target.value;
   if (id === 'name-input') { state.data.name = v.slice(0, 30); save(); $('#avatar').innerHTML = AvatarInner(); }
+  else if (state.aform && id === 'adj-input') {
+    const c = cleanAdjText(v);
+    if (c.neg) state.aform.sign = -1;
+    state.aform.text = c.text;
+    if (e.target.value !== c.text) e.target.value = c.text;          // 999 is shown as 180 straight away
+    state.aform.capped = c.capped;
+    syncAdjSheet();
+  }
+  else if (id === 'bg-dark') {
+    state.data.bg.dark = Number(v);
+    const out = $('#bg-dark-v');
+    if (out) out.textContent = v + '%';
+    applyBackground(); saveSoon();
+  }
   else if (state.cform && id === 'c-label') state.cform.label = v;
   else if (state.cform && id === 'c-time') state.cform.time = v;
   else if (id === 'f-q') state.form.q = v;
@@ -2383,6 +2485,7 @@ document.addEventListener('input', e => {
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeSheet();
   if (e.key === 'Enter' && e.target.id === 'f-q') { e.preventDefault(); searchManual(); }
+  if (e.key === 'Enter' && e.target.id === 'adj-input') { e.preventDefault(); saveAdj(); }
 });
 
 // Keep "today" correct if the app stays open past midnight.
