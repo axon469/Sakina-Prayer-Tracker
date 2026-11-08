@@ -164,7 +164,7 @@ Dates use the `YYYY-MM-DD` format. Future dates are ignored during import.
 
 The Android application is a standalone app that bundles the complete Sakina website codes inside the APK, so it works offline.
 
-Current Android version: **1.2.0**
+Current Android version: **1.2.6**
 
 - Application name: Sakina Prayer Tracker
 - Package ID: `org.axon.sakina`
