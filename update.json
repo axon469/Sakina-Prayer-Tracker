@@ -1,9 +1,12 @@
+
 {
-  "versionCode": 5,
-  "versionName": "1.2.4",
+  "versionCode": 6,
+  "versionName": "1.2.6",
   "title": "A little update is ready.",
-  "message": "Sakina 1.2.4 is here with improved notifications and other enhancements.",
+  "message": "Sakina 1.2.6 brings improved prayer time adjustments and custom background options.",
   "whatsNew": [
+    "Adjust prayer times up to ±180 minutes",
+    "Choose custom background photos directly from your phone gallery",
     "Native Android prayer notifications",
     "Notification scheduling and permission support",
     "Notification restoration after device restart",
