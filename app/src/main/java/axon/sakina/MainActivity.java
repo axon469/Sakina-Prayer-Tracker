@@ -1,4 +1,3 @@
-
 package org.axon.sakina;
 
 import android.Manifest;
@@ -9,13 +8,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.provider.Settings;
+import android.util.Base64;
 import android.view.Gravity;
 import android.view.View;
 import android.webkit.GeolocationPermissions;
@@ -36,6 +39,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -60,6 +64,7 @@ public class MainActivity extends Activity {
     private static final int FILE_PICKER_REQUEST = 102;
     private static final int SAVE_BACKUP_REQUEST = 103;
     private static final int NOTIFICATION_PERMISSION_REQUEST = 104;
+    private static final int IMAGE_PICKER_REQUEST = 105;
 
     private static final String LOCAL_URL =
             "https://appassets.androidplatform.net/assets/index.html";
@@ -205,7 +210,7 @@ public class MainActivity extends Activity {
                 requestLocationPermission(origin, callback);
             }
 
-            // Handles JSON backup imports and background image selection.
+            // Handles JSON backup imports and other HTML file inputs.
             @Override
             public boolean onShowFileChooser(
                     WebView webView,
@@ -269,8 +274,31 @@ public class MainActivity extends Activity {
         webView.loadUrl(LOCAL_URL);
     }
 
-    // Existing native backup-saving bridge.
+    // Native file bridge.
     private class AndroidFileBridge {
+
+        // Opens Android's image picker for custom backgrounds.
+        @JavascriptInterface
+        public void pickImage() {
+            runOnUiThread(() -> {
+                try {
+                    Intent intent;
+
+                    if (Build.VERSION.SDK_INT >= 33) {
+                        intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
+                    } else {
+                        intent = new Intent(Intent.ACTION_GET_CONTENT);
+                        intent.setType("image/*");
+                        intent.addCategory(Intent.CATEGORY_OPENABLE);
+                    }
+
+                    startActivityForResult(intent, IMAGE_PICKER_REQUEST);
+
+                } catch (Exception e) {
+                    notifyImagePickCancelled();
+                }
+            });
+        }
 
         @JavascriptInterface
         public void saveBackup(String filename, String content) {
@@ -302,7 +330,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    // Native notification bridge used by the v1.2.4 HTML.
+    // Native notification bridge.
     private class SakinaAndroidBridge {
 
         @JavascriptInterface
@@ -590,6 +618,11 @@ public class MainActivity extends Activity {
     ) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        if (requestCode == IMAGE_PICKER_REQUEST) {
+            handleImagePickerResult(resultCode, data);
+            return;
+        }
+
         if (requestCode == FILE_PICKER_REQUEST) {
 
             if (fileCallback != null) {
@@ -647,6 +680,130 @@ public class MainActivity extends Activity {
         }
     }
 
+    // Receives the selected photo, resizes it, and sends it to the HTML app.
+    private void handleImagePickerResult(int resultCode, Intent data) {
+
+        if (resultCode != RESULT_OK || data == null || data.getData() == null) {
+            notifyImagePickCancelled();
+            return;
+        }
+
+        Bitmap bitmap = null;
+
+        try {
+            Uri imageUri = data.getData();
+
+            BitmapFactory.Options bounds = new BitmapFactory.Options();
+            bounds.inJustDecodeBounds = true;
+
+            try (InputStream input =
+                         getContentResolver().openInputStream(imageUri)) {
+
+                if (input == null) {
+                    throw new IllegalStateException("Unable to open image");
+                }
+
+                BitmapFactory.decodeStream(input, null, bounds);
+            }
+
+            if (bounds.outWidth <= 0 || bounds.outHeight <= 0) {
+                throw new IllegalArgumentException("Invalid image");
+            }
+
+            int sample = 1;
+
+            while (Math.max(bounds.outWidth, bounds.outHeight) / sample > 1600) {
+                sample *= 2;
+            }
+
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inSampleSize = sample;
+
+            try (InputStream input =
+                         getContentResolver().openInputStream(imageUri)) {
+
+                if (input == null) {
+                    throw new IllegalStateException("Unable to open image");
+                }
+
+                bitmap = BitmapFactory.decodeStream(input, null, options);
+            }
+
+            if (bitmap == null) {
+                throw new IllegalArgumentException("Unable to decode image");
+            }
+
+            int largestSide = Math.max(
+                    bitmap.getWidth(),
+                    bitmap.getHeight()
+            );
+
+            if (largestSide > 1600) {
+
+                float scale = 1600f / largestSide;
+
+                Bitmap resized = Bitmap.createScaledBitmap(
+                        bitmap,
+                        Math.max(1, Math.round(bitmap.getWidth() * scale)),
+                        Math.max(1, Math.round(bitmap.getHeight() * scale)),
+                        true
+                );
+
+                if (resized != bitmap) {
+                    bitmap.recycle();
+                }
+
+                bitmap = resized;
+            }
+
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+            bitmap.compress(
+                    Bitmap.CompressFormat.JPEG,
+                    85,
+                    output
+            );
+
+            bitmap.recycle();
+            bitmap = null;
+
+            String encoded = Base64.encodeToString(
+                    output.toByteArray(),
+                    Base64.NO_WRAP
+            );
+
+            String javascript =
+                    "window.onSakinaImagePicked && " +
+                    "window.onSakinaImagePicked('data:image/jpeg;base64," +
+                    encoded + "')";
+
+            if (webView != null) {
+                webView.post(() ->
+                        webView.evaluateJavascript(javascript, null)
+                );
+            }
+
+        } catch (Exception e) {
+
+            if (bitmap != null && !bitmap.isRecycled()) {
+                bitmap.recycle();
+            }
+
+            notifyImagePickCancelled();
+        }
+    }
+
+    private void notifyImagePickCancelled() {
+
+        if (webView != null) {
+            webView.post(() -> webView.evaluateJavascript(
+                    "window.onSakinaImagePickCancelled && " +
+                    "window.onSakinaImagePickCancelled()",
+                    null
+            ));
+        }
+    }
+
     private void checkForUpdates() {
 
         new Thread(() -> {
@@ -689,14 +846,17 @@ public class MainActivity extends Activity {
 
                 int latestVersionCode = data.optInt("versionCode", 0);
                 String latestVersionName = data.optString("versionName", "");
+
                 String title = data.optString(
                         "title",
                         "A little update is ready."
                 );
+
                 String message = data.optString(
                         "message",
                         "A newer version of Sakina is available."
                 );
+
                 String downloadUrl = data.optString("downloadUrl", "");
                 JSONArray whatsNew = data.optJSONArray("whatsNew");
 
@@ -750,6 +910,7 @@ public class MainActivity extends Activity {
         LinearLayout panel = new LinearLayout(this);
         panel.setOrientation(LinearLayout.VERTICAL);
         panel.setPadding(dp(24), dp(22), dp(24), dp(22));
+
         panel.setBackground(
                 roundRect(CARD, dp(28), Color.rgb(48, 48, 52), dp(1))
         );
@@ -759,6 +920,7 @@ public class MainActivity extends Activity {
         panel.addView(brand, matchWrap());
 
         if (versionName != null && !versionName.trim().isEmpty()) {
+
             TextView version = text(
                     "VERSION " + versionName,
                     11,
@@ -809,6 +971,7 @@ public class MainActivity extends Activity {
         panel.addView(whatsNewTitle, matchWrap());
 
         if (whatsNew != null) {
+
             for (int i = 0; i < whatsNew.length(); i++) {
 
                 String item = whatsNew.optString(i, "");
@@ -833,6 +996,7 @@ public class MainActivity extends Activity {
         }
 
         TextView updateButton = buttonText("Update now", BG);
+
         updateButton.setBackground(
                 roundRect(ACCENT, dp(40), ACCENT, 0)
         );
@@ -843,6 +1007,7 @@ public class MainActivity extends Activity {
         panel.addView(updateButton, updateParams);
 
         TextView laterButton = buttonText("Maybe later", WHITE);
+
         laterButton.setBackground(
                 roundRect(CARD_DARK, dp(40), CARD_DARK, 0)
         );
@@ -861,17 +1026,21 @@ public class MainActivity extends Activity {
                 dialog.getWindow().setBackgroundDrawableResource(
                         android.R.color.transparent
                 );
+
                 dialog.getWindow().setDimAmount(0.72f);
             }
         });
 
         updateButton.setOnClickListener(v -> {
+
             try {
                 Intent intent = new Intent(
                         Intent.ACTION_VIEW,
                         Uri.parse(downloadUrl)
                 );
+
                 startActivity(intent);
+
             } catch (Exception ignored) {
             }
 
@@ -906,6 +1075,7 @@ public class MainActivity extends Activity {
     }
 
     private TextView buttonText(String value, int color) {
+
         TextView view = text(value, 15, color, true);
 
         view.setGravity(Gravity.CENTER);
@@ -948,6 +1118,7 @@ public class MainActivity extends Activity {
 
     @Override
     public void onBackPressed() {
+
         if (webView != null && webView.canGoBack()) {
             webView.goBack();
         } else {
@@ -964,6 +1135,7 @@ public class MainActivity extends Activity {
                     false,
                     false
             );
+
             locationCallback = null;
         }
 
