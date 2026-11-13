@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Sakina Prayer Tracker v1.2.6 | Android WebView version -->
+<!-- Sakina Prayer Tracker v1.2.9 | Android WebView version -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -16,7 +16,7 @@
   --b1:#2a2a2d; --b2:#34343a; --b3:#3a3a3e; --input:#121214; --select:#212124; --sheet:#151517; --sheet-list:#1c1c1f;
   --nav-bg:rgba(28,28,30,.92); --nav-active:#2d2d30; --line:rgba(255,255,255,.07); --hr:rgba(255,255,255,.2); --ring-line:rgba(255,255,255,.07);
   --text:#fff; --soft:#c9c9ce; --muted:#8f8f96; --faint:#6f6f76; --fg:#fff; --on-fg:#000; --bgc:#fff;
-  --accent:#cf9f86; --accent-dark:#392e29; --danger:#e0766c; --ok:#7fd6a2; --ok-bg:rgba(111,207,151,.1); --warn:#e6b866; --warn-bg:rgba(230,184,102,.12);
+  --accent:#cf9f86; --accent-dark:#392e29; --danger:#e0766c; --ok:#7fd6a2; --ok-bg:rgba(111,207,151,.1); --warn:#e6b866; --warn-bg:rgba(230,184,102,.12); --info:#8fb0ff;
   --chev:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
   --radius:28px; --nav-h:72px;
   --font:"Outfit","Poppins",ui-rounded,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
@@ -32,7 +32,7 @@ html[data-theme="light"]{
   --b1:#dcdce2; --b2:#d0d0d8; --b3:#c2c2cb; --input:#f4f4f7; --select:#f1f1f5; --sheet:#ffffff; --sheet-list:#f6f6f9;
   --nav-bg:rgba(255,255,255,.92); --nav-active:#e9e9ee; --line:rgba(0,0,0,.08); --hr:rgba(0,0,0,.15); --ring-line:rgba(0,0,0,.06);
   --text:#111114; --soft:#3d3d44; --muted:#6b6b73; --faint:#9a9aa3; --fg:#111114; --on-fg:#ffffff; --bgc:#000;
-  --accent:#b97f62; --accent-dark:#f0e2da; --danger:#d14a3f; --ok:#1f8a4c; --ok-bg:rgba(31,138,76,.1); --warn:#8a5a0c; --warn-bg:rgba(150,96,15,.1);
+  --accent:#b97f62; --accent-dark:#f0e2da; --danger:#d14a3f; --ok:#1f8a4c; --ok-bg:rgba(31,138,76,.1); --warn:#8a5a0c; --warn-bg:rgba(150,96,15,.1); --info:#2b5fc7;
   --chev:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -413,6 +413,42 @@ button.nt{display:block;padding:0}
 .lbl-row .lbl{margin:0}
 .lbl-row output{color:var(--muted);font-size:13px}
 
+/* ---------- v1.2.9 ---------- */
+.pill.hist{height:44px;padding:0 16px;gap:8px;font-size:15px;font-weight:600;flex:none}
+.pill.hist .ic{fill:none;color:var(--text);width:20px;height:20px}
+.select-pill.dd{display:inline-flex;align-items:center;text-align:left;cursor:pointer;overflow:hidden}
+.select-pill.dd span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.select-pill.wide.dd,.opt .select-pill.dd{display:flex}
+.pick-list{margin-top:0}
+.pick-list .pick{padding:14px 18px}
+.pick-list .pl b{font-weight:500;font-size:16px}
+.pick-list .pick[aria-pressed="true"] .pl b{font-weight:700}
+.rk-sum{display:grid;grid-template-columns:1fr 1fr;text-align:center}
+.rk-sum div+div{border-left:1px solid var(--line)}
+.rk-sum b{display:block;font-size:32px;font-weight:700;line-height:1}
+.rk-sum small{display:block;margin-top:8px;font-size:13px;color:var(--muted)}
+.rk-legend{display:grid;grid-template-columns:1fr 1fr;gap:14px 12px}
+.rk-lg{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;line-height:1.35;color:var(--muted)}
+.rk-lg b{display:block;font-size:14px;font-weight:600;color:var(--text)}
+.rk-lg .dot{margin-top:5px}
+.dot{display:block;width:8px;height:8px;border-radius:50%;flex:none;background:var(--faint)}
+i.t-f{background:var(--danger)}i.t-m{background:var(--ok)}i.t-w{background:var(--info)}i.t-o{background:var(--faint)}
+.rk-head{display:flex;align-items:center;gap:14px}
+.rk-head .mi{width:44px;height:44px;border-radius:14px}
+.rk-t{flex:1;min-width:0}
+.rk-t b{display:block;font-size:20px;font-weight:600}
+.rk-t small{display:block;margin-top:2px;font-size:13px;color:var(--muted)}
+.rk-total{text-align:right}
+.rk-total b{display:block;font-size:32px;font-weight:700;line-height:1}
+.rk-total small{display:block;margin-top:4px;font-size:12px;color:var(--muted)}
+.rk-bar{display:flex;gap:3px;height:6px;margin:16px 0 14px}
+.rk-bar i{display:block;border-radius:9px;min-width:6px}
+.rk-parts{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px}
+.rk-p{background:var(--card-2);border-radius:16px;padding:12px 6px;text-align:center}
+.rk-p b{display:block;font-size:22px;font-weight:700;line-height:1}
+.rk-p span{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:8px;font-size:11.5px;color:var(--muted)}
+.rk-p .dot{width:7px;height:7px}
+
 /* ---------- Sheet + toast ---------- */
 .backdrop{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
 .sheet{position:fixed;left:0;right:0;bottom:0;z-index:31;max-width:480px;margin:0 auto;max-height:90vh;overflow:auto;background:var(--sheet);border:1px solid var(--line);
@@ -473,7 +509,18 @@ button.nt{display:block;padding:0}
 /* =====================================================================
    Constants
    ===================================================================== */
-const VERSION = '1.2.6';
+const VERSION = '1.2.9';
+
+// Wording for the Android app. Defined early so every message can use it.
+const PlatformText = {
+  saveFail: 'Could not save. Storage may be blocked.',
+  geoMissing: 'Location is not available in this app. Choose your location manually below.',
+  geoBlocked: () => '',
+  geoDenied: 'Location permission was denied. You can allow it in the app permission settings, or choose your location manually below.',
+  geoWait: 'Waiting for your device. Allow location access if Android asks.',
+  recordsSaved: 'Saved on this device',
+  storageNote: 'Everything is saved only on this device. Clearing the app data or uninstalling Sakina removes it, so export a backup now and then. You can import a Sakina backup or a Deen backup. You will see a preview before anything is added, and nothing is ever deleted by an import.'
+};
 const KEY = 'sakina:v1';          // same key as v1.0 so existing data carries over
 const PRAYERS = [
   { id: 'fajr',    name: 'Fajr',    ar: 'الفجر',  icon: 'sunrise' },
@@ -731,7 +778,7 @@ let saveWarned = false;
 function save() {
   try { localStorage.setItem(KEY, JSON.stringify(state.data)); }
   catch (e) {
-    if (!saveWarned) { saveWarned = true; toast('Could not save. Browser storage may be blocked.'); }
+    if (!saveWarned) { saveWarned = true; toast(PlatformText.saveFail); }
   }
   scheduleRefresh();
 }
@@ -751,6 +798,7 @@ const state = {
   importPlan: null,
   cform: null,
   aform: null,
+  pick: null,
   ui: freshUi(),
   form: freshForm(),
   sheet: null,        // 'log' | 'reset' | 'import' | 'custom' | 'help-method' | 'help-asr' | null
@@ -862,7 +910,7 @@ function exportData() {
     toast('Choose where to save your backup');
 
   } else {
-    // Normal browser download.
+    // Fallback download when the app bridge is not available.
     const blob = new Blob([backupJSON], {
       type: 'application/json'
     });
@@ -1163,8 +1211,9 @@ function detectLocation() {
   const u = state.ui;
   if (u.status === 'locating' || u.status === 'geocoding') return;
   const fail = msg => { u.status = 'idle'; u.msg = msg; render(); };
-  if (!('geolocation' in navigator)) { u.manual = true; return fail('This browser cannot share your location. Choose your location manually below.'); }
-  if (window.isSecureContext === false) { u.manual = true; return fail('Location sharing needs a secure page (https). Open Sakina from your GitHub Pages link, or choose your location manually below.'); }
+  if (!('geolocation' in navigator)) { u.manual = true; return fail(PlatformText.geoMissing); }
+  const blocked = PlatformText.geoBlocked();
+  if (blocked) { u.manual = true; return fail(blocked); }
   u.status = 'locating'; u.msg = '';
   render();
   navigator.geolocation.getCurrentPosition(pos => {
@@ -1183,7 +1232,7 @@ function detectLocation() {
       render();
     });
   }, err => {
-    if (err && err.code === 1) { u.manual = true; fail('Location permission was denied. You can allow it in your browser settings, or choose your location manually below.'); }
+    if (err && err.code === 1) { u.manual = true; fail(PlatformText.geoDenied); }
     else if (err && err.code === 3) fail('Finding your location took too long. Try again, or choose it manually.');
     else fail('Your position could not be found. Try again, or choose your location manually.');
   }, { enableHighAccuracy: false, timeout: 15000, maximumAge: 600000 });
@@ -1242,7 +1291,7 @@ function saveManual() {
 
 function tzList() {
   let list = [];
-  try { list = Intl.supportedValuesOf('timeZone').slice(); } catch (e) { /* older browsers */ }
+  try { list = Intl.supportedValuesOf('timeZone').slice(); } catch (e) { /* older runtimes */ }
   if (!list.length) list = Array.from(new Set(TZ_FALLBACK)).sort();
   for (const z of [state.form.tz, state.data.loc && state.data.loc.tz, deviceTz()]) if (z && !list.includes(z)) list.push(z);
   return list;
@@ -1251,7 +1300,7 @@ function tzList() {
 /* =====================================================================
    Notifications: shared scheduling model
    The same schedule is built on every platform. Only the platform layer below
-   decides how it is delivered (browser timers or the native Android bridge).
+   decides how it is delivered (see the platform layer below).
    ===================================================================== */
 const notifStatus = { ok: false, count: 0, reason: 'off', msg: '', items: [] };
 
@@ -1379,7 +1428,7 @@ async function setMaster(on) {
   const n = state.data.notif;
   if (!on) { n.enabled = false; save(); render(); toast('Notifications turned off'); return; }
   const perm = Notifier.permission();
-  if (perm === 'unsupported' && Notifier.platform === 'web') { toast('This browser does not support notifications.'); return; }
+  if (perm === 'unsupported' && Notifier.lockWhenUnsupported) { toast(Notifier.unsupportedText); return; }
   if (perm === 'denied') { toast('Notifications are blocked. Allow them in settings first.'); render(); return; }
   if (perm === 'default') {
     const r = await Notifier.requestPermission();      // only asked now, after the user turned notifications on
@@ -1430,7 +1479,7 @@ function deleteCustom() {
 /* ---------------------------------------------------------------------
    Platform layer: ANDROID WEBVIEW (index.android.html)
    Talks only to a native bridge object named SakinaAndroid (added with
-   addJavascriptInterface). Browser notifications are never used here.
+   addJavascriptInterface). Only this bridge is used for notifications.
    If the bridge is missing the app keeps working and nothing is scheduled.
 
    Bridge methods (all arguments and results are strings, numbers or booleans):
@@ -1463,6 +1512,7 @@ const Notifier = (() => {
 
   const self = {
     platform: 'android', horizonDays: 14, persistent: true,
+    lockWhenUnsupported: false, unsupportedText: '',
     supported: () => !!bridge(),
     permission() {
       if (!bridge()) return 'unsupported';
@@ -1536,6 +1586,14 @@ const PlatformImages = (() => {
   return { pick() { const b = bridge(); if (!b) return false; try { b.pickImage(); return true; } catch (e) { return false; } } };
 })();
 
+// No extra screens are needed in the app, so these hooks do nothing.
+const PlatformUI = {
+  extraNotifHtml: () => '',
+  beforeRender() {},
+  onAction: () => false,
+  sheets: { views: {}, titles: {}, classes: {}, locked: [] }
+};
+
 
 /* =====================================================================
    Theme and background
@@ -1586,7 +1644,7 @@ function usePhotoSource(src, done) {
   const img = new Image();
   img.onload = () => {
     if (done) done();
-    for (const [max, q] of [[1280, 0.72], [800, 0.6]]) {              // shrink the photo so it fits in browser storage
+    for (const [max, q] of [[1280, 0.72], [800, 0.6]]) {              // shrink the photo so it fits in local storage
       const sc = Math.min(1, max / Math.max(img.width, img.height));
       const c = document.createElement('canvas');
       c.width = Math.max(1, Math.round(img.width * sc)); c.height = Math.max(1, Math.round(img.height * sc));
@@ -1666,10 +1724,11 @@ function WeekStrip() {
 }
 
 function Nav() {
-  const item = (to, icon, label) => `<button class="nav-item ${state.view === to ? 'active' : ''}" data-action="nav" data-to="${to}" ${state.view === to ? 'aria-current="page"' : ''}>${Icon(icon)}<span>${label}</span></button>`;
+  const here = state.view === 'history' ? 'stats' : state.view;                    // History is opened from Statistics
+  const item = (to, icon, label) => `<button class="nav-item ${here === to ? 'active' : ''}" data-action="nav" data-to="${to}" ${here === to ? 'aria-current="page"' : ''}>${Icon(icon)}<span>${label}</span></button>`;
   return `<div class="nav-bar">${item('home', 'home', 'Home')}${item('stats', 'stats', 'Stats')}
     <button class="nav-main" data-action="open-log" aria-label="Log prayers">${Icon('plus')}</button>
-    ${item('history', 'history', 'History')}${item('settings', 'settings', 'Settings')}</div>`;
+    ${item('rakats', 'mosque', 'Rakats')}${item('settings', 'settings', 'Settings')}</div>`;
 }
 
 /* =====================================================================
@@ -1815,11 +1874,10 @@ function Heatmap(year) {
 function ActivityCard() {
   const years = yearsList();
   if (!years.includes(state.year)) state.year = years[0];
-  const opts = years.map(y => `<option value="${y}" ${y === state.year ? 'selected' : ''}>${y}</option>`).join('');
   const legend = ['l1', 'l2', 'l3', 'l4', 'l5'].map(c => `<i class="hm-c ${c}"></i>`).join('');
   return `<section class="card">
     <div class="card-head"><h2>${Icon('mosque')}Activity</h2>
-      <select class="select-pill" id="year-select" aria-label="Year">${opts}</select></div>
+      ${Dd('year-select', 'Year', years.map(y => [y, y]), state.year)}</div>
     ${Heatmap(state.year)}
     <div class="legend">
       <span class="lg">Less ${legend} More</span>
@@ -1834,7 +1892,8 @@ function StatsView() {
   const o = overview();
   const label = `<span class="rl"><b>${o.rate === null ? '—' : o.rate + '%'}</b><small>Overall</small></span>`;
   return `
-  <header class="top"><div><p class="eyebrow">Insights</p><h1>Statistics</h1></div></header>
+  <header class="top"><div><p class="eyebrow">Insights</p><h1>Statistics</h1></div>
+    <button class="pill hist" data-action="nav" data-to="history" aria-label="Open history">${Icon('history')}<span>History</span></button></header>
   <section class="card hero" aria-label="Overall statistics">
     <div class="hero-top">
       ${Ring('overall', o.rate || 0, label)}
@@ -1872,9 +1931,8 @@ function SummaryCard(keys) {
     const w = keys.length ? Math.round(done / keys.length * 100) : 0;
     return `<div class="sum-row">${Icon(p.icon)}<span class="n">${p.name}</span><div class="bar"><i style="width:${w}%"></i></div><span class="c">${done}/${keys.length}</span></div>`;
   }).join('');
-  const opts = RANGES.map(([v, l]) => `<option value="${v}" ${v === state.histRange ? 'selected' : ''}>${l}</option>`).join('');
   return `<section class="card">
-    <div class="card-head"><h2>${Icon('mosque')}Prayer Summary</h2><select class="select-pill" id="range-select" aria-label="Time range">${opts}</select></div>${rows}</section>`;
+    <div class="card-head"><h2>${Icon('mosque')}Prayer Summary</h2>${Dd('range-select', 'Time range', RANGES, state.histRange)}</div>${rows}</section>`;
 }
 
 function DayCard(k) {
@@ -1901,7 +1959,7 @@ function HistoryView() {
   const keys = rangeKeys(), list = keys.slice().reverse();
   const shown = list.slice(0, state.histLimit);
   return `
-  <header class="top"><div><p class="eyebrow">Records</p><h1>History</h1></div></header>
+  <header class="subhead"><button class="back-btn" data-action="nav" data-to="stats" aria-label="Back to statistics">${Icon('chev')}</button><h1>History</h1></header>
   ${SummaryCard(keys)}
   <div class="sec-row"><h3>All days</h3><span class="muted">${list.length} ${list.length === 1 ? 'entry' : 'entries'}</span></div>
   ${shown.map(DayCard).join('')}
@@ -1966,7 +2024,7 @@ function GeneralPage() {
     <button class="btn btn-ghost" data-action="pick-file">${Icon('upload')}Import backup</button>
     <button class="btn btn-danger" data-action="ask-reset">${Icon('trash')}Reset all data</button>
   </section>
-  <p class="note">Everything is saved only in this browser on this device. Clearing browser data removes it, so export a backup now and then. You can import a Sakina backup or a Deen backup. You will see a preview before anything is added, and nothing is ever deleted by an import.</p>`;
+  <p class="note">${PlatformText.storageNote}</p>`;
 }
 
 function ThemePage() {
@@ -2017,7 +2075,7 @@ function AboutPage() {
   <section class="card">
     <div class="row"><b>Version</b><span class="v">${VERSION}</span></div>
     <div class="row"><b>Prayer times</b><span class="v">Calculated on device</span></div>
-    <div class="row"><b>Your records</b><span class="v">Saved in this browser</span></div>
+    <div class="row"><b>Your records</b><span class="v">${PlatformText.recordsSaved}</span></div>
   </section>
   <p class="note">Sakina has no account and no server. Your prayer records and settings stay on this device. Your coordinates are sent to OpenStreetMap only when you tap detect or search, to look up an address.</p>
   <p class="eyebrow group">About the developer</p>
@@ -2039,14 +2097,12 @@ function LocationPage() {
       <p class="tz">Time Zone: ${esc(l.tz)}</p>
       <p class="coords">${l.lat.toFixed(4)}, ${l.lon.toFixed(4)} · ${l.source === 'device' ? 'From your device' : 'Set manually'}</p>`;
   } else body = '<p class="small" style="margin-top:0">No location set yet. Share your device location or choose a place manually to get accurate prayer times.</p>';
-  const status = u.status === 'locating' ? `<p class="status"><i class="spin"></i>Waiting for your device. Allow location access if your browser asks.</p>`
+  const status = u.status === 'locating' ? `<p class="status"><i class="spin"></i>${PlatformText.geoWait}</p>`
     : u.status === 'geocoding' ? `<p class="status"><i class="spin"></i>Finding your address…</p>` : '';
   const err = u.msg ? `<p class="status err" role="alert">${esc(u.msg)}</p>` : '';
 
-  const mOpts = `<option value="auto" ${c.method === 'auto' ? 'selected' : ''}>Auto${l ? ': ' + METHODS[autoMethod(l)].name : ''}</option>` +
-    METHOD_IDS.map(id => `<option value="${id}" ${c.method === id ? 'selected' : ''}>${METHODS[id].name}</option>`).join('');
-  const aOpts = `<option value="auto" ${c.asr === 'auto' ? 'selected' : ''}>Auto${l ? ': ' + cap(autoAsr(l)) : ''}</option>
-    <option value="hanafi" ${c.asr === 'hanafi' ? 'selected' : ''}>Hanafi</option><option value="shafi" ${c.asr === 'shafi' ? 'selected' : ''}>Shafi</option>`;
+  const mOpts = [['auto', 'Auto' + (l ? ': ' + METHODS[autoMethod(l)].name : '')]].concat(METHOD_IDS.map(id => [id, METHODS[id].name]));
+  const aOpts = [['auto', 'Auto' + (l ? ': ' + cap(autoAsr(l)) : '')], ['hanafi', 'Hanafi'], ['shafi', 'Shafi']];
   const auto = l && (c.method === 'auto' || c.asr === 'auto');
   const act = activeCalc();
   const note = auto ? `<div class="ok-note">${Icon('check')}<span>${c.method === 'auto' ? 'Calculation method' : 'Asr calculation'} automatically set based on your location. Using ${METHODS[act.method].name} and ${cap(act.asr)}.</span></div>`
@@ -2065,9 +2121,9 @@ function LocationPage() {
     <h2 class="h">Prayer Time Calculation</h2>
     <p class="small">Select your preferred calculation method or let Sakina choose one for your area.</p>
     <div class="opt"><span class="opt-l">Calculation Method <button class="q" data-action="help" data-topic="method" aria-label="About calculation methods">?</button></span>
-      <select id="method-select" class="select-pill" aria-label="Calculation method">${mOpts}</select></div>
+      ${Dd('method-select', 'Calculation method', mOpts, c.method)}</div>
     <div class="opt"><span class="opt-l">Asr Calculation <button class="q" data-action="help" data-topic="asr" aria-label="About Asr calculation">?</button></span>
-      <select id="asr-select" class="select-pill" aria-label="Asr calculation">${aOpts}</select></div>
+      ${Dd('asr-select', 'Asr calculation', aOpts, c.asr)}</div>
     ${note}
   </section>
   ${AdjCard()}
@@ -2077,7 +2133,7 @@ function LocationPage() {
 function ManualCard() {
   const u = state.ui, f = state.form;
   const results = u.results.map((r, i) => `<button class="res" data-action="pick-result" data-i="${i}">${Icon('pin')}<span>${esc(r.display_name || '')}</span></button>`).join('');
-  const tzs = tzList().map(z => `<option value="${esc(z)}" ${z === f.tz ? 'selected' : ''}>${esc(z)}</option>`).join('');
+  const tzs = tzList().map(z => [z, z]);
   return `<section class="card" aria-label="Choose location manually">
     <h2 class="h">Choose manually</h2>
     <div class="field-row" style="margin-top:14px"><input id="f-q" type="search" class="inp" placeholder="Search city or place" value="${esc(f.q)}" autocomplete="off" enterkeyhint="search">
@@ -2087,7 +2143,7 @@ function ManualCard() {
     <p class="lbl">Location details</p>
     <input id="f-name" class="inp" placeholder="Place name (optional)" value="${esc(f.name)}" autocomplete="off">
     <div class="two"><input id="f-lat" class="inp" inputmode="decimal" placeholder="Latitude" value="${esc(f.lat)}" aria-label="Latitude"><input id="f-lon" class="inp" inputmode="decimal" placeholder="Longitude" value="${esc(f.lon)}" aria-label="Longitude"></div>
-    <select id="tz-select" class="select-pill wide" aria-label="Time zone">${tzs}</select>
+    ${Dd('tz-select', 'Time zone', tzs, f.tz, 'wide')}
     ${u.fMsg ? `<p class="status err" role="alert">${esc(u.fMsg)}</p>` : ''}
     <button class="btn btn-primary" style="margin-top:16px" data-action="save-manual">Save location</button>
   </section>`;
@@ -2122,11 +2178,11 @@ function NotificationsPage() {
   const permText = { granted: 'Allowed', denied: 'Blocked', default: 'Not asked yet', unsupported: 'Not available' }[perm] || 'Unknown';
   const permBtn = perm === 'default' && sup ? '<button class="btn-sm sm" data-action="n-perm">Allow</button>'
     : (perm === 'denied' && typeof Notifier.openSettings === 'function' ? '<button class="btn-sm sm" data-action="n-settings">Open settings</button>' : '');
-  const lockMaster = Notifier.platform === 'web' && !sup;
+  const lockMaster = Notifier.lockWhenUnsupported && !sup;
   const mSub = !n.enabled ? 'Turn on to receive reminders'
     : st.ok ? (st.count ? `${st.count} reminders scheduled` : 'On, nothing to schedule yet')
     : st.reason === 'denied' ? 'On, but blocked' : st.reason === 'permission' ? 'On, waiting for permission' : 'On, not scheduled';
-  const opts = (arr, cur) => arr.map(m => `<option value="${m}" ${m === cur ? 'selected' : ''}>${m} min</option>`).join('');
+  const opts = arr => arr.map(m => [m, `${m} min`]);
   const up = st.ok ? st.items.slice(0, 5).map(it => {
     const f = new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'short', hour: 'numeric', minute: '2-digit' });
     return `<div class="imp-row"><span>${esc(it.title)}</span><b>${f.format(new Date(it.triggerAt)).replace(/\u202f/g, ' ')}</b></div>`;
@@ -2149,9 +2205,9 @@ function NotificationsPage() {
     <h2 class="h">Reminders</h2>
     <div class="nrow"><div class="nt"><b>Prayer-time reminders</b><small>Notify when each prayer begins</small></div>${Sw('n-toggle', 'atTime', n.atTime, 'Prayer-time reminders')}</div>
     <div class="nrow"><div class="nt"><b>Before the prayer</b><small>An early heads-up</small></div>${Sw('n-toggle', 'preOn', n.pre.on, 'Reminder before the prayer')}</div>
-    ${n.pre.on ? `<div class="nopt"><span>Remind me</span><select id="n-pre-min" class="select-pill" aria-label="Minutes before the prayer">${opts(PRE_MINUTES, n.pre.min)}</select><span>before</span></div>` : ''}
+    ${n.pre.on ? `<div class="nopt"><span>Remind me</span>${Dd('n-pre-min', 'Minutes before the prayer', opts(PRE_MINUTES), n.pre.min)}<span>before</span></div>` : ''}
     <div class="nrow"><div class="nt"><b>Missed-prayer reminder</b><small>If a prayer is still not marked as completed</small></div>${Sw('n-toggle', 'missedOn', n.missed.on, 'Missed-prayer reminder')}</div>
-    ${n.missed.on ? `<div class="nopt"><span>Remind me</span><select id="n-missed-min" class="select-pill" aria-label="Minutes after the prayer starts">${opts(MISSED_MINUTES, n.missed.min)}</select><span>after it starts</span></div>` : ''}
+    ${n.missed.on ? `<div class="nopt"><span>Remind me</span>${Dd('n-missed-min', 'Minutes after the prayer starts', opts(MISSED_MINUTES), n.missed.min)}<span>after it starts</span></div>` : ''}
   </section>
   <section class="card" aria-label="Prayers">
     <h2 class="h">Prayers</h2>
@@ -2169,7 +2225,8 @@ function NotificationsPage() {
     ${customRows}
     <button class="btn btn-ghost" style="margin-top:12px" data-action="c-add" ${n.custom.length >= CUSTOM_MAX ? 'disabled' : ''}>${Icon('plus')}Add reminder</button>
   </section>
-  ${up ? `<section class="card" aria-label="Next reminders"><h2 class="h">Next reminders</h2><div style="margin-top:8px">${up}</div></section>` : ''}`;
+  ${up ? `<section class="card" aria-label="Next reminders"><h2 class="h">Next reminders</h2><div style="margin-top:8px">${up}</div></section>` : ''}
+  ${PlatformUI.extraNotifHtml()}`;
 }
 
 /* ---------- Typed prayer-time adjustment ---------- */
@@ -2223,16 +2280,16 @@ function CustomSheet() {
   const f = state.cform;
   if (!f) return '';
   const chips = ['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((x, i) => `<button class="chip" data-action="c-day" data-i="${i}" aria-pressed="${f.days[i]}" aria-label="${DAYS3[i]}">${x}</button>`).join('');
-  const types = [['clock', 'At a set time'], ['before', 'Before a prayer'], ['after', 'After a prayer']].map(([v, t]) => `<option value="${v}" ${f.type === v ? 'selected' : ''}>${t}</option>`).join('');
-  const anchors = TIME_IDS.map(id => `<option value="${id}" ${f.anchor === id ? 'selected' : ''}>${TIME_NAMES[id]}</option>`).join('');
-  const mins = CUSTOM_MINUTES.map(m => `<option value="${m}" ${f.min === m ? 'selected' : ''}>${m} min</option>`).join('');
+  const types = [['clock', 'At a set time'], ['before', 'Before a prayer'], ['after', 'After a prayer']];
+  const anchors = TIME_IDS.map(id => [id, TIME_NAMES[id]]);
+  const mins = CUSTOM_MINUTES.map(m => [m, `${m} min`]);
   return `<div class="grab"></div>
     <div class="sheet-head"><div><p class="eyebrow">Custom reminder</p><h2>${f.id ? 'Edit reminder' : 'New reminder'}</h2></div>
       <button class="icon-btn" data-action="close-sheet" aria-label="Close">${Icon('x')}</button></div>
     <input id="c-label" class="inp" style="margin-top:0" maxlength="40" placeholder="Name (for example, Read Quran)" value="${esc(f.label)}" autocomplete="off">
-    <select id="c-type" class="select-pill wide" aria-label="When">${types}</select>
+    ${Dd('c-type', 'When', types, f.type, 'wide')}
     ${f.type === 'clock' ? `<input id="c-time" type="time" class="inp" value="${esc(f.time)}" aria-label="Time">`
-      : `<div class="two"><select id="c-anchor" class="select-pill wide" aria-label="Prayer">${anchors}</select><select id="c-min" class="select-pill wide" aria-label="Minutes">${mins}</select></div>
+      : `<div class="two">${Dd('c-anchor', 'Prayer', anchors, f.anchor, 'wide')}${Dd('c-min', 'Minutes', mins, f.min, 'wide')}</div>
          ${state.data.loc ? '' : '<p class="small muted" style="margin-top:10px;font-size:13px">This reminder needs a location to know the prayer time.</p>'}`}
     <p class="lbl">Repeat on</p><div class="chips">${chips}</div>
     ${f.err ? `<p class="status err" role="alert">${esc(f.err)}</p>` : ''}
@@ -2243,7 +2300,42 @@ function CustomSheet() {
 
 const SUBS = { theme: ThemePage, design: DesignPage, general: GeneralPage, location: LocationPage, notifications: NotificationsPage, about: AboutPage };
 
-const VIEWS = { home: HomeView, stats: StatsView, history: HistoryView, settings: SettingsView };
+/* ---------- Rakats guide ---------- */
+// Order of each row follows the order the rakats are prayed. Types: f = Farz, m = Sunnat Muakkadah, w = Waajib, o = optional (other Sunnat and Nafl).
+const RAKAT_TYPES = [['f', 'Farz', 'Required'], ['m', 'Sunnat Muakkadah', 'Strongly recommended'], ['w', 'Waajib', 'Necessary (Witr)'], ['o', 'Optional', 'Other Sunnat and Nafl']];
+const RAKATS = [
+  { id: 'fajr', name: 'Fajr', icon: 'sunrise', parts: [['Sunnat', '2', 'm'], ['Farz', '2', 'f']] },
+  { id: 'dhuhr', name: 'Dhuhr', icon: 'sun', parts: [['Sunnat', '4', 'm'], ['Farz', '4', 'f'], ['Sunnat', '2', 'm'], ['Nafl', '2', 'o']] },
+  { id: 'asr', name: 'Asr', icon: 'sunlow', parts: [['Sunnat', '4', 'o'], ['Farz', '4', 'f']] },
+  { id: 'maghrib', name: 'Maghrib', icon: 'sunset', parts: [['Farz', '3', 'f'], ['Sunnat', '2', 'm'], ['Nafl', '2', 'o']] },
+  { id: 'isha', name: 'Isha', icon: 'moon', parts: [['Sunnat', '4', 'o'], ['Farz', '4', 'f'], ['Sunnat', '2', 'm'], ['Nafl', '2', 'o'], ['Witr', '3', 'w'], ['Nafl', '2', 'o']] },
+  { id: 'jumuah', name: "Jumu'ah", sub: 'Friday, in place of Dhuhr', icon: 'mosque', parts: [['Sunnat', '4', 'm'], ['Farz', '2', 'f'], ['Sunnat', '4+2', 'm'], ['Nafl', '2', 'o']] }
+];
+const rakatNum = v => String(v).split('+').reduce((a, b) => a + Number(b), 0);
+const rakatSum = (r, type) => r.parts.filter(p => !type || p[2] === type).reduce((a, p) => a + rakatNum(p[1]), 0);
+
+function RakatsView() {
+  const daily = RAKATS.filter(r => r.id !== 'jumuah');
+  const farz = daily.reduce((a, r) => a + rakatSum(r, 'f'), 0), all = daily.reduce((a, r) => a + rakatSum(r), 0);
+  const legend = RAKAT_TYPES.map(([t, n, d]) => `<div class="rk-lg"><i class="dot t-${t}"></i><div><b>${n}</b>${d}</div></div>`).join('');
+  const cards = RAKATS.map(r => {
+    const bar = r.parts.map(p => `<i class="t-${p[2]}" style="flex:${rakatNum(p[1])}"></i>`).join('');
+    const pills = r.parts.map(p => `<div class="rk-p" title="${p[1]} rakats ${p[0]}"><b>${esc(p[1].replace('+', ' + '))}</b><span><i class="dot t-${p[2]}"></i>${p[0]}</span></div>`).join('');
+    return `<article class="card" aria-label="${r.name} rakats">
+      <div class="rk-head"><div class="mi">${Icon(r.icon)}</div><div class="rk-t"><b>${r.name}</b>${r.sub ? `<small>${r.sub}</small>` : ''}</div>
+        <div class="rk-total"><b>${rakatSum(r)}</b><small>rakats</small></div></div>
+      <div class="rk-bar" aria-hidden="true">${bar}</div>
+      <div class="rk-parts">${pills}</div></article>`;
+  }).join('');
+  return `
+  <header class="top"><div><p class="eyebrow">Guide</p><h1>Rakats</h1></div></header>
+  <section class="card rk-sum" aria-label="Daily totals"><div><b>${farz}</b><small>Farz rakats a day</small></div><div><b>${all}</b><small>All rakats a day</small></div></section>
+  <section class="card rk-legend" aria-label="Key">${legend}</section>
+  ${cards}
+  <p class="note">Each row follows the order the rakats are prayed. The counts follow the common Hanafi table. Other schools of thought can count some rakats differently.</p>`;
+}
+
+const VIEWS = { home: HomeView, stats: StatsView, history: HistoryView, rakats: RakatsView, settings: SettingsView };
 
 /* ---------- Sheets ---------- */
 function LogSheet() {
@@ -2325,12 +2417,71 @@ function ImportSheet() {
     <button class="btn btn-ghost" data-action="close-sheet">Cancel</button>`;
 }
 
+/* ---------- Custom dropdowns (these replace the phone's native select menus) ---------- */
+const ddReg = {};
+// A button that looks like the old select. Tapping it opens a list in Sakina's own bottom sheet.
+function Dd(id, title, options, value, cls) {
+  ddReg[id] = { title, options, value: String(value) };
+  const cur = options.find(o => String(o[0]) === String(value)) || options[0];
+  return `<button type="button" class="select-pill dd ${cls || ''}" id="${id}" data-action="dd-open" data-dd="${id}" aria-haspopup="listbox" aria-label="${esc(title)}: ${esc(cur[1])}"><span>${esc(cur[1])}</span></button>`;
+}
+
+function pickRows() {
+  const p = state.pick, reg = p && ddReg[p.id];
+  if (!reg) return '';
+  const q = (p.q || '').trim().toLowerCase();
+  const rows = reg.options.filter(o => !q || String(o[1]).toLowerCase().includes(q));
+  if (!rows.length) return '<p class="note" style="margin:16px">No matches.</p>';
+  return rows.map(([v, l]) => {
+    const on = String(v) === reg.value;
+    return `<button class="pick" role="option" data-action="pick-choose" data-v="${esc(v)}" aria-selected="${on}" aria-pressed="${on}"><span class="pl"><b>${esc(l)}</b></span>${on ? `<span class="chk">${Icon('check')}</span>` : ''}</button>`;
+  }).join('');
+}
+
+function PickSheet() {
+  const p = state.pick, reg = p && ddReg[p.id];
+  if (!reg) return '';
+  return `<div class="grab"></div>
+    <div class="sheet-head"><div><p class="eyebrow">Choose</p><h2>${esc(reg.title)}</h2></div><button class="icon-btn" data-action="close-sheet" aria-label="Close">${Icon('x')}</button></div>
+    ${reg.options.length > 12 ? '<input id="pick-search" class="inp" style="margin-top:0;margin-bottom:12px" type="search" placeholder="Search" autocomplete="off" aria-label="Search">' : ''}
+    <div class="card menu pick-list" id="pick-list" role="listbox">${pickRows()}</div>`;
+}
+
+function applyDropdown(id, v) {
+  switch (id) {
+    case 'year-select': state.year = Number(v); break;
+    case 'range-select': state.histRange = v; state.histLimit = 30; break;
+    case 'method-select': state.data.calc.method = v; clearCache(); save(); toast('Calculation method updated'); break;
+    case 'asr-select': state.data.calc.asr = v; clearCache(); save(); toast('Asr calculation updated'); break;
+    case 'tz-select': state.form.tz = v; break;
+    case 'n-pre-min': state.data.notif.pre.min = Number(v); save(); break;
+    case 'n-missed-min': state.data.notif.missed.min = Number(v); save(); break;
+    case 'c-type': if (state.cform) { state.cform.type = v; state.cform.err = ''; } break;
+    case 'c-anchor': if (state.cform) state.cform.anchor = v; break;
+    case 'c-min': if (state.cform) state.cform.min = Number(v); break;
+  }
+}
+
+function pickChoose(v) {
+  const p = state.pick, reg = p && ddReg[p.id];
+  if (!reg || !reg.options.some(o => String(o[0]) === String(v))) return;       // only values that are in the list
+  const back = p.back;
+  applyDropdown(p.id, v);
+  if (back) { state.sheet = back; state.pick = null; render(); }               // go back to the sheet it was opened from
+  else closeSheet();
+}
+
 function SheetView() {
   if (!state.sheet) return '';
   const fresh = state.sheetFresh ? ' enter' : '';
-  const body = { log: LogSheet, reset: ResetSheet, import: ImportSheet, custom: CustomSheet, adj: AdjSheet, 'help-method': MethodHelp, 'help-asr': AsrHelp }[state.sheet]();
+  const ui = PlatformUI.sheets;
+  const views = Object.assign({ log: LogSheet, reset: ResetSheet, import: ImportSheet, custom: CustomSheet, adj: AdjSheet, pick: PickSheet, 'help-method': MethodHelp, 'help-asr': AsrHelp }, ui.views);
+  const titles = Object.assign({ log: 'Log prayers', reset: 'Reset all data', import: 'Import preview', custom: 'Custom reminder', adj: 'Adjust prayer time', pick: 'Choose an option',
+    'help-method': 'Calculation methods', 'help-asr': 'Asr calculation' }, ui.titles);
+  const body = views[state.sheet]();
+  const cls = ui.classes[state.sheet] ? ' ' + ui.classes[state.sheet] : '';
   return `<div class="backdrop${fresh}" data-action="close-sheet"></div>
-    <div class="sheet${fresh}" role="dialog" aria-modal="true" aria-label="${{ log: 'Log prayers', reset: 'Reset all data', import: 'Import preview', custom: 'Custom reminder', adj: 'Adjust prayer time', 'help-method': 'Calculation methods', 'help-asr': 'Asr calculation' }[state.sheet]}" tabindex="-1">${body}</div>`;
+    <div class="sheet${fresh}${cls}" role="dialog" aria-modal="true" aria-label="${esc(titles[state.sheet] || 'Dialog')}" tabindex="-1">${body}</div>`;
 }
 
 function openSheet(type) {
@@ -2339,12 +2490,14 @@ function openSheet(type) {
   const s = $('.sheet'); if (s) s.focus({ preventScroll: true });
 }
 
-function closeSheet() {
+function closeSheet(force) {
   if (!state.sheet || state.closing) return;
+  if (PlatformUI.sheets.locked.includes(state.sheet) && !force) return;          // some sheets can only be closed by their own button
+  if (state.sheet === 'pick' && state.pick && state.pick.back) { state.sheet = state.pick.back; state.pick = null; render(); return; }
   state.closing = true;
   $('#overlay').classList.add('leaving');
   setTimeout(() => {
-    state.sheet = null; state.closing = false;
+    state.sheet = null; state.closing = false; state.pick = null;
     $('#overlay').classList.remove('leaving');
     render();
   }, 180);
@@ -2358,6 +2511,7 @@ function render(enter) {
   v.innerHTML = VIEWS[state.view]();
   if (enter) { v.classList.remove('enter'); void v.offsetWidth; v.classList.add('enter'); }
   $('#nav').innerHTML = Nav();
+  PlatformUI.beforeRender();
   $('#overlay').innerHTML = SheetView();
   tickNext();
   document.body.classList.toggle('lock', !!state.sheet);
@@ -2407,7 +2561,7 @@ window.addEventListener('hashchange', () => {
   const r = parseHash();
   if (r.view === state.view && r.sub === state.sub) return;
   state.view = r.view; state.sub = r.sub;
-  state.sheet = null; state.closing = false;
+  state.sheet = null; state.closing = false; state.pick = null;
   $('#overlay').classList.remove('leaving');
   render(true);
   window.scrollTo(0, 0);
@@ -2417,6 +2571,7 @@ document.addEventListener('click', e => {
   const t = e.target.closest('[data-action]');
   if (!t) return;
   const d = t.dataset;
+  if (PlatformUI.onAction(d.action, d)) return;
   switch (d.action) {
     case 'nav': go(d.to); break;
     case 'mark': mark(d.prayer); break;
@@ -2455,6 +2610,15 @@ document.addEventListener('click', e => {
     case 'n-toggle': toggleNotif(d.k); break;
     case 'n-test': testNotification(); break;
     case 'n-settings': if (typeof Notifier.openSettings === 'function') Notifier.openSettings(); break;
+    case 'dd-open': {
+      if (!ddReg[d.dd]) break;
+      state.pick = { id: d.dd, q: '', back: state.sheet && state.sheet !== 'pick' ? state.sheet : null };
+      openSheet('pick');
+      const cur = document.querySelector('#pick-list .pick[aria-pressed="true"]');
+      if (cur && cur.scrollIntoView) cur.scrollIntoView({ block: 'center' });
+      break;
+    }
+    case 'pick-choose': pickChoose(d.v); break;
     case 'adj-edit': {
       const v = state.data.adj[d.id] || 0;
       state.aform = { id: d.id, sign: v < 0 ? -1 : 1, text: v ? String(Math.abs(v)) : '' };
@@ -2517,6 +2681,7 @@ document.addEventListener('change', e => {
 document.addEventListener('input', e => {
   const id = e.target.id, v = e.target.value;
   if (id === 'name-input') { state.data.name = v.slice(0, 30); save(); $('#avatar').innerHTML = AvatarInner(); }
+  else if (state.pick && id === 'pick-search') { state.pick.q = v; const list = $('#pick-list'); if (list) list.innerHTML = pickRows(); }
   else if (state.aform && id === 'adj-input') {
     const c = cleanAdjText(v);
     if (c.neg) state.aform.sign = -1;
