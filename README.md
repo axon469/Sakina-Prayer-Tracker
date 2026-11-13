@@ -33,7 +33,7 @@ Prayer times are **calculated on your device** from the position of the sun, usi
 
 ## Screenshots
 
-<div align="center">
+<div>
 <table>
   <tr>
     <td align="center"><img src="screenshots/home.png" width="170" alt="Home"><br><sub><b>Home</b></sub></td>
