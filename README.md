@@ -36,21 +36,26 @@ Prayer times are **calculated on your device** from the position of the sun, usi
 <div align="center">
 <table>
   <tr>
-    <td align="center"><img src="screenshots/home.png" width="190" alt="Home"><br><sub><b>Home</b></sub></td>
-    <td align="center"><img src="screenshots/statistics.png" width="190" alt="Statistics"><br><sub><b>Statistics</b></sub></td>
-    <td align="center"><img src="screenshots/history.png" width="190" alt="History"><br><sub><b>History</b></sub></td>
-    <td align="center"><img src="screenshots/light.png" width="190" alt="Light theme"><br><sub><b>Light theme</b></sub></td>
+    <td align="center"><img src="screenshots/home.png" width="170" alt="Home"><br><sub><b>Home</b></sub></td>
+    <td align="center"><img src="screenshots/statistics.png" width="170" alt="Statistics with the History button"><br><sub><b>Statistics</b></sub></td>
+    <td align="center"><img src="screenshots/history.png" width="170" alt="History"><br><sub><b>History</b></sub></td>
+    <td align="center"><img src="screenshots/rakats.png" width="170" alt="Rakats"><br><sub><b>Rakats</b></sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="screenshots/settings.png" width="190" alt="Settings"><br><sub><b>Settings</b></sub></td>
-    <td align="center"><img src="screenshots/design.png" width="190" alt="Design style"><br><sub><b>Design style</b></sub></td>
-    <td align="center"><img src="screenshots/location.png" width="190" alt="Location and calculation method"><br><sub><b>Location &amp; Method</b></sub></td>
+    <td align="center"><img src="screenshots/history-dropdown.png" width="170" alt="Custom dropdown"><br><sub><b>Custom dropdown</b></sub></td>
+    <td align="center"><img src="screenshots/location.png" width="170" alt="Location and calculation method"><br><sub><b>Location and method</b></sub></td>
+    <td align="center"><img src="screenshots/notifications.png" width="170" alt="Notifications and reminders on Android"><br><sub><b>Reminders (Android)</b></sub></td>
+    <td align="center"><img src="screenshots/website-notice.png" width="170" alt="One-time notice on the website"><br><sub><b>Website notice</b></sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshots/settings.png" width="170" alt="Settings"><br><sub><b>Settings</b></sub></td>
+    <td align="center"><img src="screenshots/light.png" width="170" alt="Light theme"><br><sub><b>Light theme</b></sub></td>
+    <td></td>
     <td></td>
   </tr>
 </table>
-<sub>Screenshots use sample data.</sub>
-</div>
 
+  
 ## Features
 
 **Home**
